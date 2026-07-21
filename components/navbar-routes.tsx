@@ -1,16 +1,16 @@
 "use client"
 
-import { useAuth, UserButton } from "@clerk/nextjs";
+import { useUser, UserButton } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
 import { Button } from "./ui/button";
 import { LogOut } from "lucide-react";
 import Link from "next/link";
-import { isTeacher } from "@/lib/teacher";
 
 
 export const NavbarRoutes = () => {
     const pathname = usePathname();
-    const { userId } = useAuth();
+    const { user } = useUser();
+    const isTeacherUser = user?.publicMetadata?.userType === "teacher";
     const isTeacherPage = pathname?.startsWith('/teacher');
     const isPlayerPage = pathname?.startsWith('/chapter');
 
@@ -25,7 +25,7 @@ export const NavbarRoutes = () => {
                             Exit
                         </Button>
                     </Link>
-                ) : isTeacher(userId) ? (
+                ) : isTeacherUser ? (
                     <Link href="/teacher/courses">
                         <Button size='sm' variant='outline'>
                             Teacher Mode

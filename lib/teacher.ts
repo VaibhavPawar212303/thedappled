@@ -1,3 +1,10 @@
-export const isTeacher = (userId?: string | null) => {
-    return userId === process.env.NEXT_PUBLIC_TEACHER_ID;
-}
+import { auth, clerkClient } from "@clerk/nextjs/server";
+
+export const isTeacher = async () => {
+    const { userId } = await auth();
+    if (!userId) return false;
+
+    const client = await clerkClient();
+    const user = await client.users.getUser(userId);
+    return user.publicMetadata?.userType === "teacher";
+};
