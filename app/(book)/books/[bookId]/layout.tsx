@@ -15,11 +15,13 @@ const BookLayout = async ({
 }) => {
     const { userId } = await auth();
     const { bookId } = await params;
-    
-    if (!userId) {
-        return redirect('/');
-    }
-    
+    // Prisma treats `undefined` filter values as "no filter" (would match
+    // every user's rows), so anonymous visitors need an explicit value that
+    // can never match a real Clerk userId, not undefined.
+    const safeUserId = userId ?? "";
+
+    // Publicly browsable — anonymous visitors can view the book shell and
+    // any free chapter; locked chapters gate on login at the chapter page.
     const book = await prisma.book.findUnique({
         where: {
             id: bookId
@@ -32,7 +34,7 @@ const BookLayout = async ({
                 include: {
                     userProgress: {
                         where: {
-                            userId
+                            userId: safeUserId
                         }
                     }
                 },
@@ -48,12 +50,12 @@ const BookLayout = async ({
     }
 
     // ✅ Use getBookProgress instead of getProgress
-    const progressCount = await getBookProgress(userId, book.id);
+    const progressCount = await getBookProgress(safeUserId, book.id);
 
     const purchase = await prisma.bookPurchase.findUnique({
         where: {
             userId_bookId: {
-                userId,
+                userId: safeUserId,
                 bookId: book.id,
             }
         }

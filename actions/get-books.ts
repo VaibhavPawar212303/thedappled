@@ -8,13 +8,13 @@ type BookWithCategory = Book & {
 }
 
 type GetBooks = {
-    userId: string;
+    userId?: string;
     title?: string;
     categoryId?: string;
 }
 
 export const getBooks = async ({
-    userId, title, categoryId
+    title, categoryId
 }: GetBooks): Promise<BookWithCategory[]> => {
     try {
         const books = await prisma.book.findMany({

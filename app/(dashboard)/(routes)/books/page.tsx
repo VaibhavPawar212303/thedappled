@@ -1,8 +1,6 @@
 import { prisma } from "@/lib/db";
 import { Categories } from "../search/_components/categories"; // Assuming shared categories component
 import { SearchInput } from "@/components/search-input";
-import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
 import { getBooks } from "@/actions/get-books";
 import { BooksList } from "../books/_components/books-list";
 
@@ -14,21 +12,16 @@ interface BooksPageProps {
 }
 
 const BookPage = async ({ searchParams }: BooksPageProps) => {
-    const { userId } = await auth();
     const params = await searchParams;
 
-    if (!userId) {
-        return redirect("/");
-    }
-
-    // Categories and books are independent — fetch in parallel.
+    // Publicly browsable — no login required to see the catalog.
     const [categories, books] = await Promise.all([
         prisma.category.findMany({
             orderBy: {
                 name: "asc"
             }
         }),
-        getBooks({ userId, ...params })
+        getBooks({ ...params })
     ]);
 
     return (

@@ -21,10 +21,6 @@ const BookChapterIdPage = async ({
     const { userId } = await auth();
     const { bookId, chapterId } = await params;
 
-    if (!userId) {
-        return redirect("/");
-    }
-
     const {
         chapter,
         book,
@@ -34,13 +30,19 @@ const BookChapterIdPage = async ({
         isLocked,
         userVoice
     } = await getBookChapter({
-        userId,
+        userId: userId ?? "",
         bookId,
         chapterId
     });
 
     if (!chapter || !book) {
         return redirect("/");
+    }
+
+    // Anonymous visitors can read free chapters, but need to sign in before
+    // they can even see a locked chapter's purchase prompt.
+    if (isLocked && !userId) {
+        return redirect(`/sign-in?redirect_url=${encodeURIComponent(`/books/${bookId}/chapters/${chapterId}`)}`);
     }
 
     // Helper to check if quiz exists
