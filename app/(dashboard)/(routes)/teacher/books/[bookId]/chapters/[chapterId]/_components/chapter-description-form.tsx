@@ -11,9 +11,15 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { TiptapEditor } from "@/components/editor";
+import dynamic from "next/dynamic";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Preview } from "@/components/preview";
 import { Book } from "@prisma/client";
+
+const TiptapEditor = dynamic(
+    () => import("@/components/editor").then((mod) => mod.TiptapEditor),
+    { ssr: false, loading: () => <Skeleton className="h-64 w-full rounded-md" /> }
+);
 
 interface ChapterDescriptionFormProps {
     initialData: Book

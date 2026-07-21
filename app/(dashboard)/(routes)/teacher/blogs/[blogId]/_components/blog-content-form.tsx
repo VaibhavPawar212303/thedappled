@@ -14,11 +14,17 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-// Ensure this path matches where you saved your updated editor component
-import { TiptapEditor } from "@/components/expand-editor";
+import dynamic from "next/dynamic";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Preview } from "@/components/preview";
 import { Blog } from "@prisma/client";
 import { Badge } from "@/components/ui/badge";
+
+// Ensure this path matches where you saved your updated editor component
+const TiptapEditor = dynamic(
+    () => import("@/components/expand-editor").then((mod) => mod.TiptapEditor),
+    { ssr: false, loading: () => <Skeleton className="h-64 w-full rounded-md" /> }
+);
 
 interface BlogContentFormProps {
     initialData: Blog;
