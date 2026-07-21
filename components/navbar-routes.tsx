@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Button } from "./ui/button";
 import { LogOut } from "lucide-react";
 import Link from "next/link";
+import { ModeToggle } from "./mode-toggle";
 
 
 export const NavbarRoutes = () => {
@@ -33,6 +34,7 @@ export const NavbarRoutes = () => {
                     </Link>
                 ) : null
             }
+            <ModeToggle />
             <UserButton />
         </div>
     )

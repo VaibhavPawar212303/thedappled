@@ -5,10 +5,11 @@ import { UserButton, SignedIn, SignedOut } from "@clerk/nextjs"; // ✅ Import t
 import { ArrowLeft, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/app/_components/logo";
+import { ModeToggle } from "@/components/mode-toggle";
 
 export const BlogNavbar = () => {
     return (
-        <div className="p-4 border-b h-full flex items-center bg-white shadow-sm max-w-6xl mx-auto">
+        <div className="p-4 border-b h-full flex items-center bg-background shadow-sm max-w-6xl mx-auto">
             {/* Left Side: Brand */}
             <div className="flex items-center gap-x-4">
                 <Link href="/blogs" className="font-bold text-xl text-slate-700">
@@ -18,7 +19,8 @@ export const BlogNavbar = () => {
 
             {/* Right Side: Auth State */}
             <div className="ml-auto flex items-center gap-x-4">
-                
+                <ModeToggle />
+
                 {/* 1. Show this if user IS logged in */}
                 <SignedIn>
                     <Link href="/search">

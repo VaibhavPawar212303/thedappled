@@ -3,7 +3,7 @@ import { ClerkProvider } from '@clerk/nextjs'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import { ToastProvider } from '@/components/providers/toast-providers'
-import { LandingNavbar } from './_components/landing-navbar'
+import { ThemeProvider } from '@/components/providers/theme-provider'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -27,14 +27,19 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en">
+      <html lang="en" suppressHydrationWarning>
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-          {/* ✅ Navbar is here, managing the auth buttons */}
-          <LandingNavbar /> 
-          <ToastProvider />
-          <main className="pt-20 h-full">
-            {children}
-          </main>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem={false}
+            disableTransitionOnChange
+          >
+            <ToastProvider />
+            <main className="h-full">
+              {children}
+            </main>
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>

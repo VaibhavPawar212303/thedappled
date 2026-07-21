@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export const Sidebar = () => {
     return (
-        <div className="h-full border-r flex flex-col overflow-y-auto bg-white shadow-sm">
+        <div className="h-full border-r flex flex-col overflow-y-auto bg-background shadow-sm">
             <div className="p-6">
                 <Link href="/dashboard" className="hover:opacity-90 transition">
                     <Logo />

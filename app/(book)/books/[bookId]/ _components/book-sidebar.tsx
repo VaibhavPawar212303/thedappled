@@ -16,7 +16,7 @@ export const BookSidebar = ({ course, progressCount, purchase }: BookSidebarProp
     // ✅ No prisma queries here!
 
     return (
-        <div className="h-full border-r flex flex-col overflow-y-auto shadow-sm bg-white">
+        <div className="h-full border-r flex flex-col overflow-y-auto shadow-sm bg-background">
              <div className="p-8 flex flex-col border-b mt-16">
                 <h1 className="font-semibold">
                     {course.title}

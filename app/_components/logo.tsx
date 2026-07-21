@@ -17,7 +17,7 @@ export const Logo = ({ className, showText = true }: LogoProps) => {
         viewBox="0 0 32 32"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="text-slate-900" // Controls the Black color
+        className="text-foreground" // Controls the icon color, theme-aware
       >
         {/* The Stem */}
         <rect x="2" y="2" width="8" height="28" rx="2" fill="currentColor" />
@@ -35,7 +35,7 @@ export const Logo = ({ className, showText = true }: LogoProps) => {
 
       {/* The Text */}
       {showText && (
-        <span className="font-bold text-xl tracking-tight text-slate-900">
+        <span className="font-bold text-xl tracking-tight text-foreground">
           Thedappled
         </span>
       )}
