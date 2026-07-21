@@ -13,112 +13,76 @@ export const getChapter = async ({
   chapterId,
 }: GetChapterProps) => {
   try {
-    console.log("📥 getChapter INPUT:", { userId, courseId, chapterId });
-
-    // 1️⃣ Check Purchase
-    const purchase = await prisma.purchase.findUnique({
-      where: {
-        userId_courseId: {
-          userId,
-          courseId,
-        },
-      },
-    });
-
-    // 2️⃣ Fetch Course
-    const course = await prisma.course.findUnique({
-      where: {
-        id: courseId,
-      },
-      select: {
-        id: true,
-        price: true,
-      },
-    });
-
-    if (!course) {
-      console.log("❌ Course not found:", courseId);
-      return {
-        chapter: null,
-        course: null,
-        attachments: [],
-        nextChapter: null,
-        userProgress: null,
-        purchase: null,
-      };
-    }
-
-    // 3️⃣ Fetch Chapter
-    const chapter = await prisma.chapter.findUnique({
-      where: {
-        id: chapterId,
-      },
-    });
-
-    if (!chapter) {
-      console.log("❌ Chapter not found:", chapterId);
-      return {
-        chapter: null,
-        course: null,
-        attachments: [],
-        nextChapter: null,
-        userProgress: null,
-        purchase: null,
-      };
-    }
-
-    if (!chapter.isPublished) {
-      console.log("❌ Chapter not published");
-      return {
-        chapter: null,
-        course: null,
-        attachments: [],
-        nextChapter: null,
-        userProgress: null,
-        purchase: null,
-      };
-    }
-
-    // 4️⃣ Attachments visible only if purchased
-    let attachments: Attachment[] = [];
-
-    if (purchase) {
-      attachments = await prisma.attachment.findMany({
+    // Purchase, course, chapter, and user progress are independent lookups — run in parallel.
+    const [purchase, course, chapter, userProgress] = await Promise.all([
+      prisma.purchase.findUnique({
         where: {
-          courseId,
-        },
-      });
-    }
-
-    // 5️⃣ Get next chapter only if allowed
-    let nextChapter: Chapter | null = null;
-
-    if (chapter.isFree || purchase) {
-      nextChapter = await prisma.chapter.findFirst({
-        where: {
-          courseId,
-          isPublished: true,
-          position: {
-            gt: chapter.position,
+          userId_courseId: {
+            userId,
+            courseId,
           },
         },
-        orderBy: {
-          position: "asc",
+      }),
+      prisma.course.findUnique({
+        where: {
+          id: courseId,
         },
-      });
+        select: {
+          id: true,
+          price: true,
+        },
+      }),
+      prisma.chapter.findUnique({
+        where: {
+          id: chapterId,
+        },
+      }),
+      prisma.userProgress.findUnique({
+        where: {
+          userId_chapterId: {
+            userId,
+            chapterId,
+          },
+        },
+      }),
+    ]);
+
+    if (!course || !chapter || !chapter.isPublished) {
+      return {
+        chapter: null,
+        course: null,
+        attachments: [],
+        nextChapter: null,
+        userProgress: null,
+        purchase: null,
+      };
     }
 
-    // 6️⃣ User progress
-    const userProgress = await prisma.userProgress.findUnique({
-      where: {
-        userId_chapterId: {
-          userId,
-          chapterId,
-        },
-      },
-    });
+    // Attachments and next-chapter lookup depend on chapter/purchase — run together.
+    const [attachments, nextChapter] = await Promise.all([
+      purchase
+        ? prisma.attachment.findMany({
+            where: {
+              courseId,
+            },
+          })
+        : Promise.resolve<Attachment[]>([]),
+      chapter.isFree || purchase
+        ? prisma.chapter.findFirst({
+            where: {
+              courseId,
+              isPublished: true,
+              position: {
+                gt: chapter.position,
+              },
+            },
+            orderBy: {
+              position: "asc",
+            },
+          })
+        : Promise.resolve<Chapter | null>(null),
+    ]);
 
-    // 7️⃣ Final return
     return {
       chapter,
       course,

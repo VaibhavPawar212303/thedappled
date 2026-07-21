@@ -21,13 +21,14 @@ const Searchpage = async ({ searchParams }: SearchPageProps) => {
         return redirect("/");
     }
 
-    const catrgories = await prisma.category.findMany({
-        orderBy: {
-            name: "asc"
-        }
-    });
-
-    const courses = await getCourses({ userId, ...params })  // ✅ Use params
+    const [catrgories, courses] = await Promise.all([
+        prisma.category.findMany({
+            orderBy: {
+                name: "asc"
+            }
+        }),
+        getCourses({ userId, ...params })  // ✅ Use params
+    ]);
 
     return (
         <>

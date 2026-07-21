@@ -21,15 +21,15 @@ const BookPage = async ({ searchParams }: BooksPageProps) => {
         return redirect("/");
     }
 
-    // Fetch categories to display filter pills
-    const categories = await prisma.category.findMany({
-        orderBy: {
-            name: "asc"
-        }
-    });
-
-    // Fetch books based on search params
-    const books = await getBooks({ userId, ...params });
+    // Categories and books are independent — fetch in parallel.
+    const [categories, books] = await Promise.all([
+        prisma.category.findMany({
+            orderBy: {
+                name: "asc"
+            }
+        }),
+        getBooks({ userId, ...params })
+    ]);
 
     return (
         <>
