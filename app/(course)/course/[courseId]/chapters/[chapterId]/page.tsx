@@ -114,7 +114,7 @@ const ChapterIdPage = async ({ params }: PageProps) => {
                                         href={attachment.url}
                                         key={attachment.id}
                                         target="_blank"
-                                        className="flex items-center p-3 w-full bg-sky-200 border text-sky-700 hover:underline"
+                                        className="flex items-center gap-x-2 p-3 w-full bg-sky-100 border border-sky-200 text-sky-700 rounded-md transition hover:shadow-sm"
                                     >
                                         <File />
                                         <p className="line-clamp-1">{attachment.name}</p>
