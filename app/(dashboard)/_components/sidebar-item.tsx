@@ -28,8 +28,8 @@ export const SidebarItem = ({ icon: Icon, label, href }: SidebarItemProps) => {
             type="button"
             className={
                 cn(
-                    "flex items-center gap-x-2 text-slate-500 text-sm font-[500] pl-6 transition-all hover:text-gray-600 hover:bg-grey-300/20",
-                    isActive && "text-grey-700 bg-grey-200 hover:bg-grey-200 hover:text-grey-700"
+                    "flex items-center gap-x-2 text-slate-500 dark:text-slate-400 text-sm font-[500] pl-6 transition-all hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-300/20 dark:hover:bg-slate-800",
+                    isActive && "text-slate-700 dark:text-slate-100 bg-slate-200 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-100"
                 )
             }
         >
@@ -38,7 +38,7 @@ export const SidebarItem = ({ icon: Icon, label, href }: SidebarItemProps) => {
                     size={22}
                     className={
                         cn(
-                            "text-slate-500", isActive && "text-grey-700"
+                            "text-slate-500 dark:text-slate-400", isActive && "text-slate-700 dark:text-slate-100"
                         )
                     }
                 />
@@ -46,7 +46,7 @@ export const SidebarItem = ({ icon: Icon, label, href }: SidebarItemProps) => {
             </div>
             <div
             className={cn(
-                "ml-auto opacity-0 border-2 border-gray-700 h-full transition-all", isActive && "opacity-100"
+                "ml-auto w-1 self-stretch opacity-0 bg-slate-700 dark:bg-slate-100 transition-all", isActive && "opacity-100"
             )}
             />
         </button>
