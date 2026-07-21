@@ -57,18 +57,8 @@ model Chapter {
   courseId     String
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
-  muxDataId    String?
   course       Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  muxData      MuxData?
   userProgress UserProgress[]
-}
-
-model MuxData {
-  id         String  @id @default(uuid())
-  assetId    String
-  playbackId String?
-  chapterId  String  @unique
-  chapter    Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
 }
 
 model UserProgress {

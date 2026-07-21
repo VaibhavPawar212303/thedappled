@@ -36,13 +36,7 @@ export async function PATCH(
             return new NextResponse("Not Found", { status: 404 });
         }
         
-        const muxData = await prisma.muxData.findUnique({
-            where: {
-                chapterId: chapterId  // ✅ Use chapterId
-            }
-        })
-        
-        if (!chapter || !muxData || !chapter.title || !chapter.description || !chapter.videourl) {
+        if (!chapter || !chapter.title || !chapter.description || !chapter.videourl) {
             return new NextResponse("Missing required fields", { status: 400 });
         }
         

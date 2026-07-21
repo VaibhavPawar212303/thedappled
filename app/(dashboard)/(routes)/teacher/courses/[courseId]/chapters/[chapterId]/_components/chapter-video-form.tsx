@@ -8,11 +8,10 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { FileUpload } from "@/components/file-upload";
-import MuxPlayer from "@mux/mux-player-react"
-import { Chapter, MuxData } from "@prisma/client";
+import { Chapter } from "@prisma/client";
 
 interface ChapterVideoProps {
-    initialData: Chapter & { muxData?: MuxData | null };
+    initialData: Chapter;
     courseId: string;
     chapterId: string
 }
@@ -64,8 +63,11 @@ export const ChapterVideoForm = ({ initialData, courseId, chapterId }: ChapterVi
                     </div>
                 ) : (
                     <div className="relative aspect-video mt-2">
-                        <MuxPlayer
-                            playbackId={initialData?.muxData?.playbackId || ""}
+                        {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+                        <video
+                            src={initialData.videourl || ""}
+                            controls
+                            className="w-full h-full"
                         />
                     </div>
                 )
@@ -85,13 +87,6 @@ export const ChapterVideoForm = ({ initialData, courseId, chapterId }: ChapterVi
                     </div>
                 </div>
             )}
-            {
-                initialData.videourl && !isEditing && (
-                    <div className="text-sm text-muted-foreground mt-2">
-                        video can take  a few minute to process. Refresh the page if video does not appear
-                    </div>
-                )
-            }
         </div>
     )
 }

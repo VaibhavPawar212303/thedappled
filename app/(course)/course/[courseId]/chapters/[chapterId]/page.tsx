@@ -29,7 +29,6 @@ const ChapterIdPage = async ({ params }: PageProps) => {
     const {
         chapter,
         course,
-        muxData,
         attachments,
         nextChapter,
         userProgress,
@@ -74,7 +73,7 @@ const ChapterIdPage = async ({ params }: PageProps) => {
                         title={chapter.title}
                         courseId={courseId}
                         nextChapterId={nextChapter?.id}
-                        playbackId={muxData?.playbackId!}
+                        videoUrl={chapter.videourl!}
                         isLocked={isLocked}
                         completeOnEnd={completeOnEnd}
                     />

@@ -41,7 +41,6 @@ export const getChapter = async ({
       return {
         chapter: null,
         course: null,
-        muxData: null,
         attachments: [],
         nextChapter: null,
         userProgress: null,
@@ -61,7 +60,6 @@ export const getChapter = async ({
       return {
         chapter: null,
         course: null,
-        muxData: null,
         attachments: [],
         nextChapter: null,
         userProgress: null,
@@ -74,7 +72,6 @@ export const getChapter = async ({
       return {
         chapter: null,
         course: null,
-        muxData: null,
         attachments: [],
         nextChapter: null,
         userProgress: null,
@@ -93,17 +90,10 @@ export const getChapter = async ({
       });
     }
 
-    // 5️⃣ Get video (mux) + next chapter only if allowed
-    let muxData = null;
+    // 5️⃣ Get next chapter only if allowed
     let nextChapter: Chapter | null = null;
 
     if (chapter.isFree || purchase) {
-      muxData = await prisma.muxData.findUnique({
-        where: {
-          chapterId,
-        },
-      });
-
       nextChapter = await prisma.chapter.findFirst({
         where: {
           courseId,
@@ -132,7 +122,6 @@ export const getChapter = async ({
     return {
       chapter,
       course,
-      muxData,
       attachments,
       nextChapter,
       userProgress,
@@ -144,7 +133,6 @@ export const getChapter = async ({
     return {
       chapter: null,
       course: null,
-      muxData: null,
       attachments: [],
       nextChapter: null,
       userProgress: null,

@@ -25,9 +25,6 @@ const ChapterIdPage = async ({ params }: { params: Promise<{ courseId: string; c
             id: chapterId,
             courseId: courseId
         },
-        include: {
-            muxData: true
-        },
     })
 
     if (!chapter) {
