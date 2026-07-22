@@ -34,6 +34,9 @@ export const getCourses = async ({
                     },
                     select: {
                         id: true
+                    },
+                    orderBy: {
+                        position: "asc"
                     }
                 },
                 purchases: {

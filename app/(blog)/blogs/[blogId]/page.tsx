@@ -31,11 +31,11 @@ const BlogIdPage = async ({
     }
 
     return (
-        <div className="max-w-4xl mx-auto p-6 md:p-10 bg-white rounded-lg shadow-sm border">
+        <div className="p-6 md:p-10 bg-white dark:bg-slate-900 dark:border-slate-800 rounded-lg shadow-sm border">
             <div className="flex items-center justify-between mb-6">
-                <Link 
-                    href="/blogs" 
-                    className="flex items-center text-sm hover:opacity-75 transition text-slate-500"
+                <Link
+                    href="/blogs"
+                    className="flex items-center text-sm hover:opacity-75 transition text-slate-500 dark:text-slate-400"
                 >
                     <ArrowLeft className="h-4 w-4 mr-2" />
                     Back to all articles
@@ -46,11 +46,11 @@ const BlogIdPage = async ({
             </div>
 
             <div className="space-y-4">
-                <h1 className="text-3xl md:text-5xl font-bold text-slate-900 leading-tight">
+                <h1 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-slate-50 leading-tight">
                     {blog.title}
                 </h1>
 
-                <div className="flex items-center gap-x-4 text-slate-500 text-sm">
+                <div className="flex items-center gap-x-4 text-slate-500 dark:text-slate-400 text-sm">
                     <div className="flex items-center gap-x-1">
                         <Calendar className="h-4 w-4" />
                         <span>
@@ -85,7 +85,7 @@ const BlogIdPage = async ({
 
             <Separator className="my-8" />
 
-            <div className="pb-10">
+            <div id="article-content" className="pb-10">
                 <Preview value={blog.content} />
             </div>
         </div>

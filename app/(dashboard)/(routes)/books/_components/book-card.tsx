@@ -13,6 +13,7 @@ interface BookCardProps {
     chaptersLength: number;
     price: number;
     category: string;
+    firstChapterId?: string;
 }
 
 export const BookCard = ({
@@ -21,10 +22,16 @@ export const BookCard = ({
     imageUrl,
     chaptersLength,
     price,
-    category
+    category,
+    firstChapterId
 }: BookCardProps) => {
+    // Link straight to the first chapter when known, instead of through
+    // /books/[id], which only exists to server-redirect there — that extra
+    // hop meant nothing painted (not even the loading skeleton) until both
+    // round trips finished.
+    const href = firstChapterId ? `/books/${id}/chapters/${firstChapterId}` : `/books/${id}`;
     return (
-        <Link href={`/books/${id}`}>
+        <Link href={href}>
             <div className="group hover:shadow-sm transition overflow-hidden border rounded-lg p-3 h-full">
                 <div className="relative w-full aspect-video rounded-md overflow-hidden">
                     <Image

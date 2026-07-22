@@ -5,19 +5,17 @@ import { useAuth } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { SignedIn, SignedOut, UserButton, SignInButton, SignUpButton } from "@clerk/nextjs";
 import { BookOpen, Newspaper, MonitorPlay } from "lucide-react";
-import { Logo } from "./logo";
 import { ModeToggle } from "@/components/mode-toggle";
 import { LandingMobileNav } from "./landing-mobile-nav";
+import { AppLogoLink } from "./app-logo-link";
 
 
 export const LandingNavbar = () => {
   return (
     <nav className="p-4 bg-background flex items-center justify-between z-50 w-full border-b fixed top-0 transition-all">
-      
+
       {/* 1. BRAND LOGO */}
-      <Link href="/" className="hover:opacity-90 transition mt-3">
-        <Logo />
-      </Link>
+      <AppLogoLink className="hover:opacity-90 transition mt-3" />
 
       {/* 2. NAVIGATION (Color Coded on Hover) */}
       <div className="hidden md:flex items-center gap-x-8">

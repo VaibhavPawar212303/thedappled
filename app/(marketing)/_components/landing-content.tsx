@@ -16,7 +16,7 @@ import {
   Check
 } from "lucide-react";
 import { SignedIn, SignedOut, SignUpButton } from "@clerk/nextjs";
-import { Logo } from "@/app/_components/logo";
+import { AppLogoLink } from "@/app/_components/app-logo-link";
 import { motion } from "framer-motion";
 import type { LandingStats } from "@/actions/get-landing-stats";
 
@@ -463,9 +463,7 @@ export default function LandingContent({ stats }: LandingContentProps) {
       <footer className="bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-800 py-12 mt-auto">
         <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-2">
-            <Link href="/" className="hover:opacity-90 transition">
-              <Logo />
-            </Link>
+            <AppLogoLink className="hover:opacity-90 transition" />
           </div>
 
           <div className="text-sm text-slate-500 dark:text-slate-400">

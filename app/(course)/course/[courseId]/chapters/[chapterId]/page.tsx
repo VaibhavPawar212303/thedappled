@@ -22,9 +22,6 @@ const ChapterIdPage = async ({ params }: PageProps) => {
     const { courseId, chapterId } = await params;
 
     const { userId } = await auth();
-    if (!userId) {
-        return redirect("/");
-    }
 
     const {
         chapter,
@@ -34,7 +31,7 @@ const ChapterIdPage = async ({ params }: PageProps) => {
         userProgress,
         purchase
     } = await getChapter({
-        userId,
+        userId: userId ?? "",
         courseId,
         chapterId
     });
@@ -44,6 +41,13 @@ const ChapterIdPage = async ({ params }: PageProps) => {
     }
 
     const isLocked = !chapter.isFree && !purchase;
+
+    // Anonymous visitors can watch free chapters, but need to sign in before
+    // they can even see a locked chapter's purchase prompt.
+    if (isLocked && !userId) {
+        return redirect(`/sign-in?redirect_url=${encodeURIComponent(`/course/${courseId}/chapters/${chapterId}`)}`);
+    }
+
     const completeOnEnd = !!purchase && !userProgress?.isCompleted;
 
     return (

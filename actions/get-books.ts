@@ -33,6 +33,9 @@ export const getBooks = async ({
                     },
                     select: {
                         id: true
+                    },
+                    orderBy: {
+                        position: "asc"
                     }
                 },
             },

@@ -20,14 +20,14 @@ export const Preview = ({ value }: PreviewProps) => {
     <div 
       className={cn(
         "tiptap-content", // Custom class for global CSS targeting
-        "prose prose-slate max-w-none", // Tailwind Typography
+        "prose prose-slate dark:prose-invert max-w-none", // Tailwind Typography
         // Custom overrides for specific elements:
-        "prose-p:leading-7 prose-p:my-4", 
-        "prose-headings:font-bold prose-headings:text-slate-900",
+        "prose-p:leading-7 prose-p:my-4",
+        "prose-headings:font-bold prose-headings:text-slate-900 dark:prose-headings:text-slate-100",
         "prose-h1:text-3xl prose-h1:mt-8 prose-h1:mb-4",
         "prose-h2:text-2xl prose-h2:mt-6 prose-h2:mb-4",
-        "prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline",
-        "prose-blockquote:border-l-4 prose-blockquote:border-slate-300 prose-blockquote:pl-4 prose-blockquote:italic",
+        "prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline",
+        "prose-blockquote:border-l-4 prose-blockquote:border-slate-300 dark:prose-blockquote:border-slate-700 prose-blockquote:pl-4 prose-blockquote:italic",
         "prose-ul:list-disc prose-ul:pl-6 prose-ul:my-4",
         "prose-ol:list-decimal prose-ol:pl-6 prose-ol:my-4",
         "prose-li:my-1",

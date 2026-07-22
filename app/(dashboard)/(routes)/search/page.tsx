@@ -3,7 +3,6 @@ import { Categories } from "./_components/categories";
 import { SearchInput } from "@/components/search-input";
 import { auth } from "@clerk/nextjs/server";
 import { getCourses } from "@/actions/get-courses";
-import { redirect } from "next/navigation";
 import { CoursesList } from "@/components/courses-list";
 
 interface SearchPageProps {
@@ -17,17 +16,14 @@ const Searchpage = async ({ searchParams }: SearchPageProps) => {
     const { userId } = await auth();
     const params = await searchParams;  // ✅ Await searchParams
 
-    if (!userId) {
-        return redirect("/");
-    }
-
+    // Publicly browsable — no login required to see the catalog.
     const [catrgories, courses] = await Promise.all([
         prisma.category.findMany({
             orderBy: {
                 name: "asc"
             }
         }),
-        getCourses({ userId, ...params })  // ✅ Use params
+        getCourses({ userId: userId ?? "", ...params })
     ]);
 
     return (

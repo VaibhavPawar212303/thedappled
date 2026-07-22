@@ -25,6 +25,7 @@ export const BooksList = ({ items }: BooksListProps) => {
                         chaptersLength={item.chapters.length}
                         price={item.price!}
                         category={item.category?.name!}
+                        firstChapterId={item.chapters[0]?.id}
                     />
                 ))}
             </div>

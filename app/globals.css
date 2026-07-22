@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -191,6 +192,14 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  /* Keeps anchor-jumped headings (table of contents links) from landing
+     underneath the fixed navbar. */
+  #article-content h2 {
+    scroll-margin-top: 6rem;
   }
 }
 

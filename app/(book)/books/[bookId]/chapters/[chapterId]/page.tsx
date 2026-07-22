@@ -107,14 +107,14 @@ const BookChapterIdPage = async ({
                 {/* Content Section */}
                 <div className="mt-6">
                     {isLocked ? (
-                        <div className="flex flex-col items-center justify-center h-60 bg-slate-100 rounded-md gap-y-2 text-slate-500">
+                        <div className="flex flex-col items-center justify-center h-60 bg-slate-100 dark:bg-slate-800 rounded-md gap-y-2 text-slate-500 dark:text-slate-400">
                             <Lock className="h-8 w-8" />
                             <p>This chapter is locked.</p>
                         </div>
                     ) : (
                         <div className="space-y-10">
                             {/* 1. Main Text Content */}
-                            <div className="bg-white rounded-md border shadow-sm p-6 md:p-10"> 
+                            <div className="bg-white dark:bg-slate-900 dark:border-slate-800 rounded-md border shadow-sm p-6 md:p-10">
                                 <Preview value={chapter.content} />
                             </div>
 

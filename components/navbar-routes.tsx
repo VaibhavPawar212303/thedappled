@@ -1,6 +1,6 @@
 "use client"
 
-import { useUser, UserButton } from "@clerk/nextjs";
+import { useUser, UserButton, SignedIn, SignedOut, SignInButton, SignUpButton } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
 import { Button } from "./ui/button";
 import { LogOut } from "lucide-react";
@@ -17,7 +17,7 @@ export const NavbarRoutes = () => {
 
 
     return (
-        <div className="flex gap-x-2 ml-auto">
+        <div className="flex items-center gap-x-2 ml-auto">
             {
                 isTeacherPage || isPlayerPage ? (
                     <Link href="/">
@@ -35,7 +35,21 @@ export const NavbarRoutes = () => {
                 ) : null
             }
             <ModeToggle />
-            <UserButton />
+            <SignedIn>
+                <UserButton />
+            </SignedIn>
+            <SignedOut>
+                <SignInButton mode="modal">
+                    <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-slate-50">
+                        Log in
+                    </Button>
+                </SignInButton>
+                <SignUpButton mode="modal">
+                    <Button size="sm" className="bg-slate-900 hover:bg-slate-800 text-white dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200">
+                        Get Started
+                    </Button>
+                </SignUpButton>
+            </SignedOut>
         </div>
     )
 }

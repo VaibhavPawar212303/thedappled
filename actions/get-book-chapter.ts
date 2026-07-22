@@ -23,43 +23,40 @@ export const getBookChapter = async ({
     chapterId,
 }: GetBookChapterProps): Promise<GetBookChapterResult> => {
     try {
-        const purchase = await prisma.bookPurchase.findUnique({
-            where: {
-                userId_bookId: {
-                    userId,
-                    bookId,
+        // Purchase, book, chapter, and user progress are all independent
+        // lookups (none need each other's result) — run them in parallel.
+        const [purchase, book, chapter, userProgress] = await Promise.all([
+            prisma.bookPurchase.findUnique({
+                where: {
+                    userId_bookId: {
+                        userId,
+                        bookId,
+                    }
                 }
-            }
-        });
-
-        const book = await prisma.book.findUnique({
-            where: { id: bookId },
-        });
-
-        // 1. We fetch the chapter here. 
-        // Prisma automatically fetches 'preferredVoice' if it exists in the schema.
-        const chapter = await prisma.bookChapter.findUnique({
-            where: {
-                id: chapterId,
-                isPublished: true,
-            },
-        });
+            }),
+            prisma.book.findUnique({
+                where: { id: bookId },
+            }),
+            // Prisma automatically fetches 'preferredVoice' if it exists in the schema.
+            prisma.bookChapter.findUnique({
+                where: {
+                    id: chapterId,
+                    isPublished: true,
+                },
+            }),
+            prisma.bookUserProgress.findUnique({
+                where: {
+                    userId_bookChapterId: {
+                        userId,
+                        bookChapterId: chapterId,
+                    }
+                }
+            }),
+        ]);
 
         if (!chapter || !book) {
             throw new Error("Chapter or Book not found");
         }
-
-        const userProgress = await prisma.bookUserProgress.findUnique({
-            where: {
-                userId_bookChapterId: {
-                    userId,
-                    bookChapterId: chapterId,
-                }
-            }
-        });
-
-        // ❌ REMOVED: No need to fetch userSettings or fetch bookChapter again.
-        // We already have the 'chapter' variable above.
 
         const isLocked = !chapter.isFree && !purchase;
 

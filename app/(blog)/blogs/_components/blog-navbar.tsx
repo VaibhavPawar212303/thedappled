@@ -2,20 +2,15 @@
 
 import Link from "next/link";
 import { UserButton, SignedIn, SignedOut } from "@clerk/nextjs"; // ✅ Import these
-import { ArrowLeft, LogIn } from "lucide-react";
+import { LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Logo } from "@/app/_components/logo";
 import { ModeToggle } from "@/components/mode-toggle";
+import { BlogMobileSidebar } from "./blog-mobile-sidebar";
 
 export const BlogNavbar = () => {
     return (
-        <div className="p-4 border-b h-full flex items-center bg-background shadow-sm max-w-6xl mx-auto">
-            {/* Left Side: Brand */}
-            <div className="flex items-center gap-x-4">
-                <Link href="/blogs" className="font-bold text-xl text-slate-700">
-                   <Logo/>
-                </Link>
-            </div>
+        <div className="p-4 border-b h-full flex items-center gap-x-4 bg-background shadow-sm">
+            <BlogMobileSidebar />
 
             {/* Right Side: Auth State */}
             <div className="ml-auto flex items-center gap-x-4">

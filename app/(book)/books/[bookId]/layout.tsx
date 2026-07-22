@@ -4,12 +4,13 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { BookNavbar } from "./ _components/book-navbar";
 import { BookSidebar } from "./ _components/book-sidebar";
+import { AppLogoLink } from "@/app/_components/app-logo-link";
 
 
-const BookLayout = async ({ 
-  children, 
-  params 
-}: { 
+const BookLayout = async ({
+  children,
+  params
+}: {
   children: React.ReactNode
   params: Promise<{ bookId: string }>
 }) => {
@@ -22,47 +23,54 @@ const BookLayout = async ({
 
     // Publicly browsable — anonymous visitors can view the book shell and
     // any free chapter; locked chapters gate on login at the chapter page.
-    const book = await prisma.book.findUnique({
-        where: {
-            id: bookId
-        },
-        include: {
-            chapters: {
-                where: {
-                    isPublished: true
-                },
-                include: {
-                    userProgress: {
-                        where: {
-                            userId: safeUserId
+    // Progress and purchase only need bookId/userId (not the fetched book),
+    // so all three run in parallel instead of waiting on each other.
+    const [book, progressCount, purchase] = await Promise.all([
+        prisma.book.findUnique({
+            where: {
+                id: bookId
+            },
+            include: {
+                chapters: {
+                    where: {
+                        isPublished: true
+                    },
+                    include: {
+                        userProgress: {
+                            where: {
+                                userId: safeUserId
+                            }
                         }
+                    },
+                    orderBy: {
+                        position: "asc"
                     }
-                },
-                orderBy: {
-                    position: "asc"
                 }
             }
-        }
-    });
+        }),
+        getBookProgress(safeUserId, bookId),
+        prisma.bookPurchase.findUnique({
+            where: {
+                userId_bookId: {
+                    userId: safeUserId,
+                    bookId,
+                }
+            }
+        }),
+    ]);
 
     if (!book) {
         return redirect('/');
     }
 
-    // ✅ Use getBookProgress instead of getProgress
-    const progressCount = await getBookProgress(safeUserId, book.id);
-
-    const purchase = await prisma.bookPurchase.findUnique({
-        where: {
-            userId_bookId: {
-                userId: safeUserId,
-                bookId: book.id,
-            }
-        }
-    });
-
     return (
         <div className="h-full">
+            {/* Brand corner: sits above the header/sidebar seam so the logo
+                has a real home instead of floating in the sidebar's own
+                top-clearance gap. */}
+            <div className="hidden md:flex h-[80px] w-80 fixed inset-y-0 left-0 z-[60] items-center px-6 border-b border-r bg-background">
+                <AppLogoLink className="hover:opacity-90 transition" />
+            </div>
             <div className="h-[80px] md:pl-80 fixed inset-y-0 w-full z-50">
                 <BookNavbar
                     course={book}
@@ -70,7 +78,7 @@ const BookLayout = async ({
                     purchase={purchase}
                 />
             </div>
-            <div className="hidden md:flex h-full w-80 flex-col fixed inset-y-0 z-50">
+            <div className="hidden md:flex h-full w-80 flex-col fixed inset-y-0 z-40">
                 <BookSidebar
                     course={book}
                     progressCount={progressCount}

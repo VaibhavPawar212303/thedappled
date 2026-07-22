@@ -27,6 +27,9 @@ export const getDashboardCourses = async (userId: string): Promise<DashboardCour
                         chapters: {
                             where: {
                                 isPublished: true
+                            },
+                            orderBy: {
+                                position: "asc"
                             }
                         }
                     }

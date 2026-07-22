@@ -1,6 +1,4 @@
 import { SearchInput } from "@/components/search-input";
-import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
 import { getBlogs } from "@/actions/get-blogs";
 import { BlogsList } from "./_components/blogs-list";
 
@@ -11,14 +9,9 @@ interface BlogsPageProps {
 }
 
 const BlogsPage = async ({ searchParams }: BlogsPageProps) => {
-    const { userId } = await auth();
     const params = await searchParams;
 
-    if (!userId) {
-        return redirect("/");
-    }
-
-    // Fetch blogs based on search params (Title only)
+    // Publicly browsable — no login required to read articles.
     const blogs = await getBlogs({ ...params });
 
     return (

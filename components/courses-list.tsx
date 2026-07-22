@@ -25,6 +25,7 @@ export const CoursesList = ({ items }: CourseListProps) => {
                         price={item.price!}
                         progress={item.progress}
                         category={item?.category?.name!}
+                        firstChapterId={item.chapters[0]?.id}
                     />
                 ))}
             </div>

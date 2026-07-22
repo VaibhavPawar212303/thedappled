@@ -13,11 +13,17 @@ interface CourseCardProps {
     price: number,
     progress: number | null
     category: string
+    firstChapterId?: string
 }
 
-export const CourseCard = ({ id, title, imageUrl, chapterLength, price, progress, category }: CourseCardProps) => {  // ✅ Add category here
+export const CourseCard = ({ id, title, imageUrl, chapterLength, price, progress, category, firstChapterId }: CourseCardProps) => {  // ✅ Add category here
+    // Link straight to the first chapter when we know it, instead of
+    // through /course/[id], which only exists to server-redirect there —
+    // that extra hop meant nothing painted (not even the loading skeleton)
+    // until both round trips finished.
+    const href = firstChapterId ? `/course/${id}/chapters/${firstChapterId}` : `/course/${id}`;
     return (
-        <Link href={`/course/${id}`} className="h-[340] w-[400px]">
+        <Link href={href} className="h-[340] w-[400px]">
             <div className="group hover:shadow-sm transition overflow-hidden border rounded-lg p-3">
                 <div className="relative w-full aspect-video rounded-md overflow-hidden">
                     <Image

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { ClerkProvider } from '@clerk/nextjs'
 import { Geist, Geist_Mono } from 'next/font/google'
+import NextTopLoader from 'nextjs-toploader'
 import './globals.css'
 import { ToastProvider } from '@/components/providers/toast-providers'
 import { ThemeProvider } from '@/components/providers/theme-provider'
@@ -35,6 +36,7 @@ export default function RootLayout({
             enableSystem={false}
             disableTransitionOnChange
           >
+            <NextTopLoader color="#2563eb" showSpinner={false} height={3} />
             <ToastProvider />
             <main className="h-full">
               {children}
