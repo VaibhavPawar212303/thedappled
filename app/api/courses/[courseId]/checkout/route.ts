@@ -39,7 +39,18 @@ export async function POST(
         if (!course) {
             return new NextResponse("Course not found", { status: 404 });
         }
-        
+
+        if (!course.price || course.price <= 0) {
+            await prisma.purchase.create({
+                data: {
+                    userId: user.id,
+                    courseId: course.id,
+                }
+            });
+
+            return NextResponse.json({ free: true });
+        }
+
         const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [
             {
                 quantity: 1,

@@ -31,6 +31,18 @@ export async function POST(req: Request,{ params }: { params: Promise<{ bookId: 
         if (!book) {
             return new NextResponse("Book not found", { status: 404 });
         }
+
+        if (!book.price || book.price <= 0) {
+            await prisma.bookPurchase.create({
+                data: {
+                    userId: user.id,
+                    bookId: book.id,
+                }
+            });
+
+            return NextResponse.json({ free: true });
+        }
+
         const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [
             {
                 quantity: 1,
