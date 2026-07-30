@@ -28,9 +28,9 @@ export const Logo = ({ className, showText = true }: LogoProps) => {
         {/* The Bottom Bar */}
         <rect x="12" y="22" width="10" height="8" rx="2" fill="currentColor" />
         
-        {/* The Curve (Pixelated/Dappled effect) */}
-        <rect x="24" y="6" width="6" height="8" rx="2" fill="currentColor" />
-        <rect x="24" y="18" width="6" height="8" rx="2" fill="currentColor" />
+        {/* The Curve (Pixelated/Dappled effect) — brand accent, fixed across themes */}
+        <rect x="24" y="6" width="6" height="8" rx="2" fill="#3987e5" />
+        <rect x="24" y="18" width="6" height="8" rx="2" fill="#3987e5" />
       </svg>
 
       {/* The Text */}
