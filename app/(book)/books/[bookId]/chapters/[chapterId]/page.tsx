@@ -6,14 +6,55 @@ import { Separator } from "@/components/ui/separator";
 import { Preview } from "@/components/preview";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { Metadata } from "next";
 import { ArrowRight, Lock } from "lucide-react";
 import { BookEnrollButton } from "./_components/book-enroll-button";
 import { BookProgressButton } from "./_components/book-progress-button";
 import { StudentQuiz } from "./_components/student-quiz";
 import { AudioPlayer } from "@/app/(dashboard)/(routes)/teacher/books/[bookId]/chapters/[chapterId]/_components/audio-player";
+import { prisma } from "@/lib/db";
+import { htmlToPlainText, truncate } from "@/lib/seo";
 
+export async function generateMetadata({
+    params,
+}: {
+    params: Promise<{ bookId: string; chapterId: string }>
+}): Promise<Metadata> {
+    const { bookId, chapterId } = await params;
 
-const BookChapterIdPage = async ({ 
+    const [book, chapter] = await Promise.all([
+        prisma.book.findUnique({
+            where: { id: bookId, isPublished: true },
+            select: { title: true, imageUrl: true },
+        }),
+        prisma.bookChapter.findUnique({
+            where: { id: chapterId, isPublished: true },
+            select: { title: true, content: true, isFree: true },
+        }),
+    ]);
+
+    if (!book || !chapter) return {};
+
+    const title = `${chapter.title} - ${book.title}`;
+    const description = truncate(htmlToPlainText(chapter.content), 160);
+
+    return {
+        title,
+        description,
+        // Locked chapters redirect anonymous visitors to /sign-in before this
+        // page ever renders for them, but noindex keeps them out of results
+        // for any crawler that does have access (e.g. via a logged-in fetch).
+        robots: chapter.isFree ? undefined : { index: false, follow: true },
+        openGraph: {
+            title,
+            description,
+            type: "article",
+            images: book.imageUrl ? [{ url: book.imageUrl }] : undefined,
+        },
+    };
+}
+
+const BookChapterIdPage = async ({
     params 
 }: { 
     params: Promise<{ bookId: string; chapterId: string }> 

@@ -1,6 +1,12 @@
 import { SearchInput } from "@/components/search-input";
 import { getBlogs } from "@/actions/get-blogs";
 import { BlogsList } from "./_components/blogs-list";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Articles",
+    description: "Read the latest articles and tutorials from TheDappled.",
+};
 
 interface BlogsPageProps {
     searchParams: Promise<{

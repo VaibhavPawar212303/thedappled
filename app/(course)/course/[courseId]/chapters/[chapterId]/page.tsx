@@ -10,11 +10,53 @@ import { File } from "lucide-react";
 import { CourseProgressButton } from "./_components/course-progress-button";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Metadata } from "next";
+import { prisma } from "@/lib/db";
+import { htmlToPlainText, truncate } from "@/lib/seo";
 
 interface PageProps {
     params: {
         courseId: string;
         chapterId: string;
+    };
+}
+
+export async function generateMetadata({
+    params,
+}: {
+    params: Promise<{ courseId: string; chapterId: string }>
+}): Promise<Metadata> {
+    const { courseId, chapterId } = await params;
+
+    const [course, chapter] = await Promise.all([
+        prisma.course.findUnique({
+            where: { id: courseId, isPublished: true },
+            select: { title: true, imageUrl: true },
+        }),
+        prisma.chapter.findUnique({
+            where: { id: chapterId, isPublished: true },
+            select: { title: true, description: true, isFree: true },
+        }),
+    ]);
+
+    if (!course || !chapter) return {};
+
+    const title = `${chapter.title} - ${course.title}`;
+    const description = truncate(htmlToPlainText(chapter.description ?? ""), 160);
+
+    return {
+        title,
+        description,
+        // Locked chapters redirect anonymous visitors to /sign-in before this
+        // page ever renders for them, but noindex keeps them out of results
+        // for any crawler that does have access (e.g. via a logged-in fetch).
+        robots: chapter.isFree ? undefined : { index: false, follow: true },
+        openGraph: {
+            title,
+            description,
+            type: "article",
+            images: course.imageUrl ? [{ url: course.imageUrl }] : undefined,
+        },
     };
 }
 

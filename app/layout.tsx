@@ -7,6 +7,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import './globals.css'
 import { ToastProvider } from '@/components/providers/toast-providers'
 import { ThemeProvider } from '@/components/providers/theme-provider'
+import { SITE_URL } from '@/lib/seo'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -19,8 +20,19 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'TheDappled',
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: 'TheDappled',
+    template: '%s | TheDappled',
+  },
   description: 'Tutorial web app for learning new tech stack',
+  openGraph: {
+    type: 'website',
+    siteName: 'TheDappled',
+  },
+  twitter: {
+    card: 'summary_large_image',
+  },
 }
 
 export default function RootLayout({
