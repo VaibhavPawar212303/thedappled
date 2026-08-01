@@ -3,6 +3,12 @@ import { Categories } from "../search/_components/categories"; // Assuming share
 import { SearchInput } from "@/components/search-input";
 import { getBooks } from "@/actions/get-books";
 import { BooksList } from "../books/_components/books-list";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Books",
+    description: "Browse the full catalog of books on TheDappled.",
+};
 
 interface BooksPageProps {
     searchParams: Promise<{

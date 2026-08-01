@@ -2,17 +2,53 @@ import { prisma } from "@/lib/db";
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { Metadata } from "next";
 import { ArrowLeft, Calendar } from "lucide-react";
 import { Preview } from "@/components/preview";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ShareButton } from "../_components/share-button";
+import { htmlToPlainText, truncate } from "@/lib/seo";
 
+export async function generateMetadata({
+    params,
+}: {
+    params: Promise<{ blogId: string }>
+}): Promise<Metadata> {
+    const { blogId } = await params;
 
-const BlogIdPage = async ({ 
-    params 
-}: { 
-    params: Promise<{ blogId: string }> 
+    const blog = await prisma.blog.findUnique({
+        where: { id: blogId, isPublished: true },
+        select: { title: true, content: true, imageUrl: true, tags: true },
+    });
+
+    if (!blog) return {};
+
+    const description = truncate(htmlToPlainText(blog.content), 160);
+
+    return {
+        title: blog.title,
+        description,
+        keywords: blog.tags,
+        openGraph: {
+            title: blog.title,
+            description,
+            type: "article",
+            images: blog.imageUrl ? [{ url: blog.imageUrl }] : undefined,
+        },
+        twitter: {
+            card: "summary_large_image",
+            title: blog.title,
+            description,
+            images: blog.imageUrl ? [blog.imageUrl] : undefined,
+        },
+    };
+}
+
+const BlogIdPage = async ({
+    params
+}: {
+    params: Promise<{ blogId: string }>
 }) => {
     const { blogId } = await params;
 
