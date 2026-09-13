@@ -3,31 +3,39 @@ import { prisma } from "@/lib/db";
 import { SITE_URL } from "@/lib/seo";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  // A transient DB error must not 500 the whole sitemap — that shows up in
+  // Search Console as "couldn't fetch sitemap" and can stall indexing.
   const [blogs, books, courses] = await Promise.all([
-    prisma.blog.findMany({
-      where: { isPublished: true },
-      select: { id: true, updatedAt: true },
-    }),
-    prisma.book.findMany({
-      where: { isPublished: true },
-      select: {
-        id: true,
-        chapters: {
-          where: { isPublished: true, isFree: true },
-          select: { id: true, updatedAt: true },
+    prisma.blog
+      .findMany({
+        where: { isPublished: true },
+        select: { id: true, updatedAt: true },
+      })
+      .catch(() => []),
+    prisma.book
+      .findMany({
+        where: { isPublished: true },
+        select: {
+          id: true,
+          chapters: {
+            where: { isPublished: true, isFree: true },
+            select: { id: true, updatedAt: true },
+          },
         },
-      },
-    }),
-    prisma.course.findMany({
-      where: { isPublished: true },
-      select: {
-        id: true,
-        chapters: {
-          where: { isPublished: true, isFree: true },
-          select: { id: true, updatedAt: true },
+      })
+      .catch(() => []),
+    prisma.course
+      .findMany({
+        where: { isPublished: true },
+        select: {
+          id: true,
+          chapters: {
+            where: { isPublished: true, isFree: true },
+            select: { id: true, updatedAt: true },
+          },
         },
-      },
-    }),
+      })
+      .catch(() => []),
   ]);
 
   const staticRoutes: MetadataRoute.Sitemap = [
