@@ -9,16 +9,21 @@ interface SidebarItemProps {
     icon: LucideIcon;
     label: string;
     href: string;
+    external?: boolean;
 }
 
 
 
-export const SidebarItem = ({ icon: Icon, label, href }: SidebarItemProps) => {
+export const SidebarItem = ({ icon: Icon, label, href, external }: SidebarItemProps) => {
     const pathname = usePathname();
     const router = useRouter();
-    const isActive = (pathname === "/" && href === "/") || (pathname === href || pathname?.startsWith(`${href}/`));
+    const isActive = !external && ((pathname === "/" && href === "/") || (pathname === href || pathname?.startsWith(`${href}/`)));
 
     const onClick = () => {
+        if (external) {
+            window.open(href, "_blank", "noopener,noreferrer");
+            return;
+        }
         router.push(href);
     }
 

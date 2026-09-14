@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Menu, MonitorPlay, BookOpen, Newspaper } from "lucide-react";
+import { Menu, MonitorPlay, BookOpen, Newspaper, Terminal } from "lucide-react";
 import { SignedIn, SignedOut, UserButton, SignInButton, SignUpButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,6 +18,12 @@ const links = [
   { href: "/search", label: "Courses", icon: MonitorPlay },
   { href: "/books", label: "Books", icon: BookOpen },
   { href: "/blogs", label: "Blogs", icon: Newspaper },
+  {
+    href: "https://c-architech-compiler.vercel.app/?tab=revision",
+    label: "Compiler",
+    icon: Terminal,
+    external: true,
+  },
 ];
 
 export const LandingMobileNav = () => {
@@ -38,10 +44,12 @@ export const LandingMobileNav = () => {
           </SheetTitle>
         </SheetHeader>
         <nav className="flex flex-col gap-1 px-4">
-          {links.map(({ href, label, icon: Icon }) => (
+          {links.map(({ href, label, icon: Icon, external }) => (
             <SheetClose asChild key={href}>
               <Link
                 href={href}
+                target={external ? "_blank" : undefined}
+                rel={external ? "noopener noreferrer" : undefined}
                 className="flex items-center gap-x-3 rounded-md px-3 py-2.5 text-sm font-medium text-foreground hover:bg-muted transition"
               >
                 <Icon className="h-4 w-4" />

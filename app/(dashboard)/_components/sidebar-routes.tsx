@@ -1,11 +1,17 @@
 "use client"
 
-import { BarChart, Book, BookAIcon, Compass, File, Layout, List, User } from "lucide-react"
+import { BarChart, Book, BookAIcon, Compass, File, Layout, List, LucideIcon, Terminal, User } from "lucide-react"
 import { SidebarItem } from "./sidebar-item";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 
-const guestRoutes = [
+const guestRoutes: {
+    icon: LucideIcon;
+    label: string;
+    href: string;
+    requiresAuth: boolean;
+    external?: boolean;
+}[] = [
     {
         icon: Layout,
         label: "Dashboard",
@@ -31,6 +37,13 @@ const guestRoutes = [
         label: "Blogs",
         href: "/blogs",
         requiresAuth: false,
+    },
+    {
+        icon: Terminal,
+        label: "Compiler",
+        href: "https://c-architech-compiler.vercel.app/?tab=revision",
+        requiresAuth: false,
+        external: true,
     },
 ]
 
@@ -74,6 +87,7 @@ export const SidebarRoutes = () => {
                     icon={route.icon}
                     label={route.label}
                     href={route.href}
+                    external={"external" in route ? Boolean(route.external) : false}
                 />
             )}
         </div>

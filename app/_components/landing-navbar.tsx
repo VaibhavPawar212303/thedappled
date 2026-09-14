@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useAuth } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { SignedIn, SignedOut, UserButton, SignInButton, SignUpButton } from "@clerk/nextjs";
-import { BookOpen, Newspaper, MonitorPlay } from "lucide-react";
+import { BookOpen, Newspaper, MonitorPlay, Terminal } from "lucide-react";
 import { ModeToggle } from "@/components/mode-toggle";
 import { LandingMobileNav } from "./landing-mobile-nav";
 import { AppLogoLink } from "./app-logo-link";
@@ -43,6 +43,19 @@ export const LandingNavbar = () => {
             </div>
             Blogs
         </Link>
+
+        {/* Compiler - Amber Hover (external app) */}
+        <a
+            href="https://c-architech-compiler.vercel.app/?tab=revision"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center gap-x-2 text-slate-600 dark:text-slate-300 font-medium transition hover:text-amber-600"
+        >
+            <div className="p-1 rounded-md bg-slate-100 dark:bg-slate-800 group-hover:bg-amber-100 dark:group-hover:bg-amber-950 transition">
+                <Terminal className="w-4 h-4 text-slate-600 dark:text-slate-300 group-hover:text-amber-600" />
+            </div>
+            Compiler
+        </a>
       </div>
 
       {/* 3. AUTH BUTTONS (Black & White Style) - desktop only, mirrored in the mobile drawer */}
