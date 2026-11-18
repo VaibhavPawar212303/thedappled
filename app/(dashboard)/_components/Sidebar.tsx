@@ -1,16 +1,12 @@
-
-
-import { Logo } from "@/app/_components/logo";
+import { AppLogoLink } from "@/app/_components/app-logo-link";
 import { SidebarRoutes } from "./sidebar-routes";
-import Link from "next/link";
 
 export const Sidebar = () => {
     return (
         <div className="h-full border-r flex flex-col overflow-y-auto bg-background shadow-sm">
             <div className="p-6">
-                <Link href="/dashboard" className="hover:opacity-90 transition">
-                    <Logo />
-                </Link>
+                {/* Signed out -> landing page, signed in -> dashboard */}
+                <AppLogoLink className="hover:opacity-90 transition" />
             </div>
             <div className="flex flex-col w-full">
                 <SidebarRoutes />
