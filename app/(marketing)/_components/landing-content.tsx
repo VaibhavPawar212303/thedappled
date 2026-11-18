@@ -56,70 +56,125 @@ export default function LandingContent({ stats }: LandingContentProps) {
       {/* ================================================== */}
       {/* 1. HERO SECTION                                    */}
       {/* ================================================== */}
-      <section className="flex-1 flex flex-col items-center justify-center text-center px-4 py-32 bg-gradient-to-b from-white to-slate-50 dark:from-slate-950 dark:to-slate-900 border-b border-slate-200 dark:border-slate-800">
+      <section className="relative overflow-hidden px-4 py-20 lg:py-28 bg-gradient-to-b from-white to-slate-50 dark:from-slate-950 dark:to-slate-900 border-b border-slate-200 dark:border-slate-800">
+        <div className="pointer-events-none absolute -top-24 right-0 h-96 w-96 rounded-full bg-blue-200/40 dark:bg-blue-900/20 blur-3xl" />
+        <div className="pointer-events-none absolute bottom-0 -left-24 h-80 w-80 rounded-full bg-purple-200/40 dark:bg-purple-900/20 blur-3xl" />
+
         <motion.div
           initial="hidden"
           animate="visible"
           variants={staggerContainer}
-          className="flex flex-col items-center"
+          className="relative max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-16 items-center"
         >
-          <motion.div variants={fadeIn} className="mb-8 inline-flex items-center rounded-full border border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-950 px-4 py-1.5 text-sm font-medium text-blue-700 dark:text-blue-300 shadow-sm">
-            <span className="flex h-2 w-2 rounded-full bg-blue-600 mr-2 animate-pulse"></span>
-            New: AI-Powered Research Agent
-          </motion.div>
+          {/* Left: copy */}
+          <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
+            <motion.div variants={fadeIn} className="mb-6 inline-flex items-center rounded-full border border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-950 px-4 py-1.5 text-sm font-medium text-blue-700 dark:text-blue-300 shadow-sm">
+              <span className="flex h-2 w-2 rounded-full bg-blue-600 mr-2 animate-pulse"></span>
+              New: AI-Powered Research Agent
+            </motion.div>
 
-          <motion.h1 variants={fadeIn} className="text-4xl md:text-7xl font-extrabold tracking-tight mb-6 max-w-5xl leading-tight">
-            Master Modern Tech with <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500">
-              Intelligent Learning
-            </span>
-          </motion.h1>
+            <motion.h1 variants={fadeIn} className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6 leading-[1.1]">
+              Master modern tech with{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500">
+                intelligent learning.
+              </span>
+            </motion.h1>
 
-          <motion.p variants={fadeIn} className="text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mb-10 leading-relaxed">
-            The all-in-one platform for developers. Dive into interactive video courses,
-            read deep-dive books, and generate market-aware technical articles with AI.
-          </motion.p>
+            <motion.p variants={fadeIn} className="text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-xl mb-8 leading-relaxed">
+              Video courses, interactive books and AI-researched articles &mdash; one platform built for developers.
+            </motion.p>
 
-          <motion.div variants={fadeIn} className="flex flex-col sm:flex-row items-center gap-4 w-full justify-center">
-            <SignedOut>
-              <SignUpButton mode="modal">
-                <Button size="lg" className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-md px-8 py-6 rounded-full shadow-lg hover:shadow-blue-500/20 transition-all">
-                  Start Learning Free
-                  <ArrowRight className="h-5 w-5 ml-2" />
-                </Button>
-              </SignUpButton>
-            </SignedOut>
+            <motion.div variants={fadeIn} className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+              <SignedOut>
+                <SignUpButton mode="modal">
+                  <Button size="lg" className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-md px-8 py-6 rounded-xl shadow-lg hover:shadow-blue-500/20 transition-all">
+                    Start learning free
+                    <ArrowRight className="h-5 w-5 ml-2" />
+                  </Button>
+                </SignUpButton>
+              </SignedOut>
 
-            <SignedIn>
-              <Link href="/search" className="w-full sm:w-auto">
-                <Button size="lg" className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-md px-8 py-6 rounded-full shadow-lg">
-                  Go to Dashboard
-                  <ArrowRight className="h-5 w-5 ml-2" />
+              <SignedIn>
+                <Link href="/search" className="w-full sm:w-auto">
+                  <Button size="lg" className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-md px-8 py-6 rounded-xl shadow-lg">
+                    Go to Dashboard
+                    <ArrowRight className="h-5 w-5 ml-2" />
+                  </Button>
+                </Link>
+              </SignedIn>
+
+              <Link href="/blogs" className="w-full sm:w-auto">
+                <Button size="lg" variant="outline" className="w-full sm:w-auto text-md px-8 py-6 rounded-xl border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">
+                  Read articles
                 </Button>
               </Link>
-            </SignedIn>
-
-            <Link href="/blogs" className="w-full sm:w-auto">
-              <Button size="lg" variant="outline" className="w-full sm:w-auto text-md px-8 py-6 rounded-full border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">
-                Read Articles
-              </Button>
-            </Link>
-          </motion.div>
-
-          {hasStats && (
-            <motion.div variants={fadeIn} className="mt-16 grid grid-cols-3 gap-8 sm:gap-16">
-              {statItems.map((item) => (
-                <div key={item.label} className="flex flex-col items-center">
-                  <span className="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-slate-50">
-                    {item.value}+
-                  </span>
-                  <span className="text-sm text-slate-500 dark:text-slate-400 mt-1">{item.label}</span>
-                </div>
-              ))}
             </motion.div>
-          )}
+          </div>
+
+          {/* Right: product preview */}
+          <motion.div variants={fadeIn} className="relative w-full">
+            <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden">
+              <div className="h-10 bg-slate-100 dark:bg-slate-800 flex items-center px-4 gap-2">
+                <div className="h-3 w-3 rounded-full bg-red-400" />
+                <div className="h-3 w-3 rounded-full bg-yellow-400" />
+                <div className="h-3 w-3 rounded-full bg-green-400" />
+              </div>
+              <div className="p-5 space-y-4">
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="col-span-2 aspect-video rounded-xl bg-slate-900 flex items-center justify-center relative">
+                    <div className="h-12 w-12 rounded-full bg-white/10 flex items-center justify-center">
+                      <Play className="h-5 w-5 text-white ml-0.5" />
+                    </div>
+                    <div className="absolute bottom-3 left-3 right-3 h-1.5 rounded-full bg-slate-700">
+                      <div className="h-full w-1/2 rounded-full bg-blue-500" />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    {[0, 1, 2, 3].map((i) => (
+                      <div key={i} className={`h-8 rounded-md ${i === 1 ? "bg-blue-100 dark:bg-blue-950" : "bg-slate-100 dark:bg-slate-800"}`} />
+                    ))}
+                  </div>
+                </div>
+                <div className="h-2 rounded-full bg-slate-100 dark:bg-slate-800">
+                  <div className="h-full w-2/3 rounded-full bg-blue-600" />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="rounded-xl bg-purple-50 dark:bg-purple-950/40 p-4">
+                    <div className="flex items-center gap-2 text-sm font-semibold text-purple-700 dark:text-purple-300">
+                      <BookOpen className="h-4 w-4" /> Interactive books
+                    </div>
+                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Bookmark &amp; track progress</p>
+                  </div>
+                  <div className="rounded-xl bg-emerald-50 dark:bg-emerald-950/40 p-4">
+                    <div className="flex items-center gap-2 text-sm font-semibold text-emerald-700 dark:text-emerald-300">
+                      <Sparkles className="h-4 w-4" /> AI articles
+                    </div>
+                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Market-aware, every week</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
         </motion.div>
       </section>
+
+      {/* ================================================== */}
+      {/* 1b. STATS BAR (live counts)                        */}
+      {/* ================================================== */}
+      {hasStats && (
+        <section className="bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800">
+          <div className="max-w-4xl mx-auto px-4 py-10 grid grid-cols-3 gap-8 text-center">
+            {statItems.map((item) => (
+              <div key={item.label} className="flex flex-col items-center">
+                <span className="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-slate-50">
+                  {item.value}+
+                </span>
+                <span className="text-sm text-slate-500 dark:text-slate-400 mt-1">{item.label}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* ================================================== */}
       {/* 2. OFFERINGS GRID (Summary)                        */}
@@ -158,6 +213,9 @@ export default function LandingContent({ stats }: LandingContentProps) {
               <p className="relative text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
                 Project-based video tutorials covering full-stack development.
               </p>
+              <Link href="/search" className="relative mt-auto text-sm font-semibold text-blue-600 hover:underline">
+                Browse courses &rarr;
+              </Link>
             </motion.div>
 
             {/* Card 2 */}
@@ -170,6 +228,9 @@ export default function LandingContent({ stats }: LandingContentProps) {
               <p className="relative text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
                 Deep-dive reading material with progress tracking.
               </p>
+              <Link href="/books" className="relative mt-auto text-sm font-semibold text-purple-600 hover:underline">
+                Explore books &rarr;
+              </Link>
             </motion.div>
 
             {/* Card 3 */}
@@ -182,8 +243,35 @@ export default function LandingContent({ stats }: LandingContentProps) {
               <p className="relative text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
                 AI-researched articles for the latest market trends.
               </p>
+              <Link href="/blogs" className="relative mt-auto text-sm font-semibold text-emerald-600 hover:underline">
+                Read articles &rarr;
+              </Link>
             </motion.div>
           </motion.div>
+        </div>
+      </section>
+
+      {/* ================================================== */}
+      {/* 2b. HOW IT WORKS                                   */}
+      {/* ================================================== */}
+      <section className="py-20 px-4 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-800">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-14 text-slate-900 dark:text-slate-50">How it works</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+            {[
+              { n: 1, title: "Pick a path", text: "Choose courses, books or articles." },
+              { n: 2, title: "Learn by building", text: "Follow chapters and ship real projects." },
+              { n: 3, title: "Track progress", text: "Resume anywhere, see what you completed." },
+            ].map((step) => (
+              <div key={step.n} className="flex flex-col items-center text-center md:items-start md:text-left">
+                <div className="h-12 w-12 rounded-full bg-slate-900 dark:bg-slate-50 text-white dark:text-slate-900 flex items-center justify-center text-lg font-bold mb-5">
+                  {step.n}
+                </div>
+                <h3 className="text-xl font-bold mb-2 text-slate-900 dark:text-slate-50">{step.title}</h3>
+                <p className="text-slate-600 dark:text-slate-400">{step.text}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -458,22 +546,68 @@ export default function LandingContent({ stats }: LandingContentProps) {
       </section>
 
       {/* ================================================== */}
-      {/* 5. FOOTER                                          */}
+      {/* 5. FINAL CTA                                       */}
       {/* ================================================== */}
-      <footer className="bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-800 py-12 mt-auto">
-        <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="flex items-center gap-2">
-            <AppLogoLink className="hover:opacity-90 transition" />
-          </div>
+      <section className="px-4 py-20 bg-white dark:bg-slate-950">
+        <div className="max-w-5xl mx-auto rounded-3xl bg-blue-600 px-6 py-14 text-center text-white shadow-xl">
+          <h2 className="text-3xl md:text-4xl font-extrabold mb-3">Start learning today &mdash; it&apos;s free</h2>
+          <p className="text-blue-100 mb-8">Pick a path and build something real.</p>
+          <SignedOut>
+            <SignUpButton mode="modal">
+              <Button size="lg" className="bg-white text-blue-700 hover:bg-blue-50 px-8 py-6 rounded-xl font-semibold">
+                Create free account
+              </Button>
+            </SignUpButton>
+          </SignedOut>
+          <SignedIn>
+            <Link href="/search">
+              <Button size="lg" className="bg-white text-blue-700 hover:bg-blue-50 px-8 py-6 rounded-xl font-semibold">
+                Go to Dashboard
+              </Button>
+            </Link>
+          </SignedIn>
+        </div>
+      </section>
 
-          <div className="text-sm text-slate-500 dark:text-slate-400">
+      {/* ================================================== */}
+      {/* 6. FOOTER                                          */}
+      {/* ================================================== */}
+      <footer className="bg-slate-900 text-slate-300 py-14 mt-auto">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr_1fr_1fr] gap-10">
+            <div className="space-y-4">
+              <div className="inline-block rounded-lg bg-white px-3 py-2">
+                <AppLogoLink className="hover:opacity-90 transition" />
+              </div>
+              <p className="text-sm text-slate-400 max-w-xs">
+                Learn modern tech with courses, books and AI-powered articles.
+              </p>
+            </div>
+            <div>
+              <h4 className="font-semibold text-white mb-4">Learn</h4>
+              <ul className="space-y-2 text-sm">
+                <li><Link href="/search" className="hover:text-white transition">Courses</Link></li>
+                <li><Link href="/books" className="hover:text-white transition">Books</Link></li>
+                <li><Link href="/blogs" className="hover:text-white transition">Blogs</Link></li>
+                <li><a href="https://c-architech-compiler.vercel.app/?tab=revision" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">Compiler</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold text-white mb-4">Company</h4>
+              <ul className="space-y-2 text-sm">
+                <li><Link href="#" className="hover:text-white transition">Contact Support</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold text-white mb-4">Legal</h4>
+              <ul className="space-y-2 text-sm">
+                <li><Link href="#" className="hover:text-white transition">Privacy Policy</Link></li>
+                <li><Link href="#" className="hover:text-white transition">Terms of Service</Link></li>
+              </ul>
+            </div>
+          </div>
+          <div className="mt-10 pt-6 border-t border-slate-800 text-sm text-slate-500">
             © {new Date().getFullYear()} TheDappled Inc. All rights reserved.
-          </div>
-
-          <div className="flex gap-8 text-sm font-medium text-slate-600 dark:text-slate-400">
-            <Link href="#" className="hover:text-blue-600 transition">Privacy Policy</Link>
-            <Link href="#" className="hover:text-blue-600 transition">Terms of Service</Link>
-            <Link href="#" className="hover:text-blue-600 transition">Contact Support</Link>
           </div>
         </div>
       </footer>
