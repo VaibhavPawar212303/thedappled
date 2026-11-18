@@ -19,7 +19,7 @@ const links = [
   { href: "/books", label: "Books", icon: BookOpen },
   { href: "/blogs", label: "Blogs", icon: Newspaper },
   {
-    href: "https://c-architech-compiler.vercel.app/?tab=revision",
+    href: "https://c-architech-compiler.vercel.app/?tab=compiler",
     label: "Compiler",
     icon: Terminal,
     external: true,

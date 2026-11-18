@@ -41,7 +41,7 @@ const guestRoutes: {
     {
         icon: Terminal,
         label: "Compiler",
-        href: "https://c-architech-compiler.vercel.app/?tab=revision",
+        href: "https://c-architech-compiler.vercel.app/?tab=compiler",
         requiresAuth: false,
         external: true,
     },

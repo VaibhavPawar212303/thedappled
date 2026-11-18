@@ -46,7 +46,7 @@ export const LandingNavbar = () => {
 
         {/* Compiler - Amber Hover (external app) */}
         <a
-            href="https://c-architech-compiler.vercel.app/?tab=revision"
+            href="https://c-architech-compiler.vercel.app/?tab=compiler"
             target="_blank"
             rel="noopener noreferrer"
             className="group flex items-center gap-x-2 text-slate-600 dark:text-slate-300 font-medium transition hover:text-amber-600"
