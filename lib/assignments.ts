@@ -1,5 +1,6 @@
 import { randomBytes } from "crypto";
 import { prisma } from "@/lib/db";
+import type { Reason, Signals, Verdict } from "@/lib/verification";
 
 export const UI_AUTOMATION = "ui-automation";
 
@@ -29,28 +30,36 @@ export type AssignmentStatus = {
   completedAt: string | null;
   done: number;
   total: number;
-  steps: { id: StepId; done: boolean; at: string | null }[];
+  // done = verified as automated. rejected = the latest attempt did not count (and why).
+  steps: { id: StepId; done: boolean; at: string | null; rejected: Reason | null }[];
 };
 
 type AssignmentWithEvents = {
   token: string;
   startedAt: Date;
   completedAt: Date | null;
-  events: { name: string; createdAt: Date }[];
+  events: { name: string; createdAt: Date; verified: boolean; reason: string | null }[];
 };
 
 export function toStatus(a: AssignmentWithEvents): AssignmentStatus {
-  const seen = new Map(a.events.map((e) => [e.name, e.createdAt]));
-  const steps = STEPS.map((s) => ({
-    id: s.id,
-    done: seen.has(s.id),
-    at: seen.get(s.id)?.toISOString() ?? null,
-  }));
+  const byName = new Map(a.events.map((e) => [e.name, e]));
+  const steps = STEPS.map((s) => {
+    const e = byName.get(s.id);
+    const done = Boolean(e?.verified);
+    return {
+      id: s.id,
+      done,
+      at: done ? e!.createdAt.toISOString() : null,
+      rejected: !done && e && (e.reason === "no-automation" || e.reason === "hand-driven") ? (e.reason as Reason) : null,
+    };
+  });
+  const done = steps.filter((s) => s.done).length;
   return {
     token: a.token,
     startedAt: a.startedAt.toISOString(),
-    completedAt: a.completedAt?.toISOString() ?? null,
-    done: steps.filter((s) => s.done).length,
+    // Completion only stands if every step is verified (older, unverified completions don't count).
+    completedAt: done >= steps.length && a.completedAt ? a.completedAt.toISOString() : null,
+    done,
     total: STEPS.length,
     steps,
   };
@@ -82,18 +91,48 @@ export async function getStatusByToken(token: string): Promise<AssignmentStatus 
   return a ? toStatus(a) : null;
 }
 
-// Records one step (idempotent) and completes the assignment once every step has been seen.
-export async function recordEvent(token: string, step: StepId): Promise<AssignmentStatus | null> {
+export type RecordResult = {
+  status: AssignmentStatus;
+  verified: boolean;
+  reason: Reason | null;
+};
+
+// Records one attempt at a step. Only verified attempts count; a verified step is never
+// downgraded, and an earlier hand-done attempt is upgraded by a later automated one.
+export async function recordEvent(token: string, step: StepId, verdict: Verdict, signals: Signals): Promise<RecordResult | null> {
   const a = await prisma.assignment.findUnique({ where: { token }, select: { id: true } });
   if (!a) return null;
-  await prisma.assignmentEvent.upsert({
+
+  const existing = await prisma.assignmentEvent.findUnique({
     where: { assignmentId_name: { assignmentId: a.id, name: step } },
-    create: { assignmentId: a.id, name: step },
-    update: {},
   });
-  const count = await prisma.assignmentEvent.count({ where: { assignmentId: a.id } });
-  if (count >= STEPS.length) {
-    await prisma.assignment.updateMany({ where: { id: a.id, completedAt: null }, data: { completedAt: new Date() } });
+
+  if (!existing) {
+    await prisma.assignmentEvent
+      .create({ data: { assignmentId: a.id, name: step, verified: verdict.verified, reason: verdict.reason, signals } })
+      .catch(() => {}); // concurrent first attempt: the row exists now, fall through to re-read below
+  } else if (!existing.verified) {
+    // Unverified so far: a verified attempt upgrades it (new timestamp); another failed one just refreshes the reason.
+    await prisma.assignmentEvent.update({
+      where: { id: existing.id },
+      data: verdict.verified
+        ? { verified: true, reason: null, signals, createdAt: new Date() }
+        : { reason: verdict.reason, signals },
+    });
   }
-  return getStatusByToken(token);
+
+  const verifiedEvents = await prisma.assignmentEvent.findMany({
+    where: { assignmentId: a.id, verified: true },
+    select: { createdAt: true },
+    orderBy: { createdAt: "desc" },
+  });
+  if (verifiedEvents.length >= STEPS.length) {
+    // Completion time = when the last required step was verified.
+    await prisma.assignment.update({ where: { id: a.id }, data: { completedAt: verifiedEvents[0].createdAt } });
+  }
+
+  const status = await getStatusByToken(token);
+  if (!status) return null;
+  const mine = status.steps.find((s) => s.id === step);
+  return { status, verified: Boolean(mine?.done), reason: mine?.done ? null : (mine?.rejected ?? verdict.reason) };
 }

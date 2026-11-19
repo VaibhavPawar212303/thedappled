@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Check, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { STEPS, type AssignmentStatus } from "@/lib/assignments";
+import { REASON_TEXT } from "@/lib/verification";
 
 function Time({ iso, withDate = false }: { iso: string | null; withDate?: boolean }) {
   const [text, setText] = React.useState("");
@@ -98,7 +99,8 @@ export function AssignmentView({ initial, siteUrl, rank }: { initial: Assignment
               <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-white/15 text-4xl">✓</span>
               <div>
                 <h1 className="text-3xl font-extrabold tracking-tight">Assignment complete!</h1>
-                <p className="mt-1 text-emerald-100">You automated sign in and sign up — all {status.total} checks passed.</p>
+                <span data-testid="assignment-verified" className="mt-2 inline-flex rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-800">✓ Verified as automated</span>
+                <p className="mt-2 text-emerald-100">All {status.total} checks passed through an automation tool.</p>
                 <p className="mt-2 text-sm text-emerald-100/80">
                   Completed <Time iso={status.completedAt} withDate /> · Took {minutes} minute{minutes === 1 ? "" : "s"}
                 </p>
@@ -115,7 +117,7 @@ export function AssignmentView({ initial, siteUrl, rank }: { initial: Assignment
                 <h1 className="text-3xl font-extrabold tracking-tight md:text-4xl">Assignment: automate sign in and sign up</h1>
                 <div className="mt-3 flex flex-wrap items-center gap-3 text-sm">
                   <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-950 dark:text-amber-300">● In progress</span>
-                  <span className="text-muted-foreground">Updates live while your script runs</span>
+                  <span className="text-muted-foreground">Only steps run by an automation tool count</span>
                 </div>
               </div>
               {rankChip}
@@ -130,7 +132,7 @@ export function AssignmentView({ initial, siteUrl, rank }: { initial: Assignment
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-extrabold">{completed ? "Your results" : "Requirements"}</h2>
               <span data-testid="assignment-count" className="text-base font-extrabold text-emerald-700 dark:text-emerald-400">
-                {status.done} of {status.total}
+                {status.done} of {status.total} verified
               </span>
             </div>
             <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700" aria-hidden="true">
@@ -144,13 +146,22 @@ export function AssignmentView({ initial, siteUrl, rank }: { initial: Assignment
                   {STEPS.filter((s) => s.group === g).map((s) => {
                     const st = byId.get(s.id);
                     const done = Boolean(st?.done);
+                    const rejected = !done ? st?.rejected : null;
                     return (
-                      <li key={s.id} data-testid={`step-${s.id}`} data-done={done} className="flex items-center gap-3 text-[15px]">
-                        <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 ${done ? "border-emerald-500 bg-emerald-500 text-white" : "border-slate-300 dark:border-slate-600"}`}>
-                          {done && <Check className="h-3.5 w-3.5" />}
+                      <li key={s.id} data-testid={`step-${s.id}`} data-done={done} data-rejected={rejected ?? ""} className="flex items-start gap-3 text-[15px]">
+                        <span className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 text-xs font-extrabold ${done ? "border-emerald-500 bg-emerald-500 text-white" : rejected ? "border-amber-500 bg-amber-100 text-amber-700 dark:bg-amber-950" : "border-slate-300 dark:border-slate-600"}`}>
+                          {done ? <Check className="h-3.5 w-3.5" /> : rejected ? "!" : null}
                         </span>
-                        <span className={`flex-1 font-medium ${done ? "" : "text-muted-foreground"}`}>{s.label}</span>
-                        {done && <span className="text-xs text-muted-foreground"><Time iso={st?.at ?? null} /></span>}
+                        <span className="min-w-0 flex-1">
+                          <span className={`block font-medium ${done || rejected ? "" : "text-muted-foreground"}`}>{s.label}</span>
+                          {rejected && <span className="mt-0.5 block text-[13px] font-semibold text-amber-700 dark:text-amber-400">{REASON_TEXT[rejected].short}</span>}
+                        </span>
+                        {done && (
+                          <span className="flex shrink-0 items-center gap-3">
+                            <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">Automated</span>
+                            {!completed && <span className="text-xs text-muted-foreground"><Time iso={st?.at ?? null} /></span>}
+                          </span>
+                        )}
                       </li>
                     );
                   })}
@@ -166,7 +177,7 @@ export function AssignmentView({ initial, siteUrl, rank }: { initial: Assignment
               <section className="min-w-0 rounded-2xl border bg-card p-6 shadow-sm sm:p-8">
                 <h2 className="text-lg font-extrabold">What you practised</h2>
                 <ul className="m-0 mt-4 list-none space-y-2.5 p-0 text-sm font-medium">
-                  {["Locators with data-testid", "Assertions on error and success states", "Form validation flows"].map((t) => (
+                  {["Locators with data-testid", "Assertions on error and success states", "Form validation flows", "Running tests with an automation tool"].map((t) => (
                     <li key={t} className="flex items-center gap-3">
                       <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300"><Check className="h-3 w-3" /></span>
                       {t}
@@ -181,6 +192,7 @@ export function AssignmentView({ initial, siteUrl, rank }: { initial: Assignment
               </section>
             </div>
           ) : (
+            <div className="min-w-0 space-y-6">
             <section className="min-w-0 rounded-2xl border bg-card p-6 shadow-sm sm:p-8">
               <h2 className="text-xl font-extrabold">Your assignment links</h2>
               <p className="mt-1 text-[13px] text-muted-foreground">Open these in your script. They are unique to you.</p>
@@ -196,19 +208,26 @@ export function AssignmentView({ initial, siteUrl, rank }: { initial: Assignment
                   </div>
                 </div>
               ))}
-              <h3 className="mt-8 text-[15px] font-extrabold">How it works</h3>
-              <ol className="m-0 mt-3 list-none space-y-3 p-0 text-sm font-medium">
-                {["Copy a link into your test", "Run your script (Playwright or Cypress)", "Watch the checks turn green here"].map((t, i) => (
-                  <li key={t} className="flex items-center gap-3">
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-900 text-xs font-bold text-white dark:bg-slate-100 dark:text-slate-900">{i + 1}</span>
-                    {t}
+            </section>
+            <section data-testid="verification-card" className="rounded-2xl border border-blue-200 bg-blue-50 p-6 dark:border-blue-900 dark:bg-blue-950/30 sm:p-8">
+              <h2 className="text-lg font-extrabold text-blue-900 dark:text-blue-200">How verification works</h2>
+              <ul className="m-0 mt-4 list-none space-y-4 p-0">
+                {[
+                  ["Automation tools only", "Steps count when Playwright, Cypress, Selenium or Puppeteer run them."],
+                  ["Hand-driven steps don’t count", "We record them and tell you why, so you can re-run with your script."],
+                  ["Your typing stays private", "We only count mouse and key activity. We never read what you type."],
+                ].map(([h, d]) => (
+                  <li key={h} className="flex gap-3">
+                    <span className="mt-0.5 flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200"><Check className="h-3 w-3" /></span>
+                    <span>
+                      <span className="block text-sm font-bold text-blue-900 dark:text-blue-200">{h}</span>
+                      <span className="mt-0.5 block text-[13px] text-blue-800 dark:text-blue-300">{d}</span>
+                    </span>
                   </li>
                 ))}
-              </ol>
-              <Button asChild variant="outline" className="mt-6 w-full">
-                <Link href={`/testing/ui-automation/login?a=${status.token}`}>View sign in demo page</Link>
-              </Button>
+              </ul>
             </section>
+            </div>
           )}
         </div>
 

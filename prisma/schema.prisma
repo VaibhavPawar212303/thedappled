@@ -202,6 +202,10 @@ model AssignmentEvent {
   id           String     @id @default(uuid())
   assignmentId String
   name         String
+  // Only verified events count: the demo page must have been driven by an automation tool.
+  verified     Boolean    @default(false)
+  reason       String?
+  signals      Json?
   createdAt    DateTime   @default(now())
   assignment   Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
 
