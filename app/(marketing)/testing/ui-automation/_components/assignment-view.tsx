@@ -62,17 +62,6 @@ export function AssignmentView({ initial, siteUrl }: { initial: AssignmentStatus
     ? Math.max(1, Math.round((new Date(status.completedAt).getTime() - new Date(status.startedAt).getTime()) / 60000))
     : 0;
 
-  const snippet = `import { test, expect } from "@playwright/test";
-
-test("sign in: empty form shows errors", async ({ page }) => {
-  await page.goto("${loginUrl}");
-  await page.getByTestId("login-submit").click();
-  await expect(page.getByTestId("login-error-email")).toBeVisible();
-  await expect(page.getByTestId("login-error-password")).toBeVisible();
-});
-
-// TODO: wrong password, valid login, then the same three on
-// ${signupUrl}`;
 
   const groups = ["Sign in", "Sign up"] as const;
 
@@ -200,22 +189,6 @@ test("sign in: empty form shows errors", async ({ page }) => {
           )}
         </div>
 
-        {!completed && (
-          <section className="mt-6 min-w-0 rounded-2xl bg-slate-950 p-6 text-slate-200 sm:p-8">
-            <div className="flex items-center justify-between gap-4">
-              <h2 className="text-base font-bold">Starter script (Playwright)</h2>
-              <button
-                type="button"
-                data-testid="copy-snippet"
-                onClick={() => navigator.clipboard?.writeText(snippet).catch(() => {})}
-                className="rounded-lg bg-slate-800 px-3 py-1.5 text-xs font-semibold text-sky-300 hover:bg-slate-700"
-              >
-                Copy snippet
-              </button>
-            </div>
-            <pre className="mt-4 overflow-x-auto text-[13px] leading-6 text-sky-300"><code>{snippet}</code></pre>
-          </section>
-        )}
       </div>
     </div>
   );
