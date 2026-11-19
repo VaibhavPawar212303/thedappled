@@ -24,7 +24,6 @@ export default function LoginDemoPage() {
         "Remember me can be checked and unchecked",
         "Pressing Enter submits the form",
       ]}
-      selectors={["login-email", "login-password", "login-toggle-password", "login-remember", "login-submit", "login-error", "login-success"]}
       note={
         <>
           <p className="font-semibold text-foreground">Demo account</p>

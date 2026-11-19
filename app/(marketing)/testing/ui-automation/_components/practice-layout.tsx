@@ -6,13 +6,11 @@ type Crumb = { label: string; href?: string };
 export function PracticeLayout({
   crumbs,
   checklist,
-  selectors,
   note,
   children,
 }: {
   crumbs: Crumb[];
   checklist: string[];
-  selectors: string[];
   note?: React.ReactNode;
   children: React.ReactNode;
 }) {
@@ -48,10 +46,6 @@ export function PracticeLayout({
               ))}
             </ul>
 
-            <h3 className="mt-8 text-base font-extrabold">Selectors</h3>
-            <pre className="mt-3 overflow-x-auto rounded-xl bg-slate-950 p-4 text-[13px] leading-7 text-sky-300">
-              {selectors.map((s) => `data-testid="${s}"`).join("\n")}
-            </pre>
             {note && <div className="mt-6 text-sm text-muted-foreground">{note}</div>}
           </aside>
         </div>
