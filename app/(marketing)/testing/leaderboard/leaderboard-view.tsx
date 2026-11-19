@@ -244,7 +244,7 @@ export function LeaderboardView({ board, signedIn, hasAssignment }: { board: Boa
               </div>
             )}
             <p className="mt-6 text-center text-[13px] text-muted-foreground">
-              Names show first name and last initial. Ranked by time to finish, then by checks completed (out of {total}).
+              Names come from each learner’s profile. Ranked by time to finish, then by checks completed (out of {total}).
             </p>
           </section>
         )}
