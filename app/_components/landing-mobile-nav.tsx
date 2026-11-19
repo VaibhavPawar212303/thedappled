@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Menu, MonitorPlay, BookOpen, Newspaper, Terminal } from "lucide-react";
+import { Menu, MonitorPlay, BookOpen, Newspaper, Terminal, FlaskConical } from "lucide-react";
 import { SignedIn, SignedOut, UserButton, SignInButton, SignUpButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,6 +18,7 @@ const links = [
   { href: "/search", label: "Courses", icon: MonitorPlay },
   { href: "/books", label: "Books", icon: BookOpen },
   { href: "/blogs", label: "Blogs", icon: Newspaper },
+  { href: "/testing", label: "Testing", icon: FlaskConical },
   {
     href: "https://c-architech-compiler.vercel.app/?tab=compiler",
     label: "Compiler",
