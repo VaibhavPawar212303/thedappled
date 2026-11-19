@@ -25,7 +25,6 @@ export default function SignupDemoPage() {
         "Terms must be ticked before submit",
         "Valid data shows the success message",
       ]}
-      selectors={["signup-name", "signup-email", "signup-password", "signup-confirm", "signup-terms", "signup-submit", "signup-error-*", "signup-success"]}
     >
       <SignupForm />
     </PracticeLayout>
