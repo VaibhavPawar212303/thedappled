@@ -3,6 +3,7 @@
 import * as React from "react";
 import { inputClass } from "./practice-layout";
 import { useAssignmentReporter } from "./assignment-reporter";
+import { AssignmentNote } from "./assignment-banner";
 
 const DEMO_EMAIL = "demo@thedappled.com";
 const DEMO_PASSWORD = "Test@1234";
@@ -131,6 +132,7 @@ export function LoginForm() {
           ✓ Welcome back, Demo User!{remember ? " (We’ll remember you.)" : ""}
         </div>
       )}
+      <AssignmentNote />
     </form>
   );
 }

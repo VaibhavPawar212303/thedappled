@@ -3,6 +3,7 @@
 import * as React from "react";
 import { inputClass } from "./practice-layout";
 import { useAssignmentReporter } from "./assignment-reporter";
+import { AssignmentNote } from "./assignment-banner";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
@@ -131,6 +132,7 @@ export function SignupForm() {
           ✓ Account created (demo). Welcome, {created}!
         </div>
       )}
+      <AssignmentNote />
     </form>
   );
 }

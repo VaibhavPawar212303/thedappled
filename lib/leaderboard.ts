@@ -29,7 +29,7 @@ type Raw = {
   userId: string;
   startedAt: Date;
   completedAt: Date | null;
-  events: { name: string; createdAt: Date }[];
+  events: { name: string; createdAt: Date; verified: boolean }[];
 };
 
 // "Asha Kulkarni" -> "Asha K.", "Asha" -> "Asha", nothing -> "Learner A1B2" (stable, not reversible).
@@ -50,7 +50,7 @@ export function rankLearners(raw: Raw[]): Ranked[] {
   const total = STEPS.length;
   const ids = new Set<string>(STEPS.map((s) => s.id));
   const items = raw.map((a) => {
-    const valid = a.events.filter((e) => ids.has(e.name));
+    const valid = a.events.filter((e) => e.verified && ids.has(e.name));
     const done = valid.length;
     const lastAt = valid.reduce((m, e) => Math.max(m, e.createdAt.getTime()), 0);
     const completed = Boolean(a.completedAt) && done >= total;
@@ -103,7 +103,7 @@ const loadBoard = unstable_cache(
   async (): Promise<CachedBoard> => {
     const raw = await prisma.assignment.findMany({
       where: { slug: UI_AUTOMATION },
-      select: { userId: true, startedAt: true, completedAt: true, events: { select: { name: true, createdAt: true } } },
+      select: { userId: true, startedAt: true, completedAt: true, events: { select: { name: true, createdAt: true, verified: true } } },
       take: 2000,
     });
     const ranked = rankLearners(raw);
