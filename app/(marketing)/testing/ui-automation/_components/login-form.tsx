@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { inputClass } from "./practice-layout";
+import { useAssignmentReporter } from "./assignment-reporter";
 
 const DEMO_EMAIL = "demo@thedappled.com";
 const DEMO_PASSWORD = "Test@1234";
@@ -16,6 +17,7 @@ export function LoginForm() {
   const [show, setShow] = React.useState(false);
   const [errors, setErrors] = React.useState<Errors>({});
   const [result, setResult] = React.useState<"idle" | "error" | "success">("idle");
+  const { report } = useAssignmentReporter();
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,9 +28,12 @@ export function LoginForm() {
     setErrors(next);
     if (Object.keys(next).length) {
       setResult("idle");
+      if (next.email === "Email is required." && next.password === "Password is required.") report("login-empty");
       return;
     }
-    setResult(email.trim().toLowerCase() === DEMO_EMAIL && password === DEMO_PASSWORD ? "success" : "error");
+    const ok = email.trim().toLowerCase() === DEMO_EMAIL && password === DEMO_PASSWORD;
+    setResult(ok ? "success" : "error");
+    report(ok ? "login-success" : "login-wrong");
   };
 
   return (

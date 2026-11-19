@@ -12,6 +12,7 @@ const isPublicRoute = createRouteMatcher([
   '/books/(.*)',
   '/search',
   '/testing(.*)',
+  '/api/assignments/event',
   '/opengraph-image(.*)',
   '/course',
   '/course/(.*)',

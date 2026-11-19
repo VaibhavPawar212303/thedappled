@@ -1,5 +1,7 @@
+import * as React from "react";
 import Link from "next/link";
 import { Check } from "lucide-react";
+import { AssignmentBanner } from "./assignment-banner";
 
 type Crumb = { label: string; href?: string };
 
@@ -16,6 +18,9 @@ export function PracticeLayout({
 }) {
   return (
     <div className="bg-slate-50 dark:bg-slate-900/40">
+      <React.Suspense fallback={null}>
+        <AssignmentBanner />
+      </React.Suspense>
       <div className="mx-auto max-w-6xl px-4 py-10 md:px-8">
         <nav aria-label="Breadcrumb" className="mb-6 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
           {crumbs.map((c, i) => (
