@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import { getAssignmentForUser } from "@/lib/assignments";
+import { getRankFor } from "@/lib/leaderboard";
 import { SITE_URL } from "@/lib/seo";
 import { AssignmentView } from "../_components/assignment-view";
 
@@ -19,5 +20,7 @@ export default async function AssignmentPage() {
   const assignment = await getAssignmentForUser(userId);
   if (!assignment) redirect("/testing/ui-automation");
 
-  return <AssignmentView initial={assignment} siteUrl={SITE_URL} />;
+  const rank = await getRankFor(userId).catch(() => null);
+
+  return <AssignmentView initial={assignment} siteUrl={SITE_URL} rank={rank} />;
 }

@@ -590,6 +590,7 @@ export default function LandingContent({ stats }: LandingContentProps) {
                 <li><Link href="/books" className="hover:text-white transition">Books</Link></li>
                 <li><Link href="/blogs" className="hover:text-white transition">Blogs</Link></li>
                 <li><Link href="/testing" className="hover:text-white transition">Testing</Link></li>
+                <li><Link href="/testing/leaderboard" className="hover:text-white transition">Leaderboard</Link></li>
                 <li><a href="https://c-architech-compiler.vercel.app/?tab=compiler" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">Compiler</a></li>
               </ul>
             </div>

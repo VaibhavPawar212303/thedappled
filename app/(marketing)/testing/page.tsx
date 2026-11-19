@@ -173,6 +173,7 @@ export default function TestingPage() {
               <li><Link href="/books" className="transition hover:text-white">Books</Link></li>
               <li><Link href="/blogs" className="transition hover:text-white">Blogs</Link></li>
               <li><Link href="/testing" className="text-emerald-300 transition hover:text-white">Testing</Link></li>
+              <li><Link href="/testing/leaderboard" className="transition hover:text-white">Leaderboard</Link></li>
               <li><a href="https://c-architech-compiler.vercel.app/?tab=compiler" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">Compiler</a></li>
             </ul>
           </div>
