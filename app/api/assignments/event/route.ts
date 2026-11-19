@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getStatusByToken, isStepId, recordEvent } from "@/lib/assignments";
-import { sanitizeSignals, verdictFromSignals } from "@/lib/verification";
+import { describeSignals, sanitizeSignals, verdictFromSignals } from "@/lib/verification";
 
 export const dynamic = "force-dynamic";
 
@@ -31,6 +31,8 @@ export async function POST(req: NextRequest) {
     completed: Boolean(status.completedAt),
     verified: result.verified,
     reason: result.reason,
+    // Why a step did not count, in plain terms, so a learner can see what the page observed.
+    ...(result.verified ? {} : { seen: describeSignals(signals) }),
   });
 }
 
