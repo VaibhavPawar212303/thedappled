@@ -23,7 +23,7 @@ const STAGES: { title: string; level: string; tone: Tone; blurb: string; href: s
   { title: "Testing fundamentals", level: "Beginner", tone: "blue", blurb: "SDLC & STLC, test types, bug lifecycle, writing good bug reports.", href: "/search" },
   { title: "Test design", level: "Beginner", tone: "blue", blurb: "Test cases, equivalence & boundary analysis, exploratory testing.", href: "/search" },
   { title: "API testing", level: "Intermediate", tone: "purple", blurb: "REST basics, status codes, auth, Postman collections and assertions.", href: "/search" },
-  { title: "UI automation", level: "Intermediate", tone: "purple", blurb: "Playwright & Cypress: locators, waits, page objects, debugging.", href: "/search" },
+  { title: "UI automation", level: "Intermediate", tone: "purple", blurb: "Playwright & Cypress: locators, waits, page objects, debugging.", href: "/testing/ui-automation" },
   { title: "Frameworks & CI", level: "Advanced", tone: "green", blurb: "Fixtures, reporting, parallel runs and GitHub Actions pipelines.", href: "/search" },
   { title: "Performance & security", level: "Advanced", tone: "green", blurb: "Load tests with k6, OWASP top 10 basics, flaky-test hygiene.", href: "/search" },
 ];
