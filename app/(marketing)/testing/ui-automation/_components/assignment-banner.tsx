@@ -30,7 +30,10 @@ export function AssignmentBanner() {
 
   if (!token) return null;
 
-  const manual = automated === false;
+  // Flags are visible at load, but scripts that hide them are only recognised from how they click
+  // and type, so a verified step also proves automation.
+  const proven = p?.verified === true;
+  const manual = automated === false && !proven;
   const link = (
     <Link href="/testing/ui-automation/assignment" className="underline underline-offset-2">
       View assignment →
@@ -49,7 +52,7 @@ export function AssignmentBanner() {
           {automated === null
             ? "● Checking how this page is being driven…"
             : manual
-              ? "⚠ Manual use detected — steps on this page won’t count. Run it with Playwright, Cypress or Selenium."
+              ? "⚠ No automation detected yet — steps done by hand won’t count. Run it with Playwright, Cypress or Selenium."
               : "● Automation detected — your steps are being recorded."}
         </span>
         <span className={manual ? "text-amber-100" : "text-emerald-100"}>
@@ -86,6 +89,7 @@ export function AssignmentNote() {
     <div data-testid="assignment-note-rejected" role="alert" className="mt-4 rounded-[10px] border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-300">
       <p className="font-bold">{REASON_TEXT[p.reason ?? "no-automation"].long}</p>
       <p className="mt-1 text-[13px]">Run it with your Playwright or Cypress script to record it.</p>
+      {p.seen && <p data-testid="assignment-note-seen" className="mt-2 text-xs opacity-80">What we saw: {p.seen}</p>}
     </div>
   );
 }
