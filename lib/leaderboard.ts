@@ -39,6 +39,21 @@ function cleanHandle(raw: string | null | undefined): string {
   return (raw ?? "").trim().replace(/[^\p{L}\p{N}._-]/gu, "").slice(0, 24);
 }
 
+const capFirst = (w: string) => {
+  const [first, ...rest] = Array.from(w);
+  return first ? first.toLocaleUpperCase() + rest.join("") : "";
+};
+
+// Turns a username / email prefix into something readable: "himani" -> "Himani",
+// "HIMANI" -> "Himani", "vaibhav.pawar" -> "Vaibhav Pawar", "asha_k" -> "Asha K".
+function prettyHandle(raw: string | null | undefined): string {
+  return cleanHandle(raw)
+    .split(/[._-]+/)
+    .filter(Boolean)
+    .map((w) => capFirst(w === w.toLocaleUpperCase() && w !== w.toLocaleLowerCase() ? w.toLocaleLowerCase() : w))
+    .join(" ");
+}
+
 // "Asha Kulkarni" -> "Asha K.", "Asha" -> "Asha". With no first name it falls back to the Clerk
 // username, then the part of the email before "@" (e.g. "vaibhav.p"), and only then to a stable
 // anonymous "Learner A1B2" label.
@@ -48,14 +63,14 @@ export function formatName(
   userId: string,
   hints: NameHints = {},
 ): string {
-  const f = (first ?? "").trim().slice(0, 24);
+  const f = capFirst((first ?? "").trim().slice(0, 24));
   const l = (last ?? "").trim();
   if (f) return l ? `${f} ${Array.from(l)[0].toUpperCase()}.` : f;
 
-  const username = cleanHandle(hints.username);
+  const username = prettyHandle(hints.username);
   if (username) return username;
 
-  const local = cleanHandle((hints.email ?? "").split("@")[0].split("+")[0]);
+  const local = prettyHandle((hints.email ?? "").split("@")[0].split("+")[0]);
   if (local) return local;
 
   const code = createHash("sha256").update(userId).digest("hex").slice(0, 4).toUpperCase();
