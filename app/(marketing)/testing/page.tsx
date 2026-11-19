@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 export const metadata: Metadata = {
   title: "Learn Software Testing – Testing Learning Path",
   description:
-    "A free step-by-step software testing roadmap: testing fundamentals, test design, API testing, Playwright and Cypress automation, CI pipelines, performance and security.",
+    "A free software testing learning path with hands-on UI automation practice: write Playwright or Cypress scripts against real sign-in and sign-up demo pages.",
   alternates: { canonical: "/testing" },
 };
 
@@ -19,13 +19,10 @@ const TONES: Record<Tone, { chip: string; text: string }> = {
   green: { chip: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300", text: "text-emerald-700 dark:text-emerald-400" },
 };
 
-const STAGES: { title: string; level: string; tone: Tone; blurb: string; href: string }[] = [
-  { title: "Testing fundamentals", level: "Beginner", tone: "blue", blurb: "SDLC & STLC, test types, bug lifecycle, writing good bug reports.", href: "/search" },
-  { title: "Test design", level: "Beginner", tone: "blue", blurb: "Test cases, equivalence & boundary analysis, exploratory testing.", href: "/search" },
-  { title: "API testing", level: "Intermediate", tone: "purple", blurb: "REST basics, status codes, auth, Postman collections and assertions.", href: "/search" },
-  { title: "UI automation", level: "Intermediate", tone: "purple", blurb: "Playwright & Cypress: locators, waits, page objects, debugging.", href: "/testing/ui-automation" },
-  { title: "Frameworks & CI", level: "Advanced", tone: "green", blurb: "Fixtures, reporting, parallel runs and GitHub Actions pipelines.", href: "/search" },
-  { title: "Performance & security", level: "Advanced", tone: "green", blurb: "Load tests with k6, OWASP top 10 basics, flaky-test hygiene.", href: "/search" },
+// Only stages with real content are shown. The earlier plan (fundamentals, test design, API testing,
+// frameworks & CI, performance & security) was removed for now and can be restored from git history.
+const STAGES: { n: number; title: string; level: string; tone: Tone; blurb: string; href: string }[] = [
+  { n: 4, title: "UI automation", level: "Intermediate", tone: "purple", blurb: "Playwright & Cypress: locators, waits, page objects, debugging.", href: "/testing/ui-automation" },
 ];
 
 const TOOLS = ["Playwright", "Cypress", "Selenium", "Postman", "Jest", "k6", "GitHub Actions", "TypeScript"];
@@ -54,7 +51,7 @@ export default function TestingPage() {
               Learn software testing, step by step.
             </h1>
             <p className="mt-6 max-w-xl text-lg text-muted-foreground">
-              A free roadmap from testing fundamentals to Playwright, Cypress, API testing and CI — built for aspiring QA engineers.
+              Learn Playwright and Cypress by automating real sign-in and sign-up pages — built for aspiring QA engineers.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Button asChild size="lg" className="bg-emerald-600 text-white hover:bg-emerald-700">
@@ -66,7 +63,7 @@ export default function TestingPage() {
                 <Link href="/search">Browse testing courses</Link>
               </Button>
             </div>
-            <p className="mt-8 text-sm font-medium text-muted-foreground">6 stages · Free to start</p>
+            <p className="mt-8 text-sm font-medium text-muted-foreground">Free to start · more stages coming soon</p>
           </div>
 
           <div className="rounded-2xl border bg-card shadow-sm" aria-hidden="true">
@@ -99,15 +96,15 @@ export default function TestingPage() {
       {/* ROADMAP */}
       <section id="roadmap" className="mx-auto max-w-6xl scroll-mt-24 px-4 py-16 md:px-8 lg:py-24">
         <h2 className="text-center text-3xl font-extrabold tracking-tight sm:text-4xl">Your testing roadmap</h2>
-        <p className="mt-3 text-center text-lg text-muted-foreground">Follow the stages in order, or jump to what you need.</p>
+        <p className="mt-3 text-center text-lg text-muted-foreground">Start with UI automation — more stages are on the way.</p>
 
-        <ol className="mt-12 grid list-none p-0 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {STAGES.map((s, i) => {
+        <ol className="mx-auto mt-12 grid max-w-xl list-none gap-6 p-0">
+          {STAGES.map((s) => {
             const tone = TONES[s.tone];
             return (
               <li key={s.title} className="flex flex-col rounded-2xl border bg-card p-7 shadow-sm transition hover:shadow-md">
                 <div className="flex items-start justify-between">
-                  <span className={`flex h-12 w-12 items-center justify-center rounded-xl text-xl font-extrabold ${tone.chip}`}>{i + 1}</span>
+                  <span className={`flex h-12 w-12 items-center justify-center rounded-xl text-xl font-extrabold ${tone.chip}`}>{s.n}</span>
                   <span className={`rounded-full px-3 py-1 text-xs font-semibold ${tone.chip}`}>{s.level}</span>
                 </div>
                 <h3 className="mt-5 text-xl font-bold">{s.title}</h3>
@@ -121,6 +118,7 @@ export default function TestingPage() {
             );
           })}
         </ol>
+        <p className="mt-8 text-center text-sm font-medium text-muted-foreground">More stages coming soon</p>
       </section>
 
       {/* TOOLS */}
