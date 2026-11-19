@@ -109,22 +109,60 @@ export function rankLearners(raw: Raw[]): Ranked[] {
   return items.map(({ userId, done, completed, minutes }) => ({ userId, done, completed, minutes }));
 }
 
-async function namesFor(userIds: string[]): Promise<Map<string, string>> {
-  const out = new Map<string, string>();
-  try {
-    const client = await clerkClient();
-    for (let i = 0; i < userIds.length; i += 100) {
-      const chunk = userIds.slice(i, i + 100);
-      const { data } = await client.users.getUserList({ userId: chunk, limit: 100 });
-      for (const u of data) {
-        const primary = u.emailAddresses.find((e) => e.id === u.primaryEmailAddressId) ?? u.emailAddresses[0];
-        out.set(u.id, formatName(u.firstName, u.lastName, u.id, { username: u.username, email: primary?.emailAddress }));
-      }
+// Last good name per learner on this server instance: used if a later Clerk lookup fails.
+const lastGoodNames = new Map<string, string>();
+
+// Looks learners up in Clerk. It THROWS on any Clerk error on purpose, so that a failed lookup is
+// never stored in a cache (a cached failure would show "Learner XXXX" to everyone until it expired).
+async function fetchNames(userIds: string[]): Promise<Record<string, string>> {
+  const out: Record<string, string> = {};
+  const client = await clerkClient();
+  for (let i = 0; i < userIds.length; i += 100) {
+    const chunk = userIds.slice(i, i + 100);
+    const { data } = await client.users.getUserList({ userId: chunk, limit: 100 });
+    for (const u of data) {
+      const primary = u.emailAddresses.find((e) => e.id === u.primaryEmailAddressId) ?? u.emailAddresses[0];
+      out[u.id] = formatName(u.firstName, u.lastName, u.id, { username: u.username, email: primary?.emailAddress });
     }
-  } catch {
-    // Clerk unavailable: everyone falls back to the anonymous "Learner XXXX" label below.
   }
   return out;
+}
+
+// Clerk's list call is two requests under the hood (the list and a count), so retry once on a
+// transient failure before giving up.
+async function fetchNamesWithRetry(userIds: string[]): Promise<Record<string, string>> {
+  try {
+    return await fetchNames(userIds);
+  } catch {
+    await new Promise((r) => setTimeout(r, 300));
+    return fetchNames(userIds);
+  }
+}
+
+// Names change rarely, so successful lookups are cached for 10 minutes (separately from the board).
+const cachedNames = unstable_cache(fetchNamesWithRetry, ["leaderboard-names"], { revalidate: 600 });
+
+function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const t = setTimeout(() => reject(new Error(`timed out after ${ms}ms`)), ms);
+    p.then(
+      (v) => { clearTimeout(t); resolve(v); },
+      (e) => { clearTimeout(t); reject(e); },
+    );
+  });
+}
+
+// strict = true: rethrow on failure (so the caller does not cache a board built without names).
+async function resolveNames(userIds: string[], strict: boolean): Promise<Map<string, string>> {
+  try {
+    const names = await withTimeout(cachedNames([...userIds].sort()), 5000);
+    for (const [id, name] of Object.entries(names)) lastGoodNames.set(id, name);
+    return new Map(Object.entries(names));
+  } catch (e) {
+    console.error("[leaderboard] Clerk name lookup failed:", e instanceof Error ? e.message : e);
+    if (strict) throw e;
+    return new Map(userIds.filter((id) => lastGoodNames.has(id)).map((id) => [id, lastGoodNames.get(id)!]));
+  }
 }
 
 // One-way key so the cached board never holds (or streams to the browser) a raw Clerk user id.
@@ -136,33 +174,40 @@ type CachedBoard = {
   rows: { key: string; name: string; done: number; total: number; completed: boolean; minutes: number | null }[];
 };
 
-// Rows carry a hashed key instead of the user id: it is only used to mark "you" per request.
-const loadBoard = unstable_cache(
-  async (): Promise<CachedBoard> => {
-    const raw = await prisma.assignment.findMany({
-      where: { slug: UI_AUTOMATION },
-      select: { userId: true, startedAt: true, completedAt: true, events: { select: { name: true, createdAt: true, verified: true } } },
-      take: 2000,
-    });
-    const ranked = rankLearners(raw);
-    const names = await namesFor(ranked.map((r) => r.userId));
-    return {
-      rows: ranked.map((r) => ({
-        key: learnerKey(r.userId),
-        done: r.done,
-        completed: r.completed,
-        minutes: r.minutes,
-        total: STEPS.length,
-        name: names.get(r.userId) ?? formatName(null, null, r.userId),
-      })),
-    };
-  },
-  ["testing-leaderboard-ui-automation"],
-  { revalidate: 30 },
-);
+async function buildBoard(strict: boolean): Promise<CachedBoard> {
+  const raw = await prisma.assignment.findMany({
+    where: { slug: UI_AUTOMATION },
+    select: { userId: true, startedAt: true, completedAt: true, events: { select: { name: true, createdAt: true, verified: true } } },
+    take: 2000,
+  });
+  const ranked = rankLearners(raw);
+  const names = await resolveNames(ranked.map((r) => r.userId), strict);
+  // Rows carry a hashed key instead of the user id: it is only used to mark "you" per request.
+  return {
+    rows: ranked.map((r) => ({
+      key: learnerKey(r.userId),
+      done: r.done,
+      completed: r.completed,
+      minutes: r.minutes,
+      total: STEPS.length,
+      name: names.get(r.userId) ?? formatName(null, null, r.userId),
+    })),
+  };
+}
+
+// Cached for 30s. If the name lookup fails this throws, so nothing is cached and an older cached
+// board (with real names) keeps being served until a lookup succeeds again.
+const loadBoard = unstable_cache(() => buildBoard(true), ["testing-leaderboard-ui-automation"], { revalidate: 30 });
 
 export async function getBoard(currentUserId: string | null): Promise<Board> {
-  const { rows } = await loadBoard();
+  let rows: CachedBoard["rows"];
+  try {
+    ({ rows } = await loadBoard());
+  } catch {
+    // Name lookup failed and there is no cached board yet: show the ranking with whatever names we
+    // know, without caching it, so the next request tries Clerk again.
+    ({ rows } = await buildBoard(false));
+  }
   const myKey = currentUserId ? learnerKey(currentUserId) : null;
   const completed = rows.filter((r) => r.completed);
   return {
