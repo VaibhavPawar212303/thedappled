@@ -1,6 +1,6 @@
 "use client"
 
-import { BarChart, Book, BookAIcon, Compass, File, Layout, List, LucideIcon, Terminal, User } from "lucide-react"
+import { BarChart, Book, BookAIcon, Compass, File, FlaskConical, Layout, List, LucideIcon, Terminal, User } from "lucide-react"
 import { SidebarItem } from "./sidebar-item";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
@@ -36,6 +36,12 @@ const guestRoutes: {
         icon: File,
         label: "Blogs",
         href: "/blogs",
+        requiresAuth: false,
+    },
+    {
+        icon: FlaskConical,
+        label: "Testing",
+        href: "/testing",
         requiresAuth: false,
     },
     {

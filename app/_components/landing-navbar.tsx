@@ -4,13 +4,16 @@ import Link from "next/link";
 import { useAuth } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { SignedIn, SignedOut, UserButton, SignInButton, SignUpButton } from "@clerk/nextjs";
-import { BookOpen, Newspaper, MonitorPlay, Terminal } from "lucide-react";
+import { BookOpen, Newspaper, MonitorPlay, Terminal, FlaskConical } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { ModeToggle } from "@/components/mode-toggle";
 import { LandingMobileNav } from "./landing-mobile-nav";
 import { AppLogoLink } from "./app-logo-link";
 
 
 export const LandingNavbar = () => {
+  const pathname = usePathname();
+  const onTesting = pathname?.startsWith("/testing");
   return (
     <nav className="p-4 bg-background flex items-center justify-between z-50 w-full border-b fixed top-0 transition-all">
 
@@ -42,6 +45,18 @@ export const LandingNavbar = () => {
                 <Newspaper className="w-4 h-4 text-slate-600 dark:text-slate-300 group-hover:text-emerald-600" />
             </div>
             Blogs
+        </Link>
+
+        {/* Testing - Emerald (active state when on /testing) */}
+        <Link
+            href="/testing"
+            aria-current={onTesting ? "page" : undefined}
+            className={`group flex items-center gap-x-2 font-medium transition hover:text-emerald-600 ${onTesting ? "text-emerald-700 dark:text-emerald-400" : "text-slate-600 dark:text-slate-300"}`}
+        >
+            <div className={`p-1 rounded-md transition group-hover:bg-emerald-100 dark:group-hover:bg-emerald-950 ${onTesting ? "bg-emerald-100 dark:bg-emerald-950" : "bg-slate-100 dark:bg-slate-800"}`}>
+                <FlaskConical className={`w-4 h-4 group-hover:text-emerald-600 ${onTesting ? "text-emerald-600" : "text-slate-600 dark:text-slate-300"}`} />
+            </div>
+            Testing
         </Link>
 
         {/* Compiler - Amber Hover (external app) */}
