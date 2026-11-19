@@ -1,3 +1,4 @@
+import * as React from "react";
 import type { Metadata } from "next";
 import { PracticeLayout } from "../_components/practice-layout";
 import { LoginForm } from "../_components/login-form";
@@ -31,7 +32,9 @@ export default function LoginDemoPage() {
         </>
       }
     >
-      <LoginForm />
+      <React.Suspense fallback={null}>
+        <LoginForm />
+      </React.Suspense>
     </PracticeLayout>
   );
 }

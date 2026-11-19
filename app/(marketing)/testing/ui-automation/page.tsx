@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { auth } from "@clerk/nextjs/server";
 import { ArrowRight, Check, LogIn, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { getAssignmentForUser } from "@/lib/assignments";
+import { AssignmentCard } from "./_components/assignment-card";
 
 export const metadata: Metadata = {
   title: "UI Automation Practice – Sign in & Sign up demos",
@@ -43,7 +46,12 @@ const TIPS = [
   { h: "Nothing is stored", d: "Demo forms never send data anywhere, so you can run them in a loop." },
 ];
 
-export default function UiAutomationPage() {
+export const dynamic = "force-dynamic";
+
+export default async function UiAutomationPage() {
+  const { userId } = await auth();
+  const assignment = userId ? await getAssignmentForUser(userId).catch(() => null) : null;
+
   return (
     <div className="bg-background text-foreground">
       <section className="relative overflow-hidden bg-slate-50 dark:bg-slate-900/40">
@@ -67,8 +75,14 @@ export default function UiAutomationPage() {
         </div>
       </section>
 
+      <section className="mx-auto max-w-6xl px-4 pt-12 md:px-8">
+        <AssignmentCard signedIn={Boolean(userId)} assignment={assignment} />
+      </section>
+
       <section className="mx-auto max-w-6xl px-4 py-12 md:px-8">
-        <div className="grid gap-6 md:grid-cols-2">
+        <h2 className="text-2xl font-extrabold">Practice pages</h2>
+        <p className="mt-1 text-muted-foreground">Free to use any time. Nothing is stored.</p>
+        <div className="mt-6 grid gap-6 md:grid-cols-2">
           {CARDS.map(({ title, blurb, points, href, cta, Icon, chip, dot, button, testid }) => (
             <article key={title} data-testid={testid} className="flex flex-col rounded-2xl border bg-card p-8 shadow-sm transition hover:shadow-md">
               <div className="flex items-start justify-between">

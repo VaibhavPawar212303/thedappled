@@ -183,3 +183,28 @@ model StripeCustomer {
 enum crdb_internal_region {
   gcp_asia_southeast1 @map("gcp-asia-southeast1")
 }
+
+// Hands-on assignments (e.g. "ui-automation"). A learner's script is verified by the
+// events the demo pages report against their personal token.
+model Assignment {
+  id          String            @id @default(uuid())
+  userId      String
+  slug        String
+  token       String            @unique
+  startedAt   DateTime          @default(now())
+  completedAt DateTime?
+  events      AssignmentEvent[]
+
+  @@unique([userId, slug])
+}
+
+model AssignmentEvent {
+  id           String     @id @default(uuid())
+  assignmentId String
+  name         String
+  createdAt    DateTime   @default(now())
+  assignment   Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+
+  @@unique([assignmentId, name])
+  @@index([assignmentId])
+}

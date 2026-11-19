@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { inputClass } from "./practice-layout";
+import { useAssignmentReporter } from "./assignment-reporter";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
@@ -23,6 +24,7 @@ export function SignupForm() {
   const [terms, setTerms] = React.useState(false);
   const [errors, setErrors] = React.useState<Errors>({});
   const [created, setCreated] = React.useState<string | null>(null);
+  const { report } = useAssignmentReporter();
 
   const { score, ok } = strength(password);
 
@@ -39,6 +41,9 @@ export function SignupForm() {
     if (!terms) next.terms = "You must accept the Terms of Service.";
     setErrors(next);
     setCreated(Object.keys(next).length ? null : name.trim());
+    if (Object.keys(next).length === 5) report("signup-empty");
+    if (next.confirm === "Passwords do not match.") report("signup-mismatch");
+    if (Object.keys(next).length === 0) report("signup-success");
   };
 
   const field = (

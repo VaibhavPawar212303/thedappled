@@ -1,3 +1,4 @@
+import * as React from "react";
 import type { Metadata } from "next";
 import { PracticeLayout } from "../_components/practice-layout";
 import { SignupForm } from "../_components/signup-form";
@@ -26,7 +27,9 @@ export default function SignupDemoPage() {
         "Valid data shows the success message",
       ]}
     >
-      <SignupForm />
+      <React.Suspense fallback={null}>
+        <SignupForm />
+      </React.Suspense>
     </PracticeLayout>
   );
 }
