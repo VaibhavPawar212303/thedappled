@@ -86,6 +86,10 @@ export function AssignmentCard({ signedIn, assignment }: { signedIn: boolean; as
               </Button>
             </>
           )}
+
+          <Link href="/testing/leaderboard" data-testid="card-leaderboard" className="mt-4 block text-center text-[13px] font-bold text-blue-600 hover:underline">
+            View leaderboard →
+          </Link>
         </div>
       </div>
     </section>
