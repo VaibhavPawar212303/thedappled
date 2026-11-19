@@ -32,15 +32,35 @@ type Raw = {
   events: { name: string; createdAt: Date }[];
 };
 
-// "Asha Kulkarni" -> "Asha K.", "Asha" -> "Asha", nothing -> "Learner A1B2" (stable, not reversible).
-export function formatName(first: string | null | undefined, last: string | null | undefined, userId: string): string {
+type NameHints = { username?: string | null; email?: string | null };
+
+// Keep only name-safe characters and cap the length. Returns "" if nothing usable is left.
+function cleanHandle(raw: string | null | undefined): string {
+  return (raw ?? "").trim().replace(/[^\p{L}\p{N}._-]/gu, "").slice(0, 24);
+}
+
+// "Asha Kulkarni" -> "Asha K.", "Asha" -> "Asha". With no first name it falls back to the Clerk
+// username, then the part of the email before "@" (e.g. "vaibhav.p"), and only then to a stable
+// anonymous "Learner A1B2" label.
+export function formatName(
+  first: string | null | undefined,
+  last: string | null | undefined,
+  userId: string,
+  hints: NameHints = {},
+): string {
   const f = (first ?? "").trim().slice(0, 24);
   const l = (last ?? "").trim();
   if (f) return l ? `${f} ${Array.from(l)[0].toUpperCase()}.` : f;
+
+  const username = cleanHandle(hints.username);
+  if (username) return username;
+
+  const local = cleanHandle((hints.email ?? "").split("@")[0].split("+")[0]);
+  if (local) return local;
+
   const code = createHash("sha256").update(userId).digest("hex").slice(0, 4).toUpperCase();
   return `Learner ${code}`;
 }
-
 
 type Ranked = { userId: string; done: number; completed: boolean; minutes: number | null };
 
@@ -81,7 +101,10 @@ async function namesFor(userIds: string[]): Promise<Map<string, string>> {
     for (let i = 0; i < userIds.length; i += 100) {
       const chunk = userIds.slice(i, i + 100);
       const { data } = await client.users.getUserList({ userId: chunk, limit: 100 });
-      for (const u of data) out.set(u.id, formatName(u.firstName, u.lastName, u.id));
+      for (const u of data) {
+        const primary = u.emailAddresses.find((e) => e.id === u.primaryEmailAddressId) ?? u.emailAddresses[0];
+        out.set(u.id, formatName(u.firstName, u.lastName, u.id, { username: u.username, email: primary?.emailAddress }));
+      }
     }
   } catch {
     // Clerk unavailable: everyone falls back to the anonymous "Learner XXXX" label below.
