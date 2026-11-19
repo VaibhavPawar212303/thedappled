@@ -22,15 +22,20 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'TheDappled',
+    default: 'TheDappled – Learn programming with courses, books & a C memory visualizer',
     template: '%s | TheDappled',
   },
-  description: 'Tutorial web app for learning new tech stack',
+  description:
+    'TheDappled is a learning platform for developers: step-by-step courses, books and articles, plus a free C compiler visualizer that shows the stack and heap as your code runs.',
+  applicationName: 'TheDappled',
+  keywords: ['TheDappled', 'The Dappled', 'learn programming', 'developer courses', 'C memory visualizer', 'stack and heap'],
   openGraph: {
     type: 'website',
     siteName: 'TheDappled',
+    locale: 'en_US',
   },
   twitter: {
+    images: ['/opengraph-image'],
     card: 'summary_large_image',
   },
 }
@@ -43,13 +48,24 @@ const structuredData = {
       '@id': `${SITE_URL}/#organization`,
       name: 'TheDappled',
       url: SITE_URL,
-      logo: `${SITE_URL}/icon.svg`,
+      logo: {
+        '@type': 'ImageObject',
+        url: `${SITE_URL}/opengraph-image`,
+        width: 1200,
+        height: 630,
+      },
+      sameAs: [
+        'https://github.com/VaibhavPawar212303',
+        'https://c-architech-compiler.vercel.app',
+      ],
     },
     {
       '@type': 'WebSite',
       '@id': `${SITE_URL}/#website`,
       name: 'TheDappled',
+      alternateName: ['The Dappled', 'Dappled', 'thedappled.com'],
       url: SITE_URL,
+      inLanguage: 'en',
       publisher: { '@id': `${SITE_URL}/#organization` },
     },
   ],
