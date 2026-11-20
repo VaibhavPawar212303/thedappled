@@ -30,7 +30,7 @@ export const STEPS: Step[] = [
   { id: "signup-success", group: "Sign up", label: "Valid details + terms show the success message" },
 ];
 
-// Stage 5. The first two steps are verified from the learner's automated test run on the demo
+// Stage 2. The first two steps are verified from the learner's automated test run on the demo
 // sign-in page; the last three come from a scan of their public GitHub repository.
 export const FRAMEWORK_STEPS: Step[] = [
   { id: "env-login", group: "Run your tests", label: "Sign in with the credentials from your .env file" },
