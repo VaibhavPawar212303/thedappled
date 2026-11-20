@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Check, X } from "lucide-react";
+import { ArrowRight, Check, FlaskConical, X } from "lucide-react";
 import { SignedIn, SignedOut, SignUpButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 
@@ -19,12 +19,18 @@ const TONES: Record<Tone, { chip: string; text: string }> = {
   green: { chip: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300", text: "text-emerald-700 dark:text-emerald-400" },
 };
 
-// Only stages with real content are shown. The earlier plan (fundamentals, test design, API testing,
+// Only tracks with real content are shown. The earlier plan (fundamentals, test design, API testing,
 // frameworks & CI, performance & security) was removed for now and can be restored from git history.
-const STAGES: { n: number; title: string; level: string; tone: Tone; blurb: string; href: string }[] = [
-  { n: 1, title: "UI automation", level: "Intermediate", tone: "purple", blurb: "Playwright & Cypress: locators, waits, page objects, debugging.", href: "/testing/ui-automation" },
-  { n: 2, title: "Framework setup", level: "Intermediate", tone: "purple", blurb: "Config and credentials in .env, tests that read them, and the project saved on GitHub with secrets.", href: "/testing/framework-setup" },
-];
+// "Automation learning" is the main card; steps 1 and 2 live inside it.
+const TRACK = {
+  title: "Automation learning",
+  level: "Intermediate",
+  blurb: "Learn Playwright and Cypress by automating real pages, then set up the framework the way teams do.",
+  steps: [
+    { n: 1, title: "UI automation", blurb: "Playwright & Cypress: locators, waits, page objects, debugging.", href: "/testing/ui-automation" },
+    { n: 2, title: "Framework setup", blurb: "Config and credentials in .env, tests that read them, and the project saved on GitHub with secrets.", href: "/testing/framework-setup" },
+  ],
+};
 
 const TOOLS = ["Playwright", "Cypress", "Selenium", "Postman", "Jest", "k6", "GitHub Actions", "TypeScript"];
 
@@ -97,28 +103,44 @@ export default function TestingPage() {
       {/* ROADMAP */}
       <section id="roadmap" className="mx-auto max-w-6xl scroll-mt-24 px-4 py-16 md:px-8 lg:py-24">
         <h2 className="text-center text-3xl font-extrabold tracking-tight sm:text-4xl">Your testing roadmap</h2>
-        <p className="mt-3 text-center text-lg text-muted-foreground">Start with UI automation — more stages are on the way.</p>
+        <p className="mt-3 text-center text-lg text-muted-foreground">Start with Automation learning — more tracks are on the way.</p>
 
-        <ol className="mx-auto mt-12 grid max-w-xl list-none gap-6 p-0">
-          {STAGES.map((s) => {
-            const tone = TONES[s.tone];
-            return (
-              <li key={s.title} className="flex flex-col rounded-2xl border bg-card p-7 shadow-sm transition hover:shadow-md">
-                <div className="flex items-start justify-between">
-                  <span className={`flex h-12 w-12 items-center justify-center rounded-xl text-xl font-extrabold ${tone.chip}`}>{s.n}</span>
-                  <span className={`rounded-full px-3 py-1 text-xs font-semibold ${tone.chip}`}>{s.level}</span>
+        <article data-testid="track-automation-learning" className="mx-auto mt-12 max-w-3xl overflow-hidden rounded-3xl border bg-card shadow-sm">
+          <div className="h-2 bg-purple-600" />
+          <div className="p-6 sm:p-8">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <span className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl ${TONES.purple.chip}`}>
+                  <FlaskConical className="h-6 w-6" />
+                </span>
+                <div>
+                  <h3 className="text-2xl font-extrabold tracking-tight">{TRACK.title}</h3>
+                  <p className="text-sm text-muted-foreground">{TRACK.steps.length} steps</p>
                 </div>
-                <h3 className="mt-5 text-xl font-bold">{s.title}</h3>
-                <p className="mt-2 flex-1 text-[15px] leading-relaxed text-muted-foreground">{s.blurb}</p>
-                <div className="mt-6 border-t pt-4">
-                  <Link href={s.href} className={`inline-flex items-center gap-1 text-sm font-semibold hover:underline ${tone.text}`}>
-                    Start stage <ArrowRight className="h-4 w-4" />
+              </div>
+              <span className={`hidden rounded-full px-3 py-1 text-xs font-semibold sm:inline-flex ${TONES.purple.chip}`}>{TRACK.level}</span>
+            </div>
+            <p className="mt-5 text-[15px] leading-relaxed text-muted-foreground">{TRACK.blurb}</p>
+
+            <ol className="m-0 mt-6 grid list-none gap-4 p-0">
+              {TRACK.steps.map((st) => (
+                <li key={st.title} data-testid={`step-card-${st.n}`}>
+                  <Link href={st.href} className="flex items-start gap-4 rounded-2xl border bg-slate-50 p-5 transition hover:shadow-md dark:bg-slate-900/40">
+                    <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-lg font-extrabold ${TONES.purple.chip}`}>{st.n}</span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-xs font-bold uppercase tracking-wide text-muted-foreground">Step {st.n}</span>
+                      <span className="mt-0.5 block text-lg font-bold">{st.title}</span>
+                      <span className="mt-1 block text-sm leading-relaxed text-muted-foreground">{st.blurb}</span>
+                    </span>
+                    <span className={`inline-flex shrink-0 items-center gap-1 self-end text-sm font-semibold ${TONES.purple.text}`}>
+                      Start step <ArrowRight className="h-4 w-4" />
+                    </span>
                   </Link>
-                </div>
-              </li>
-            );
-          })}
-        </ol>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </article>
         <p className="mt-8 text-center text-sm font-medium text-muted-foreground">More stages coming soon</p>
       </section>
 
