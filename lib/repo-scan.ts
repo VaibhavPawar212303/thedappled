@@ -25,18 +25,34 @@ const TEXT_EXT_RE = /\.(ts|tsx|js|jsx|mjs|cjs|json|ya?ml|md|txt|env|example|samp
 const SKIP_RE = /(^|\/)(node_modules|dist|build|playwright-report|test-results|\.next)\/|package-lock\.json$|pnpm-lock\.yaml$|yarn\.lock$/;
 const MAX_LEAK_FILES = 40;
 
+// Files written by Windows tools (e.g. PowerShell's `echo > .env.example`) are often UTF-16, which
+// reads as garbage if decoded as UTF-8. Detect that and decode properly; strip any BOM.
+export function decodeText(buf: Uint8Array): string {
+  const b = Buffer.from(buf);
+  if (b.length >= 2 && b[0] === 0xff && b[1] === 0xfe) return b.subarray(2).toString("utf16le");
+  if (b.length >= 2 && b[0] === 0xfe && b[1] === 0xff) return Buffer.from(b.subarray(2)).swap16().toString("utf16le");
+  // No BOM: lots of NUL bytes in a short sample means UTF-16 without one.
+  const sample = b.subarray(0, 200);
+  const nuls = sample.reduce((n, x) => n + (x === 0 ? 1 : 0), 0);
+  if (sample.length >= 4 && nuls > sample.length / 4) {
+    const oddNuls = sample.reduce((n, x, i) => n + (x === 0 && i % 2 === 1 ? 1 : 0), 0);
+    return oddNuls >= nuls / 2 ? b.toString("utf16le") : Buffer.from(b).swap16().toString("utf16le");
+  }
+  return b.toString("utf8").replace(/^\uFEFF/, "");
+}
+
 // Accepts the usual ways of ignoring a .env file: .env  /.env  **/.env  .env*  .env.*  *.env  *.env*
 const hasIgnoreRule = (gitignore: string) =>
   gitignore
     .replace(/^\uFEFF/, "")
-    .split(/\r?\n/)
+    .split(/\r\n|\r|\n/)
     .map((l) => l.trim())
     .some((l) => /^(\*\*\/)?\/?\*?\.env(\*|\.\*)?$/.test(l));
 
 const keysOf = (text: string) =>
   new Set(
     text
-      .split(/\r?\n/)
+      .split(/\r\n|\r|\n/)
       .map((l) => /^\s*(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*[=:]/.exec(l)?.[1]?.toUpperCase())
       .filter((k): k is string => Boolean(k)),
   );
@@ -92,7 +108,7 @@ export async function evaluateRepo(snap: RepoSnapshot, demoPassword: string): Pr
       const keys = keysOf(text);
       const missing = REQUIRED_KEYS.filter((k) => !keys.has(k));
       if (!missing.length) { goodExample = e; break; }
-      notes.push(`${e} is missing ${missing.join(", ")}${keys.size ? ` (it has: ${[...keys].join(", ")})` : " (it has no KEY=value lines)"}.`);
+      notes.push(`${e} is missing ${missing.join(", ")}${keys.size ? ` (it has: ${[...keys].join(", ")})` : text.trim() ? " (no KEY=value lines found — write one per line, e.g. BASE_URL=)" : " (the file is empty)"}.`);
     }
     if (!goodExample) problems.push(notes[0]);
   }
@@ -182,12 +198,12 @@ export async function loadRepo({ owner, repo }: ParsedRepo): Promise<{ snapshot:
   const viaRaw = async (path: string) => {
     const url = `${RAW()}/${owner}/${repo}/${commit}/${path.split("/").map(encodeURIComponent).join("/")}`;
     const res = await fetch(url, { cache: "no-store", signal: AbortSignal.timeout(10_000) }).catch(() => null);
-    return res && res.ok ? await res.text() : null;
+    return res && res.ok ? decodeText(new Uint8Array(await res.arrayBuffer())) : null;
   };
   const viaBlob = async (sha: string) => {
     try {
       const b = await gh<{ content: string; encoding: string }>(`${API()}/repos/${owner}/${repo}/git/blobs/${sha}`);
-      return b.encoding === "base64" ? Buffer.from(b.content, "base64").toString("utf8") : b.content;
+      return b.encoding === "base64" ? decodeText(Buffer.from(b.content, "base64")) : b.content;
     } catch {
       return null;
     }
