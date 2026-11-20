@@ -5,7 +5,15 @@ import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export function StartAssignmentButton({ label = "Start assignment" }: { label?: string }) {
+export function StartAssignmentButton({
+  label = "Start assignment",
+  slug = "ui-automation",
+  className = "bg-emerald-600 hover:bg-emerald-700",
+}: {
+  label?: string;
+  slug?: "ui-automation" | "framework-setup";
+  className?: string;
+}) {
   const router = useRouter();
   const [busy, setBusy] = React.useState(false);
   const [error, setError] = React.useState(false);
@@ -14,9 +22,9 @@ export function StartAssignmentButton({ label = "Start assignment" }: { label?: 
     setBusy(true);
     setError(false);
     try {
-      const r = await fetch("/api/assignments/ui-automation", { method: "POST" });
+      const r = await fetch(`/api/assignments/${slug}`, { method: "POST" });
       if (!r.ok) throw new Error();
-      router.push("/testing/ui-automation/assignment");
+      router.push(`/testing/${slug}/assignment`);
     } catch {
       setError(true);
       setBusy(false);
@@ -30,7 +38,7 @@ export function StartAssignmentButton({ label = "Start assignment" }: { label?: 
         onClick={start}
         disabled={busy}
         size="lg"
-        className="h-12 w-full bg-emerald-600 text-white hover:bg-emerald-700"
+        className={`h-12 w-full text-white ${className}`}
       >
         {busy ? "Starting…" : label} {!busy && <ArrowRight className="ml-2 h-4 w-4" />}
       </Button>
