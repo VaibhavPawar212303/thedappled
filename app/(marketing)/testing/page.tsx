@@ -22,8 +22,8 @@ const TONES: Record<Tone, { chip: string; text: string }> = {
 // Only stages with real content are shown. The earlier plan (fundamentals, test design, API testing,
 // frameworks & CI, performance & security) was removed for now and can be restored from git history.
 const STAGES: { n: number; title: string; level: string; tone: Tone; blurb: string; href: string }[] = [
-  { n: 4, title: "UI automation", level: "Intermediate", tone: "purple", blurb: "Playwright & Cypress: locators, waits, page objects, debugging.", href: "/testing/ui-automation" },
-  { n: 5, title: "Framework setup", level: "Intermediate", tone: "purple", blurb: "Config and credentials in .env, tests that read them, and the project saved on GitHub with secrets.", href: "/testing/framework-setup" },
+  { n: 1, title: "UI automation", level: "Intermediate", tone: "purple", blurb: "Playwright & Cypress: locators, waits, page objects, debugging.", href: "/testing/ui-automation" },
+  { n: 2, title: "Framework setup", level: "Intermediate", tone: "purple", blurb: "Config and credentials in .env, tests that read them, and the project saved on GitHub with secrets.", href: "/testing/framework-setup" },
 ];
 
 const TOOLS = ["Playwright", "Cypress", "Selenium", "Postman", "Jest", "k6", "GitHub Actions", "TypeScript"];
