@@ -2,7 +2,7 @@ import { createHash } from "crypto";
 import { unstable_cache } from "next/cache";
 import { clerkClient } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db";
-import { STEPS, UI_AUTOMATION } from "@/lib/assignments";
+import { stepsFor, UI_AUTOMATION, type AssignmentSlug } from "@/lib/assignments";
 import { minutesBetween } from "@/lib/leaderboard-utils";
 
 export { formatMinutes, minutesBetween } from "@/lib/leaderboard-utils";
@@ -81,9 +81,10 @@ type Ranked = { userId: string; done: number; completed: boolean; minutes: numbe
 
 // Completed learners first (fastest time, then earliest finish); then in-progress by checks done
 // (ties: whoever reached that count first); learners with no checks yet last, by start time.
-export function rankLearners(raw: Raw[]): Ranked[] {
-  const total = STEPS.length;
-  const ids = new Set<string>(STEPS.map((s) => s.id));
+export function rankLearners(raw: Raw[], slug: string = UI_AUTOMATION): Ranked[] {
+  const steps = stepsFor(slug);
+  const total = steps.length;
+  const ids = new Set<string>(steps.map((s) => s.id));
   const items = raw.map((a) => {
     const valid = a.events.filter((e) => e.verified && ids.has(e.name));
     const done = valid.length;
@@ -174,13 +175,13 @@ type CachedBoard = {
   rows: { key: string; name: string; done: number; total: number; completed: boolean; minutes: number | null }[];
 };
 
-async function buildBoard(strict: boolean): Promise<CachedBoard> {
+async function buildBoard(slug: AssignmentSlug, strict: boolean): Promise<CachedBoard> {
   const raw = await prisma.assignment.findMany({
-    where: { slug: UI_AUTOMATION },
+    where: { slug },
     select: { userId: true, startedAt: true, completedAt: true, events: { select: { name: true, createdAt: true, verified: true } } },
     take: 2000,
   });
-  const ranked = rankLearners(raw);
+  const ranked = rankLearners(raw, slug);
   const names = await resolveNames(ranked.map((r) => r.userId), strict);
   // Rows carry a hashed key instead of the user id: it is only used to mark "you" per request.
   return {
@@ -189,7 +190,7 @@ async function buildBoard(strict: boolean): Promise<CachedBoard> {
       done: r.done,
       completed: r.completed,
       minutes: r.minutes,
-      total: STEPS.length,
+      total: stepsFor(slug).length,
       name: names.get(r.userId) ?? formatName(null, null, r.userId),
     })),
   };
@@ -197,16 +198,24 @@ async function buildBoard(strict: boolean): Promise<CachedBoard> {
 
 // Cached for 30s. If the name lookup fails this throws, so nothing is cached and an older cached
 // board (with real names) keeps being served until a lookup succeeds again.
-const loadBoard = unstable_cache(() => buildBoard(true), ["testing-leaderboard-ui-automation"], { revalidate: 30 });
+const loaders = new Map<string, () => Promise<CachedBoard>>();
+function loadBoard(slug: AssignmentSlug) {
+  let load = loaders.get(slug);
+  if (!load) {
+    load = unstable_cache(() => buildBoard(slug, true), [`testing-leaderboard-${slug}`], { revalidate: 30 });
+    loaders.set(slug, load);
+  }
+  return load();
+}
 
-export async function getBoard(currentUserId: string | null): Promise<Board> {
+export async function getBoard(currentUserId: string | null, slug: AssignmentSlug = UI_AUTOMATION): Promise<Board> {
   let rows: CachedBoard["rows"];
   try {
-    ({ rows } = await loadBoard());
+    ({ rows } = await loadBoard(slug));
   } catch {
     // Name lookup failed and there is no cached board yet: show the ranking with whatever names we
     // know, without caching it, so the next request tries Clerk again.
-    ({ rows } = await buildBoard(false));
+    ({ rows } = await buildBoard(slug, false));
   }
   const myKey = currentUserId ? learnerKey(currentUserId) : null;
   const completed = rows.filter((r) => r.completed);
@@ -227,8 +236,8 @@ export async function getBoard(currentUserId: string | null): Promise<Board> {
   };
 }
 
-export async function getRankFor(userId: string): Promise<{ rank: number; total: number } | null> {
-  const board = await getBoard(userId);
+export async function getRankFor(userId: string, slug: AssignmentSlug = UI_AUTOMATION): Promise<{ rank: number; total: number } | null> {
+  const board = await getBoard(userId, slug);
   const me = board.rows.find((r) => r.isYou);
   return me ? { rank: me.rank, total: board.learners } : null;
 }

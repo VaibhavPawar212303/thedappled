@@ -48,7 +48,7 @@ test('signs in with the .env credentials', async ({ page }) => {
   await expect(page.getByTestId('env-success')).toBeVisible();
 });`;
 
-export function FrameworkView({ initial, env, siteUrl }: { initial: AssignmentStatus; env: Env; siteUrl: string }) {
+export function FrameworkView({ initial, env, siteUrl, rank }: { initial: AssignmentStatus; env: Env; siteUrl: string; rank?: { rank: number; total: number } | null }) {
   const [status, setStatus] = React.useState(initial);
   const [showPw, setShowPw] = React.useState(false);
   const [repoUrl, setRepoUrl] = React.useState("");
@@ -102,6 +102,18 @@ export function FrameworkView({ initial, env, siteUrl }: { initial: AssignmentSt
     : 0;
   const groups = ["Run your tests", "Save it on GitHub"] as const;
 
+  const rankChip = (
+    <Link href="/testing/leaderboard?stage=framework-setup" data-testid="assignment-rank" className="inline-flex items-center gap-3 rounded-xl border bg-card px-4 py-2.5 text-sm shadow-sm hover:shadow-md">
+      {rank && (
+        <span>
+          <span className="text-muted-foreground">Rank </span>
+          <span className="font-extrabold">#{rank.rank} of {rank.total}</span>
+        </span>
+      )}
+      <span className="font-bold text-blue-600">View leaderboard →</span>
+    </Link>
+  );
+
   return (
     <div className="bg-slate-50 dark:bg-slate-900/40">
       <div className="mx-auto max-w-6xl px-4 py-10 md:px-8">
@@ -128,14 +140,18 @@ export function FrameworkView({ initial, env, siteUrl }: { initial: AssignmentSt
             </Button>
           </div>
         ) : (
-          <div>
-            <h1 className="text-3xl font-extrabold tracking-tight md:text-4xl">Assignment: framework setup</h1>
-            <div className="mt-3 flex flex-wrap items-center gap-3 text-sm">
-              <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-950 dark:text-amber-300">● In progress</span>
-              <span className="text-muted-foreground">Test runs update live · GitHub checks run when you submit your repo</span>
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <h1 className="text-3xl font-extrabold tracking-tight md:text-4xl">Assignment: framework setup</h1>
+              <div className="mt-3 flex flex-wrap items-center gap-3 text-sm">
+                <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-950 dark:text-amber-300">● In progress</span>
+                <span className="text-muted-foreground">Test runs update live · GitHub checks run when you submit your repo</span>
+              </div>
             </div>
+            {rankChip}
           </div>
         )}
+        {completed && <div className="mt-4 flex justify-end">{rankChip}</div>}
 
         <div className="mt-8 grid items-start gap-6 lg:grid-cols-[1.15fr_1fr]">
           <section className="min-w-0 rounded-2xl border bg-card p-6 shadow-sm sm:p-8">

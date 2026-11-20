@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import { FRAMEWORK_SETUP, getAssignmentForUser } from "@/lib/assignments";
 import { demoCredentials } from "@/lib/framework-creds";
+import { getRankFor } from "@/lib/leaderboard";
 import { SITE_URL } from "@/lib/seo";
 import { FrameworkView } from "../_components/framework-view";
 
@@ -22,5 +23,6 @@ export default async function FrameworkAssignmentPage() {
 
   const c = demoCredentials(assignment.token);
   const env = { BASE_URL: SITE_URL, ASSIGNMENT_TOKEN: assignment.token, DEMO_EMAIL: c.email, DEMO_PASSWORD: c.password };
-  return <FrameworkView initial={assignment} env={env} siteUrl={SITE_URL} />;
+  const rank = await getRankFor(userId, FRAMEWORK_SETUP).catch(() => null);
+  return <FrameworkView initial={assignment} env={env} siteUrl={SITE_URL} rank={rank} />;
 }
