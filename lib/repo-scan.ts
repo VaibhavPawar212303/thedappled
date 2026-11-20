@@ -18,23 +18,26 @@ export const REQUIRED_KEYS = ["BASE_URL", "DEMO_EMAIL", "DEMO_PASSWORD"] as cons
 const CONFIG_RE = /(^|\/)(playwright|cypress)\.config\.(ts|js|mjs|cjs|mts|cts)$/;
 const ENV_USE_RE = /process\.env|dotenv|Cypress\.env|loadEnv|\benv\s*:/;
 const WORKFLOW_RE = /^\.github\/workflows\/[^/]+\.ya?ml$/;
-const EXAMPLE_RE = /(^|\/)\.env\.(example|sample|template)$/;
+const EXAMPLE_RE = /(^|\/)(\.env\.(example|sample|template|dist)|env\.example|example\.env)$/;
+const GITIGNORE_RE = /(^|\/)\.gitignore$/;
 const REAL_ENV_RE = /(^|\/)\.env(\.(local|development|production|test|staging))?$/;
 const TEXT_EXT_RE = /\.(ts|tsx|js|jsx|mjs|cjs|json|ya?ml|md|txt|env|example|sample|template)$/i;
 const SKIP_RE = /(^|\/)(node_modules|dist|build|playwright-report|test-results|\.next)\/|package-lock\.json$|pnpm-lock\.yaml$|yarn\.lock$/;
 const MAX_LEAK_FILES = 40;
 
+// Accepts the usual ways of ignoring a .env file: .env  /.env  **/.env  .env*  .env.*  *.env  *.env*
 const hasIgnoreRule = (gitignore: string) =>
   gitignore
+    .replace(/^\uFEFF/, "")
     .split(/\r?\n/)
     .map((l) => l.trim())
-    .some((l) => /^\/?\*?\.env(\*|\.\*|\.local)?$/.test(l) || l === "*.env");
+    .some((l) => /^(\*\*\/)?\/?\*?\.env(\*|\.\*)?$/.test(l));
 
 const keysOf = (text: string) =>
   new Set(
     text
       .split(/\r?\n/)
-      .map((l) => /^\s*(?:export\s+)?([A-Z][A-Z0-9_]*)\s*=/.exec(l)?.[1])
+      .map((l) => /^\s*(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*[=:]/.exec(l)?.[1]?.toUpperCase())
       .filter((k): k is string => Boolean(k)),
   );
 
@@ -70,22 +73,40 @@ export async function evaluateRepo(snap: RepoSnapshot, demoPassword: string): Pr
 
   // 2) .env ignored and not committed, .env.example committed with the keys and no password
   const committedEnv = paths.filter((p) => REAL_ENV_RE.test(p));
-  const gitignore = (await get(".gitignore")) ?? "";
+  const gitignores = paths.filter((p) => GITIGNORE_RE.test(p));
+  let ignored = false;
+  for (const g of gitignores) if (hasIgnoreRule((await get(g)) ?? "")) { ignored = true; break; }
   const examples = paths.filter((p) => EXAMPLE_RE.test(p));
   const problems: string[] = [];
   if (committedEnv.length) problems.push(`${committedEnv[0]} is committed — remove it from git (git rm --cached) and ignore it.`);
-  if (!hasIgnoreRule(gitignore)) problems.push(".gitignore does not list .env.");
-  if (!examples.length) problems.push("No .env.example file is committed.");
-  else {
-    const ex = (await get(examples[0])) ?? "";
-    const keys = keysOf(ex);
-    const missing = REQUIRED_KEYS.filter((k) => !keys.has(k));
-    if (missing.length) problems.push(`${examples[0]} is missing ${missing.join(", ")}.`);
+  if (!ignored) problems.push(gitignores.length ? ".gitignore does not list .env (add a line: .env)." : "No .gitignore found — add one that lists .env.");
+
+  let goodExample: string | null = null;
+  if (!examples.length) {
+    problems.push("No .env.example file is committed (looked for .env.example, .env.sample, .env.template).");
+  } else {
+    const notes: string[] = [];
+    for (const e of examples) {
+      const text = await get(e);
+      if (text === null) { notes.push(`Couldn't read ${e} from GitHub just now — wait a minute and check again.`); continue; }
+      const keys = keysOf(text);
+      const missing = REQUIRED_KEYS.filter((k) => !keys.has(k));
+      if (!missing.length) { goodExample = e; break; }
+      notes.push(`${e} is missing ${missing.join(", ")}${keys.size ? ` (it has: ${[...keys].join(", ")})` : " (it has no KEY=value lines)"}.`);
+    }
+    if (!goodExample) problems.push(notes[0]);
   }
-  if (leakFiles.length) problems.push(`The demo password appears in ${leakFiles[0]} — keep it only in .env and GitHub secrets.`);
+  if (leakFiles.length) {
+    const inExample = leakFiles.find((f) => EXAMPLE_RE.test(f));
+    problems.push(
+      inExample
+        ? `${inExample} contains your real demo password — .env.example must list the keys only (DEMO_PASSWORD=).`
+        : `The demo password appears in ${leakFiles[0]} — keep it only in .env and GitHub secrets.`,
+    );
+  }
   const ignore: RepoCheck = problems.length
-    ? { ok: false, message: problems[0], found: [...committedEnv, ...leakFiles] }
-    : { ok: true, message: ".env is ignored, not committed, and .env.example lists the keys.", found: examples };
+    ? { ok: false, message: problems.join(" "), found: [...committedEnv, ...leakFiles] }
+    : { ok: true, message: ".env is ignored, not committed, and .env.example lists the keys.", found: goodExample ? [goodExample] : [] };
 
   // 3) a workflow runs the tests with repository secrets
   const workflows = paths.filter((p) => WORKFLOW_RE.test(p));
@@ -144,23 +165,42 @@ async function gh<T>(url: string): Promise<T> {
   return (await res.json()) as T;
 }
 
+type TreeNode = { path: string; type: string; size?: number; sha?: string };
+
 export async function loadRepo({ owner, repo }: ParsedRepo): Promise<{ snapshot: RepoSnapshot; branch: string }> {
   const meta = await gh<{ default_branch: string; private?: boolean }>(`${API()}/repos/${owner}/${repo}`);
   const branch = meta.default_branch;
-  const tree = await gh<{ tree: { path: string; type: string; size?: number }[] }>(
-    `${API()}/repos/${owner}/${repo}/git/trees/${encodeURIComponent(branch)}?recursive=1`,
-  );
+  // Pin everything to the branch's current commit: raw.githubusercontent caches branch URLs for a few
+  // minutes, so a file pushed a moment ago could read as missing or old. A commit URL never goes stale.
+  const refPath = branch.split("/").map(encodeURIComponent).join("/");
+  const ref = await gh<{ object: { sha: string } }>(`${API()}/repos/${owner}/${repo}/git/ref/heads/${refPath}`);
+  const commit = ref.object.sha;
+  const tree = await gh<{ tree: TreeNode[] }>(`${API()}/repos/${owner}/${repo}/git/trees/${commit}?recursive=1`);
   const files = tree.tree.filter((n) => n.type === "blob");
-  const sizes = new Map(files.map((f) => [f.path, f.size ?? 0]));
+  const byPath = new Map(files.map((f) => [f.path, f]));
+
+  const viaRaw = async (path: string) => {
+    const url = `${RAW()}/${owner}/${repo}/${commit}/${path.split("/").map(encodeURIComponent).join("/")}`;
+    const res = await fetch(url, { cache: "no-store", signal: AbortSignal.timeout(10_000) }).catch(() => null);
+    return res && res.ok ? await res.text() : null;
+  };
+  const viaBlob = async (sha: string) => {
+    try {
+      const b = await gh<{ content: string; encoding: string }>(`${API()}/repos/${owner}/${repo}/git/blobs/${sha}`);
+      return b.encoding === "base64" ? Buffer.from(b.content, "base64").toString("utf8") : b.content;
+    } catch {
+      return null;
+    }
+  };
+
   return {
     branch,
     snapshot: {
       paths: files.map((f) => f.path),
       read: async (path) => {
-        if ((sizes.get(path) ?? 0) > 200_000) return null;
-        const url = `${RAW()}/${owner}/${repo}/${encodeURIComponent(branch)}/${path.split("/").map(encodeURIComponent).join("/")}`;
-        const res = await fetch(url, { cache: "no-store", signal: AbortSignal.timeout(10_000) }).catch(() => null);
-        return res && res.ok ? await res.text() : null;
+        const node = byPath.get(path);
+        if (!node || (node.size ?? 0) > 200_000) return null;
+        return (await viaRaw(path)) ?? (node.sha ? await viaBlob(node.sha) : null);
       },
     },
   };
