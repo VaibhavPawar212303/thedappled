@@ -2,8 +2,8 @@ import { getBookProgress } from "@/actions/get-book-progress"; // ✅ Import the
 import { prisma } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { BookNavbar } from "./ _components/book-navbar";
-import { BookSidebar } from "./ _components/book-sidebar";
+import { BookNavbar } from "./_components/book-navbar";
+import { BookSidebar } from "./_components/book-sidebar";
 import { AppLogoLink } from "@/app/_components/app-logo-link";
 
 
