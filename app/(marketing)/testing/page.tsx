@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Check, FlaskConical, X } from "lucide-react";
+import { ArrowRight, Check, FlaskConical, Search, X } from "lucide-react";
 import { SignedIn, SignedOut, SignUpButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 
@@ -19,19 +19,45 @@ const TONES: Record<Tone, { chip: string; text: string }> = {
   green: { chip: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300", text: "text-emerald-700 dark:text-emerald-400" },
 };
 
-// Only tracks with real content are shown. The earlier plan (fundamentals, test design, API testing,
-// frameworks & CI, performance & security) was removed for now and can be restored from git history.
-// "Automation learning" is the main card; steps 1 and 2 live inside it.
-const TRACK = {
-  title: "Automation learning",
-  level: "Intermediate",
-  blurb: "Learn Playwright and Cypress by automating real pages, set up the framework the way teams do, then structure it with page objects and fixtures.",
-  steps: [
-    { n: 1, title: "UI automation", blurb: "Playwright & Cypress: locators, waits, page objects, debugging.", href: "/testing/ui-automation", isNew: false },
-    { n: 2, title: "Framework setup", blurb: "Config and credentials in .env, tests that read them, and the project saved on GitHub with secrets.", href: "/testing/framework-setup", isNew: false },
-    { n: 3, title: "Page objects & fixtures", blurb: "Move locators into page classes, share setup with fixtures, keep specs readable.", href: "/testing/page-objects", isNew: true },
-  ],
-};
+// Design: Penpot "26 - Testing Learning Path", Roadmap page, board "Testing roadmap — manual + automation tracks (new)".
+// Two tracks side by side. Steps without an href have no page yet and show "Coming soon".
+type Step = { n: number; title: string; blurb: string; href?: string; isNew?: boolean };
+type Track = { id: string; title: string; level: string; tone: Tone; Icon: typeof FlaskConical; isNew?: boolean; blurb: string; steps: Step[]; stepTestId: (n: number) => string };
+
+const TRACKS: Track[] = [
+  {
+    id: "manual-testing",
+    title: "Manual testing",
+    level: "Beginner",
+    tone: "blue",
+    Icon: Search,
+    isNew: true,
+    blurb: "Learn how testers think before you automate: plan tests, design cases, report bugs clearly and explore an app to find what breaks.",
+    steps: [
+      { n: 1, title: "Testing fundamentals", blurb: "SDLC and STLC, test levels and types, and what makes a good tester." },
+      { n: 2, title: "Test design techniques", blurb: "Equivalence partitioning, boundary values and decision tables." },
+      { n: 3, title: "Test cases & bug reports", blurb: "Write clear test cases and defect reports with steps, severity and priority." },
+      { n: 4, title: "Exploratory testing", blurb: "Charters, time-boxed sessions and notes that find real bugs." },
+    ],
+    stepTestId: (n) => `manual-step-card-${n}`,
+  },
+  {
+    id: "automation-learning",
+    title: "Automation learning",
+    level: "Intermediate",
+    tone: "purple",
+    Icon: FlaskConical,
+    blurb: "Learn Playwright and Cypress by automating real pages, set up the framework the way teams do, then structure it with page objects and fixtures.",
+    steps: [
+      { n: 1, title: "UI automation", blurb: "Playwright & Cypress: locators, waits, page objects, debugging.", href: "/testing/ui-automation" },
+      { n: 2, title: "Framework setup", blurb: "Config and credentials in .env, tests that read them, and the project saved on GitHub with secrets.", href: "/testing/framework-setup" },
+      { n: 3, title: "Page objects & fixtures", blurb: "Move locators into page classes, share setup with fixtures, keep specs readable.", href: "/testing/page-objects", isNew: true },
+    ],
+    stepTestId: (n) => `step-card-${n}`, // unchanged ids for the existing track
+  },
+];
+
+const BAR: Record<Tone, string> = { blue: "bg-blue-600", purple: "bg-purple-600", green: "bg-emerald-600" };
 
 const TOOLS = ["Playwright", "Cypress", "Selenium", "Postman", "Jest", "k6", "GitHub Actions", "TypeScript"];
 
@@ -104,47 +130,73 @@ export default function TestingPage() {
       {/* ROADMAP */}
       <section id="roadmap" className="mx-auto max-w-6xl scroll-mt-24 px-4 py-16 md:px-8 lg:py-24">
         <h2 className="text-center text-3xl font-extrabold tracking-tight sm:text-4xl">Your testing roadmap</h2>
-        <p className="mt-3 text-center text-lg text-muted-foreground">Start with Automation learning — more tracks are on the way.</p>
+        <p className="mt-3 text-center text-lg text-muted-foreground">Two tracks — start with manual testing if you&apos;re new, or jump straight into automation.</p>
 
-        <article data-testid="track-automation-learning" className="mx-auto mt-12 max-w-3xl overflow-hidden rounded-3xl border bg-card shadow-sm">
-          <div className="h-2 bg-purple-600" />
-          <div className="p-6 sm:p-8">
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <span className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl ${TONES.purple.chip}`}>
-                  <FlaskConical className="h-6 w-6" />
-                </span>
-                <div>
-                  <h3 className="text-2xl font-extrabold tracking-tight">{TRACK.title}</h3>
-                  <p className="text-sm text-muted-foreground">{TRACK.steps.length} steps</p>
-                </div>
-              </div>
-              <span className={`hidden rounded-full px-3 py-1 text-xs font-semibold sm:inline-flex ${TONES.purple.chip}`}>{TRACK.level}</span>
-            </div>
-            <p className="mt-5 text-[15px] leading-relaxed text-muted-foreground">{TRACK.blurb}</p>
-
-            <ol className="m-0 mt-6 grid list-none gap-4 p-0">
-              {TRACK.steps.map((st) => (
-                <li key={st.title} data-testid={`step-card-${st.n}`}>
-                  <Link href={st.href} className="flex items-start gap-4 rounded-2xl border bg-slate-50 p-5 transition hover:shadow-md dark:bg-slate-900/40">
-                    <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-lg font-extrabold ${TONES.purple.chip}`}>{st.n}</span>
-                    <span className="min-w-0 flex-1">
-                      <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
-                        Step {st.n}
-                        {st.isNew && <span className={`rounded-full px-2 py-0.5 text-[11px] normal-case tracking-normal ${TONES.green.chip}`}>New</span>}
+        <div className="mt-12 grid items-stretch gap-8 lg:grid-cols-2">
+          {TRACKS.map((track) => {
+            const tone = TONES[track.tone];
+            return (
+              <article key={track.id} data-testid={`track-${track.id}`} className="flex flex-col overflow-hidden rounded-3xl border bg-card shadow-sm">
+                <div className={`h-2 ${BAR[track.tone]}`} />
+                <div className="flex-1 p-6 sm:p-8">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      <span className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl ${tone.chip}`}>
+                        <track.Icon className="h-6 w-6" />
                       </span>
-                      <span className="mt-0.5 block text-lg font-bold">{st.title}</span>
-                      <span className="mt-1 block text-sm leading-relaxed text-muted-foreground">{st.blurb}</span>
+                      <div>
+                        <h3 className="text-2xl font-extrabold tracking-tight">{track.title}</h3>
+                        <p className="text-sm text-muted-foreground">{track.steps.length} steps</p>
+                      </div>
+                    </div>
+                    <span className="hidden shrink-0 gap-2 sm:flex">
+                      {track.isNew && <span className={`rounded-full px-3 py-1 text-xs font-semibold ${TONES.green.chip}`}>New</span>}
+                      <span className={`rounded-full px-3 py-1 text-xs font-semibold ${tone.chip}`}>{track.level}</span>
                     </span>
-                    <span className={`inline-flex shrink-0 items-center gap-1 self-end text-sm font-semibold ${TONES.purple.text}`}>
-                      Start step <ArrowRight className="h-4 w-4" />
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </article>
+                  </div>
+                  <p className="mt-5 text-[15px] leading-relaxed text-muted-foreground">{track.blurb}</p>
+
+                  <ol className="m-0 mt-6 grid list-none gap-4 p-0">
+                    {track.steps.map((st) => {
+                      const body = (
+                        <>
+                          <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-lg font-extrabold ${tone.chip}`}>{st.n}</span>
+                          <span className="min-w-0 flex-1">
+                            <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                              Step {st.n}
+                              {st.isNew && <span className={`rounded-full px-2 py-0.5 text-[11px] normal-case tracking-normal ${TONES.green.chip}`}>New</span>}
+                            </span>
+                            <span className="mt-0.5 block text-lg font-bold">{st.title}</span>
+                            <span className="mt-1 block text-sm leading-relaxed text-muted-foreground">{st.blurb}</span>
+                          </span>
+                          {st.href ? (
+                            <span className={`inline-flex shrink-0 items-center gap-1 self-end text-sm font-semibold ${tone.text}`}>
+                              Start step <ArrowRight className="h-4 w-4" />
+                            </span>
+                          ) : (
+                            <span className="shrink-0 self-end rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-500 dark:bg-slate-800 dark:text-slate-400">
+                              Coming soon
+                            </span>
+                          )}
+                        </>
+                      );
+                      const cls = "flex items-start gap-4 rounded-2xl border bg-slate-50 p-5 dark:bg-slate-900/40";
+                      return (
+                        <li key={st.title} data-testid={track.stepTestId(st.n)}>
+                          {st.href ? (
+                            <Link href={st.href} className={`${cls} transition hover:shadow-md`}>{body}</Link>
+                          ) : (
+                            <div className={cls} aria-disabled="true">{body}</div>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ol>
+                </div>
+              </article>
+            );
+          })}
+        </div>
         <p className="mt-8 text-center text-sm font-medium text-muted-foreground">More stages coming soon</p>
       </section>
 

@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1120" viewBox="0 0 1440 1120" font-family="Inter, sans-serif">
+  <!-- /testing roadmap section — two tracks side by side: Manual testing (new, beginner, coming soon) and Automation learning. -->
+  <rect width="1440" height="1120" fill="#ffffff"/>
+
+  <text x="720" y="110" font-size="40" font-weight="800" fill="#0f172a" text-anchor="middle">Your testing roadmap</text>
+  <text x="720" y="150" font-size="19" fill="#64748b" text-anchor="middle">Two tracks — start with manual testing if you're new, or jump straight into automation.</text>
+
+  <!-- ============ MANUAL TESTING (left) ============ -->
+  <rect x="140" y="200" width="560" height="800" rx="24" fill="#fff" stroke="#e2e8f0"/>
+  <rect x="140" y="200" width="560" height="8" rx="4" fill="#2563eb"/>
+  <rect x="172" y="240" width="56" height="56" rx="16" fill="#dbeafe"/>
+  <circle cx="196" cy="264" r="10" stroke="#2563eb" stroke-width="3" fill="none"/><line x1="203" y1="271" x2="212" y2="280" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/>
+  <text x="248" y="264" font-size="24" font-weight="800" fill="#0f172a">Manual testing</text>
+  <text x="248" y="288" font-size="14" fill="#64748b">4 steps</text>
+  <rect x="568" y="246" width="100" height="28" rx="14" fill="#dbeafe"/><text x="618" y="265" font-size="12" font-weight="700" fill="#1d4ed8" text-anchor="middle">Beginner</text>
+  <rect x="490" y="246" width="70" height="28" rx="14" fill="#d1fae5"/><text x="525" y="265" font-size="12" font-weight="700" fill="#047857" text-anchor="middle">New</text>
+  <text x="172" y="340" font-size="15" fill="#475569">Learn how testers think before you automate: plan tests, design</text>
+  <text x="172" y="362" font-size="15" fill="#475569">cases, report bugs clearly and explore an app to find what breaks.</text>
+
+  <g>
+    <rect x="172" y="392" width="496" height="128" rx="16" fill="#f8fafc" stroke="#e2e8f0"/>
+    <rect x="192" y="412" width="44" height="44" rx="12" fill="#dbeafe"/><text x="214" y="441" font-size="18" font-weight="800" fill="#1d4ed8" text-anchor="middle">1</text>
+    <text x="252" y="424" font-size="11" font-weight="700" fill="#64748b" letter-spacing="0.5">STEP 1</text>
+    <text x="252" y="446" font-size="17" font-weight="700" fill="#0f172a">Testing fundamentals</text>
+    <text x="252" y="470" font-size="13" fill="#64748b">SDLC and STLC, test levels and types, and what</text>
+    <text x="252" y="488" font-size="13" fill="#64748b">makes a good tester.</text>
+    <rect x="556" y="482" width="96" height="24" rx="12" fill="#f1f5f9"/><text x="604" y="498" font-size="11" font-weight="700" fill="#64748b" text-anchor="middle">Coming soon</text>
+
+    <rect x="172" y="536" width="496" height="128" rx="16" fill="#f8fafc" stroke="#e2e8f0"/>
+    <rect x="192" y="556" width="44" height="44" rx="12" fill="#dbeafe"/><text x="214" y="585" font-size="18" font-weight="800" fill="#1d4ed8" text-anchor="middle">2</text>
+    <text x="252" y="568" font-size="11" font-weight="700" fill="#64748b" letter-spacing="0.5">STEP 2</text>
+    <text x="252" y="590" font-size="17" font-weight="700" fill="#0f172a">Test design techniques</text>
+    <text x="252" y="614" font-size="13" fill="#64748b">Equivalence partitioning, boundary values and</text>
+    <text x="252" y="632" font-size="13" fill="#64748b">decision tables.</text>
+    <rect x="556" y="626" width="96" height="24" rx="12" fill="#f1f5f9"/><text x="604" y="642" font-size="11" font-weight="700" fill="#64748b" text-anchor="middle">Coming soon</text>
+
+    <rect x="172" y="680" width="496" height="128" rx="16" fill="#f8fafc" stroke="#e2e8f0"/>
+    <rect x="192" y="700" width="44" height="44" rx="12" fill="#dbeafe"/><text x="214" y="729" font-size="18" font-weight="800" fill="#1d4ed8" text-anchor="middle">3</text>
+    <text x="252" y="712" font-size="11" font-weight="700" fill="#64748b" letter-spacing="0.5">STEP 3</text>
+    <text x="252" y="734" font-size="17" font-weight="700" fill="#0f172a">Test cases &amp; bug reports</text>
+    <text x="252" y="758" font-size="13" fill="#64748b">Write clear test cases and defect reports with</text>
+    <text x="252" y="776" font-size="13" fill="#64748b">steps, severity and priority.</text>
+    <rect x="556" y="770" width="96" height="24" rx="12" fill="#f1f5f9"/><text x="604" y="786" font-size="11" font-weight="700" fill="#64748b" text-anchor="middle">Coming soon</text>
+
+    <rect x="172" y="824" width="496" height="128" rx="16" fill="#f8fafc" stroke="#e2e8f0"/>
+    <rect x="192" y="844" width="44" height="44" rx="12" fill="#dbeafe"/><text x="214" y="873" font-size="18" font-weight="800" fill="#1d4ed8" text-anchor="middle">4</text>
+    <text x="252" y="856" font-size="11" font-weight="700" fill="#64748b" letter-spacing="0.5">STEP 4</text>
+    <text x="252" y="878" font-size="17" font-weight="700" fill="#0f172a">Exploratory testing</text>
+    <text x="252" y="902" font-size="13" fill="#64748b">Charters, time-boxed sessions and notes that</text>
+    <text x="252" y="920" font-size="13" fill="#64748b">find real bugs.</text>
+    <rect x="556" y="914" width="96" height="24" rx="12" fill="#f1f5f9"/><text x="604" y="930" font-size="11" font-weight="700" fill="#64748b" text-anchor="middle">Coming soon</text>
+  </g>
+
+  <!-- ============ AUTOMATION LEARNING (right) ============ -->
+  <rect x="740" y="200" width="560" height="800" rx="24" fill="#fff" stroke="#e2e8f0"/>
+  <rect x="740" y="200" width="560" height="8" rx="4" fill="#9333ea"/>
+  <rect x="772" y="240" width="56" height="56" rx="16" fill="#f3e8ff"/>
+  <path d="M793 254 h14 M796 254 v12 l-8 16 h24 l-8 -16 v-12" stroke="#9333ea" stroke-width="2.5" fill="none" stroke-linejoin="round"/>
+  <text x="848" y="264" font-size="24" font-weight="800" fill="#0f172a">Automation learning</text>
+  <text x="848" y="288" font-size="14" fill="#64748b">3 steps</text>
+  <rect x="1156" y="246" width="112" height="28" rx="14" fill="#f3e8ff"/><text x="1212" y="265" font-size="12" font-weight="700" fill="#7e22ce" text-anchor="middle">Intermediate</text>
+  <text x="772" y="340" font-size="15" fill="#475569">Learn Playwright and Cypress by automating real pages, set up</text>
+  <text x="772" y="362" font-size="15" fill="#475569">the framework the way teams do, then add page objects.</text>
+
+  <g>
+    <rect x="772" y="392" width="496" height="128" rx="16" fill="#f8fafc" stroke="#e2e8f0"/>
+    <rect x="792" y="412" width="44" height="44" rx="12" fill="#f3e8ff"/><text x="814" y="441" font-size="18" font-weight="800" fill="#7e22ce" text-anchor="middle">1</text>
+    <text x="852" y="424" font-size="11" font-weight="700" fill="#64748b" letter-spacing="0.5">STEP 1</text>
+    <text x="852" y="446" font-size="17" font-weight="700" fill="#0f172a">UI automation</text>
+    <text x="852" y="470" font-size="13" fill="#64748b">Playwright &amp; Cypress: locators, waits, page</text>
+    <text x="852" y="488" font-size="13" fill="#64748b">objects, debugging.</text>
+    <text x="1248" y="498" font-size="13" font-weight="700" fill="#9333ea" text-anchor="end">Start step →</text>
+
+    <rect x="772" y="536" width="496" height="128" rx="16" fill="#f8fafc" stroke="#e2e8f0"/>
+    <rect x="792" y="556" width="44" height="44" rx="12" fill="#f3e8ff"/><text x="814" y="585" font-size="18" font-weight="800" fill="#7e22ce" text-anchor="middle">2</text>
+    <text x="852" y="568" font-size="11" font-weight="700" fill="#64748b" letter-spacing="0.5">STEP 2</text>
+    <text x="852" y="590" font-size="17" font-weight="700" fill="#0f172a">Framework setup</text>
+    <text x="852" y="614" font-size="13" fill="#64748b">Config and credentials in .env, tests that read</text>
+    <text x="852" y="632" font-size="13" fill="#64748b">them, saved on GitHub with secrets.</text>
+    <text x="1248" y="642" font-size="13" font-weight="700" fill="#9333ea" text-anchor="end">Start step →</text>
+
+    <rect x="772" y="680" width="496" height="128" rx="16" fill="#f8fafc" stroke="#e2e8f0"/>
+    <rect x="792" y="700" width="44" height="44" rx="12" fill="#f3e8ff"/><text x="814" y="729" font-size="18" font-weight="800" fill="#7e22ce" text-anchor="middle">3</text>
+    <text x="852" y="712" font-size="11" font-weight="700" fill="#64748b" letter-spacing="0.5">STEP 3</text>
+    <rect x="904" y="699" width="42" height="18" rx="9" fill="#d1fae5"/><text x="925" y="712" font-size="10" font-weight="700" fill="#047857" text-anchor="middle">New</text>
+    <text x="852" y="734" font-size="17" font-weight="700" fill="#0f172a">Page objects &amp; fixtures</text>
+    <text x="852" y="758" font-size="13" fill="#64748b">Move locators into page classes, share setup</text>
+    <text x="852" y="776" font-size="13" fill="#64748b">with fixtures, keep specs readable.</text>
+    <text x="1248" y="786" font-size="13" font-weight="700" fill="#9333ea" text-anchor="end">Start step →</text>
+  </g>
+
+  <text x="720" y="1060" font-size="15" font-weight="500" fill="#64748b" text-anchor="middle">More stages coming soon</text>
+</svg>
