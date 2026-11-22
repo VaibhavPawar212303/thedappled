@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1180" viewBox="0 0 1440 1180" font-family="Inter, sans-serif">
+  <!-- /testing/page-objects/assignment — in-progress state (2 of 6 verified, one repo check failing). -->
+  <rect width="1440" height="1180" fill="#f8fafc"/>
+
+  <!-- header -->
+  <rect width="1440" height="72" fill="#ffffff"/>
+  <line x1="0" y1="72" x2="1440" y2="72" stroke="#e2e8f0"/>
+  <g transform="translate(64,22)">
+    <rect x="0" y="0" width="6" height="28" rx="2" fill="#0f172a"/>
+    <rect x="0" y="0" width="20" height="6" rx="2" fill="#0f172a"/>
+    <rect x="0" y="22" width="20" height="6" rx="2" fill="#0f172a"/>
+    <rect x="10" y="9" width="8" height="5" rx="2" fill="#3987e5"/>
+    <rect x="10" y="15" width="8" height="5" rx="2" fill="#3987e5"/>
+    <text x="30" y="21" font-size="20" font-weight="700" fill="#0f172a">Thedappled</text>
+  </g>
+  <g font-size="15" font-weight="500" fill="#64748b">
+    <text x="560" y="42">Courses</text><text x="650" y="42">Books</text><text x="725" y="42">Blogs</text>
+    <text x="800" y="42" fill="#047857" font-weight="700">Testing</text><text x="885" y="42">Compiler</text>
+  </g>
+
+  <!-- breadcrumb + title -->
+  <text x="184" y="122" font-size="14" fill="#64748b">Testing   /   Page objects &amp; fixtures   /   <tspan font-weight="600" fill="#0f172a">Assignment</tspan></text>
+  <text x="184" y="182" font-size="36" font-weight="800" fill="#0f172a" letter-spacing="-0.5">Assignment: page objects &amp; fixtures</text>
+  <rect x="184" y="202" width="104" height="26" rx="13" fill="#fef3c7"/>
+  <text x="236" y="220" font-size="12" font-weight="600" fill="#b45309" text-anchor="middle">● In progress</text>
+  <text x="302" y="220" font-size="14" fill="#64748b">Test runs update live · GitHub checks run when you submit your repo</text>
+  <rect x="1046" y="160" width="210" height="44" rx="12" fill="#fff" stroke="#e2e8f0"/>
+  <text x="1151" y="188" font-size="14" font-weight="700" fill="#2563eb" text-anchor="middle">View leaderboard →</text>
+
+  <!-- LEFT: requirements -->
+  <rect x="184" y="260" width="580" height="660" rx="16" fill="#fff" stroke="#e2e8f0"/>
+  <text x="216" y="304" font-size="20" font-weight="800" fill="#0f172a">Requirements</text>
+  <text x="732" y="304" font-size="16" font-weight="800" fill="#047857" text-anchor="end">2 of 6 verified</text>
+  <rect x="216" y="322" width="516" height="8" rx="4" fill="#e2e8f0"/>
+  <rect x="216" y="322" width="172" height="8" rx="4" fill="#059669"/>
+
+  <text x="216" y="370" font-size="12" font-weight="700" fill="#64748b" letter-spacing="0.5">RUN YOUR TESTS</text>
+  <g font-size="15">
+    <circle cx="228" cy="398" r="12" fill="#059669"/><text x="228" y="403" font-size="12" fill="#fff" text-anchor="middle">✓</text>
+    <text x="252" y="403" font-weight="500" fill="#0f172a">Sign in to the shop through your LoginPage</text>
+    <rect x="652" y="386" width="80" height="22" rx="11" fill="#d1fae5"/><text x="692" y="401" font-size="12" font-weight="600" fill="#047857" text-anchor="middle">Verified</text>
+
+    <circle cx="228" cy="438" r="12" fill="#059669"/><text x="228" y="443" font-size="12" fill="#fff" text-anchor="middle">✓</text>
+    <text x="252" y="443" font-weight="500" fill="#0f172a">Add two products to the cart</text>
+    <rect x="652" y="426" width="80" height="22" rx="11" fill="#d1fae5"/><text x="692" y="441" font-size="12" font-weight="600" fill="#047857" text-anchor="middle">Verified</text>
+
+    <circle cx="228" cy="478" r="11" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
+    <text x="252" y="483" font-weight="500" fill="#64748b">Checkout shows the order confirmation</text>
+  </g>
+
+  <text x="216" y="536" font-size="12" font-weight="700" fill="#64748b" letter-spacing="0.5">STRUCTURE ON GITHUB</text>
+  <g font-size="15">
+    <circle cx="228" cy="564" r="11" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
+    <text x="252" y="569" font-weight="500" fill="#64748b">pages/ has LoginPage, ProductsPage and CartPage</text>
+
+    <circle cx="228" cy="604" r="11" fill="#fee2e2" stroke="#ef4444" stroke-width="2"/><text x="228" y="609" font-size="11" font-weight="800" fill="#b91c1c" text-anchor="middle">✕</text>
+    <text x="252" y="609" font-weight="500" fill="#0f172a">A fixture provides the page objects to tests</text>
+    <text x="252" y="631" font-size="13" font-weight="600" fill="#b91c1c">No test.extend() or Cypress.Commands.add() found under tests/ or cypress/.</text>
+
+    <circle cx="228" cy="666" r="11" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
+    <text x="252" y="671" font-weight="500" fill="#64748b">Spec files use page objects only (no raw locators)</text>
+  </g>
+
+  <line x1="216" y1="712" x2="732" y2="712" stroke="#e2e8f0"/>
+  <text x="216" y="744" font-size="12" font-weight="700" fill="#64748b" letter-spacing="0.5">GITHUB REPOSITORY</text>
+  <rect x="216" y="760" width="352" height="48" rx="10" fill="#fff" stroke="#cbd5e1"/>
+  <text x="232" y="790" font-size="14" fill="#0f172a">https://github.com/you/dappled-pom</text>
+  <rect x="580" y="760" width="152" height="48" rx="10" fill="#059669"/>
+  <text x="656" y="790" font-size="14" font-weight="600" fill="#fff" text-anchor="middle">Check again</text>
+  <text x="216" y="834" font-size="13" fill="#64748b">Public repos only. We read files through the GitHub API; nothing is cloned.</text>
+  <text x="216" y="854" font-size="13" fill="#64748b">We keep your repo name and the result.</text>
+  <text x="216" y="884" font-size="13" fill="#64748b">Checked you/dappled-pom @ main just now.</text>
+
+  <!-- RIGHT column -->
+  <!-- your values -->
+  <rect x="788" y="260" width="468" height="292" rx="16" fill="#fff" stroke="#e2e8f0"/>
+  <text x="820" y="304" font-size="20" font-weight="800" fill="#0f172a">Your shop link</text>
+  <text x="820" y="328" font-size="13" fill="#64748b">Add these to your .env (from stage 2). Never commit it.</text>
+  <rect x="820" y="346" width="404" height="150" rx="12" fill="#0f172a"/>
+  <g font-family="JetBrains Mono, monospace" font-size="12" fill="#e2e8f0">
+    <text x="838" y="374">BASE_URL=https://thedappled.com</text>
+    <text x="838" y="398">ASSIGNMENT_TOKEN=k3Pq9xZr2mWb</text>
+    <text x="838" y="422">SHOP_EMAIL=you+k3Pq@demo.thedappled</text>
+    <text x="838" y="446">SHOP_PASSWORD=••••••••••••</text>
+  </g>
+  <rect x="838" y="460" width="70" height="26" rx="8" fill="#334155"/><text x="873" y="477" font-size="12" font-weight="600" fill="#fff" text-anchor="middle">Copy</text>
+  <rect x="916" y="460" width="118" height="26" rx="8" fill="#334155"/><text x="975" y="477" font-size="12" font-weight="600" fill="#fff" text-anchor="middle">Show password</text>
+  <text x="820" y="528" font-size="13" fill="#64748b">Shop: <tspan font-family="JetBrains Mono, monospace" fill="#0f172a">/testing/page-objects/shop?a=k3Pq9xZr2mWb</tspan></text>
+
+  <!-- how it works -->
+  <rect x="788" y="576" width="468" height="344" rx="16" fill="#fff" stroke="#e2e8f0"/>
+  <text x="820" y="618" font-size="18" font-weight="800" fill="#0f172a">How it works</text>
+  <g font-size="14" font-weight="500" fill="#0f172a">
+    <circle cx="832" cy="650" r="12" fill="#0f172a"/><text x="832" y="655" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">1</text>
+    <text x="854" y="655">Open the shop link and explore the 3 screens</text>
+    <circle cx="832" cy="686" r="12" fill="#0f172a"/><text x="832" y="691" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">2</text>
+    <text x="854" y="691">Write a class per screen in pages/</text>
+    <circle cx="832" cy="722" r="12" fill="#0f172a"/><text x="832" y="727" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">3</text>
+    <text x="854" y="727">Add a fixture that creates them for each test</text>
+    <circle cx="832" cy="758" r="12" fill="#0f172a"/><text x="832" y="763" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">4</text>
+    <text x="854" y="763">Write checkout.spec using only page objects</text>
+    <circle cx="832" cy="794" r="12" fill="#0f172a"/><text x="832" y="799" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">5</text>
+    <text x="854" y="799">Run it, push to GitHub, paste the repo URL</text>
+  </g>
+  <text x="820" y="846" font-size="14" font-weight="700" fill="#047857">▸ Show a Playwright example</text>
+  <text x="820" y="874" font-size="12" fill="#64748b">Expands to: pages/LoginPage.ts, fixtures.ts (test.extend),</text>
+  <text x="820" y="892" font-size="12" fill="#64748b">and a 6-line checkout.spec.ts — dark code block, JetBrains Mono.</text>
+
+  <!-- completed state strip -->
+  <text x="184" y="980" font-size="12" font-weight="700" fill="#64748b" letter-spacing="0.5">COMPLETED STATE (replaces the title row)</text>
+  <rect x="184" y="996" width="1072" height="140" rx="24" fill="#047857"/>
+  <circle cx="264" cy="1066" r="40" fill="#ffffff" opacity="0.15"/>
+  <text x="264" y="1080" font-size="36" fill="#fff" text-anchor="middle">✓</text>
+  <text x="328" y="1056" font-size="28" font-weight="800" fill="#fff">Assignment complete!</text>
+  <text x="328" y="1086" font-size="15" fill="#d1fae5">Your tests run through page objects and fixtures — specs read like plain steps.</text>
+  <text x="328" y="1110" font-size="13" fill="#a7f3d0">Took 74 minutes</text>
+  <rect x="1060" y="1044" width="164" height="44" rx="10" fill="#fff"/>
+  <text x="1142" y="1072" font-size="14" font-weight="600" fill="#047857" text-anchor="middle">Back to roadmap</text>
+</svg>

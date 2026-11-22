@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1060" viewBox="0 0 1440 1060" font-family="Inter, sans-serif">
+  <!-- /testing/page-objects — Stage 3 landing. Accent: emerald (stage 1 blue, stage 2 purple). -->
+  <defs>
+    <clipPath id="card"><rect x="184" y="404" width="1072" height="372" rx="24"/></clipPath>
+  </defs>
+  <rect width="1440" height="1060" fill="#ffffff"/>
+
+  <!-- header -->
+  <rect width="1440" height="72" fill="#ffffff"/>
+  <line x1="0" y1="72" x2="1440" y2="72" stroke="#e2e8f0"/>
+  <g transform="translate(64,22)">
+    <rect x="0" y="0" width="6" height="28" rx="2" fill="#0f172a"/>
+    <rect x="0" y="0" width="20" height="6" rx="2" fill="#0f172a"/>
+    <rect x="0" y="22" width="20" height="6" rx="2" fill="#0f172a"/>
+    <rect x="10" y="9" width="8" height="5" rx="2" fill="#3987e5"/>
+    <rect x="10" y="15" width="8" height="5" rx="2" fill="#3987e5"/>
+    <text x="30" y="21" font-size="20" font-weight="700" fill="#0f172a">Thedappled</text>
+  </g>
+  <g font-size="15" font-weight="500" fill="#64748b">
+    <text x="560" y="42">Courses</text><text x="650" y="42">Books</text><text x="725" y="42">Blogs</text>
+    <text x="800" y="42" fill="#047857" font-weight="700">Testing</text><text x="885" y="42">Compiler</text>
+  </g>
+  <rect x="1236" y="18" width="140" height="36" rx="10" fill="#2563eb"/>
+  <text x="1306" y="41" font-size="14" font-weight="600" fill="#fff" text-anchor="middle">Get started</text>
+
+  <!-- hero -->
+  <rect x="0" y="73" width="1440" height="295" fill="#f8fafc"/>
+  <circle cx="1250" cy="200" r="150" fill="#a7f3d0" opacity="0.35"/>
+  <text x="184" y="124" font-size="14" fill="#64748b">Testing   /   <tspan font-weight="600" fill="#0f172a">Page objects &amp; fixtures</tspan></text>
+  <rect x="184" y="148" width="172" height="26" rx="13" fill="#d1fae5"/>
+  <text x="270" y="166" font-size="12" font-weight="600" fill="#047857" text-anchor="middle">Stage 3 · Intermediate</text>
+  <text x="184" y="230" font-size="48" font-weight="800" fill="#0f172a" letter-spacing="-1">Page objects &amp; fixtures</text>
+  <text x="184" y="272" font-size="18" fill="#64748b">Structure your Playwright or Cypress tests the way teams do: locators live in page</text>
+  <text x="184" y="296" font-size="18" fill="#64748b">classes, setup lives in fixtures, and specs read like plain steps.</text>
+  <text x="184" y="340" font-size="14" font-weight="500" fill="#64748b">What you will practise: Page Object Model · fixtures · test.extend / custom commands · reuse · readable specs</text>
+
+  <!-- assignment card -->
+  <rect x="184" y="404" width="1072" height="372" rx="24" fill="#fff" stroke="#10b981"/>
+  <rect x="184" y="404" width="1072" height="8" fill="#059669" clip-path="url(#card)"/>
+  <rect x="216" y="444" width="92" height="26" rx="13" fill="#d1fae5"/>
+  <text x="262" y="462" font-size="12" font-weight="600" fill="#047857" text-anchor="middle">Assignment</text>
+  <text x="216" y="512" font-size="30" font-weight="800" fill="#0f172a" letter-spacing="-0.5">Page objects for the demo shop</text>
+  <text x="216" y="546" font-size="16" fill="#64748b">Automate the 3-screen demo shop (sign in → products → cart) using one class per</text>
+  <text x="216" y="570" font-size="16" fill="#64748b">page and a fixture that hands those classes to your tests. Then push it to GitHub.</text>
+  <g font-size="15" font-weight="500" fill="#0f172a">
+    <circle cx="226" cy="614" r="10" fill="#d1fae5"/><text x="226" y="619" font-size="11" fill="#047857" text-anchor="middle">✓</text>
+    <text x="246" y="619">Checkout flow passes through LoginPage, ProductsPage, CartPage</text>
+    <circle cx="226" cy="646" r="10" fill="#d1fae5"/><text x="226" y="651" font-size="11" fill="#047857" text-anchor="middle">✓</text>
+    <text x="246" y="651">A fixture (test.extend or custom commands) provides the page objects</text>
+    <circle cx="226" cy="678" r="10" fill="#d1fae5"/><text x="226" y="683" font-size="11" fill="#047857" text-anchor="middle">✓</text>
+    <text x="246" y="683">Spec files have no raw locators — only page-object calls</text>
+  </g>
+
+  <!-- right panel: signed in, not started -->
+  <rect x="852" y="444" width="372" height="300" rx="16" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="876" y="490" font-size="30" font-weight="800" fill="#0f172a">6 checks</text>
+  <text x="876" y="514" font-size="14" fill="#64748b">3 test runs · 3 GitHub checks</text>
+  <rect x="876" y="534" width="324" height="8" rx="4" fill="#e2e8f0"/>
+  <text x="876" y="574" font-size="14" font-weight="500" fill="#64748b">Not started — 0 of 6 done</text>
+  <rect x="876" y="592" width="324" height="48" rx="10" fill="#059669"/>
+  <text x="1038" y="622" font-size="15" font-weight="600" fill="#fff" text-anchor="middle">Start assignment →</text>
+  <text x="1038" y="664" font-size="13" fill="#64748b" text-anchor="middle">Takes about 60–90 minutes</text>
+  <text x="1038" y="700" font-size="13" font-weight="700" fill="#2563eb" text-anchor="middle">View leaderboard →</text>
+
+  <!-- how it works -->
+  <rect x="184" y="812" width="1072" height="200" rx="16" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="216" y="856" font-size="20" font-weight="800" fill="#0f172a">How the assignment works</text>
+  <g font-size="14" fill="#64748b">
+    <text x="216" y="896" font-size="15" font-weight="700" fill="#047857">1. Model the pages</text>
+    <text x="216" y="920">Write LoginPage, ProductsPage and CartPage</text>
+    <text x="216" y="940">classes in a pages/ folder. Locators and</text>
+    <text x="216" y="960">actions live there — nowhere else.</text>
+
+    <text x="572" y="896" font-size="15" font-weight="700" fill="#047857">2. Wire up fixtures</text>
+    <text x="572" y="920">Extend the test runner so every test gets</text>
+    <text x="572" y="940">ready-made page objects (and a signed-in</text>
+    <text x="572" y="960">page) without repeating setup.</text>
+
+    <text x="928" y="896" font-size="15" font-weight="700" fill="#047857">3. Run it and push</text>
+    <text x="928" y="920">Run the checkout spec against the demo shop,</text>
+    <text x="928" y="940">push the project to GitHub and paste the</text>
+    <text x="928" y="960">repo URL so we can check the structure.</text>
+  </g>
+</svg>

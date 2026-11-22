@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900" font-family="Inter, sans-serif">
+  <!-- /testing/page-objects/shop?a=TOKEN — the practice app students automate.
+       Three screens, one URL, swapped client-side: Sign in → Products → Cart (+ confirmation).
+       Every interactive element has a data-testid (shown in mono under it, for the design only). -->
+  <rect width="1440" height="900" fill="#f8fafc"/>
+
+  <!-- practice banner (same as stage 1 practice layout) -->
+  <rect width="1440" height="44" fill="#ecfdf5"/>
+  <text x="720" y="28" font-size="13" font-weight="600" fill="#047857" text-anchor="middle">Practice page · Stage 3 assignment — progress is recorded against your token</text>
+
+  <!-- Screen 1: sign in -->
+  <text x="64" y="96" font-size="12" font-weight="700" fill="#64748b" letter-spacing="0.5">SCREEN 1 · SIGN IN</text>
+  <rect x="64" y="112" width="400" height="420" rx="16" fill="#fff" stroke="#e2e8f0"/>
+  <text x="96" y="160" font-size="22" font-weight="800" fill="#0f172a">Dappled Shop</text>
+  <text x="96" y="186" font-size="14" fill="#64748b">Sign in with your shop credentials.</text>
+  <text x="96" y="224" font-size="13" font-weight="600" fill="#0f172a">Email</text>
+  <rect x="96" y="234" width="336" height="42" rx="10" fill="#fff" stroke="#cbd5e1"/>
+  <text x="96" y="292" font-size="10" font-family="JetBrains Mono, monospace" fill="#94a3b8">shop-email</text>
+  <text x="96" y="318" font-size="13" font-weight="600" fill="#0f172a">Password</text>
+  <rect x="96" y="328" width="336" height="42" rx="10" fill="#fff" stroke="#cbd5e1"/>
+  <text x="96" y="386" font-size="10" font-family="JetBrains Mono, monospace" fill="#94a3b8">shop-password</text>
+  <rect x="96" y="404" width="336" height="44" rx="10" fill="#059669"/>
+  <text x="264" y="432" font-size="15" font-weight="600" fill="#fff" text-anchor="middle">Sign in</text>
+  <text x="96" y="464" font-size="10" font-family="JetBrains Mono, monospace" fill="#94a3b8">shop-signin</text>
+  <rect x="96" y="478" width="336" height="34" rx="8" fill="#fef2f2"/>
+  <text x="112" y="500" font-size="13" font-weight="600" fill="#b91c1c">Wrong email or password.   <tspan font-family="JetBrains Mono, monospace" font-size="10" fill="#f87171">shop-error</tspan></text>
+
+  <!-- Screen 2: products -->
+  <text x="504" y="96" font-size="12" font-weight="700" fill="#64748b" letter-spacing="0.5">SCREEN 2 · PRODUCTS</text>
+  <rect x="504" y="112" width="440" height="560" rx="16" fill="#fff" stroke="#e2e8f0"/>
+  <text x="536" y="160" font-size="22" font-weight="800" fill="#0f172a">Products</text>
+  <rect x="822" y="138" width="90" height="32" rx="16" fill="#f1f5f9"/>
+  <text x="867" y="159" font-size="13" font-weight="700" fill="#0f172a" text-anchor="middle">Cart · 2</text>
+  <text x="867" y="186" font-size="10" font-family="JetBrains Mono, monospace" fill="#94a3b8" text-anchor="middle">cart-link / cart-count</text>
+  <g font-size="14">
+    <rect x="536" y="204" width="376" height="96" rx="12" fill="#f8fafc" stroke="#e2e8f0"/>
+    <rect x="552" y="220" width="64" height="64" rx="10" fill="#dbeafe"/>
+    <text x="632" y="244" font-weight="700" fill="#0f172a">Testing Notebook</text>
+    <text x="632" y="266" fill="#64748b">₹299</text>
+    <rect x="812" y="234" width="84" height="34" rx="8" fill="#059669"/><text x="854" y="256" font-size="13" font-weight="600" fill="#fff" text-anchor="middle">Add</text>
+    <text x="632" y="288" font-size="10" font-family="JetBrains Mono, monospace" fill="#94a3b8">product-notebook / add-notebook</text>
+
+    <rect x="536" y="312" width="376" height="96" rx="12" fill="#f8fafc" stroke="#e2e8f0"/>
+    <rect x="552" y="328" width="64" height="64" rx="10" fill="#f3e8ff"/>
+    <text x="632" y="352" font-weight="700" fill="#0f172a">Bug Hunter Mug</text>
+    <text x="632" y="374" fill="#64748b">₹449</text>
+    <rect x="812" y="342" width="84" height="34" rx="8" fill="#fff" stroke="#059669"/><text x="854" y="364" font-size="13" font-weight="600" fill="#047857" text-anchor="middle">Added ✓</text>
+    <text x="632" y="396" font-size="10" font-family="JetBrains Mono, monospace" fill="#94a3b8">product-mug / add-mug</text>
+
+    <rect x="536" y="420" width="376" height="96" rx="12" fill="#f8fafc" stroke="#e2e8f0"/>
+    <rect x="552" y="436" width="64" height="64" rx="10" fill="#d1fae5"/>
+    <text x="632" y="460" font-weight="700" fill="#0f172a">Green Build Sticker Pack</text>
+    <text x="632" y="482" fill="#64748b">₹99</text>
+    <rect x="812" y="450" width="84" height="34" rx="8" fill="#fff" stroke="#059669"/><text x="854" y="472" font-size="13" font-weight="600" fill="#047857" text-anchor="middle">Added ✓</text>
+    <text x="632" y="504" font-size="10" font-family="JetBrains Mono, monospace" fill="#94a3b8">product-stickers / add-stickers</text>
+
+    <rect x="536" y="528" width="376" height="96" rx="12" fill="#f8fafc" stroke="#e2e8f0"/>
+    <rect x="552" y="544" width="64" height="64" rx="10" fill="#fef3c7"/>
+    <text x="632" y="568" font-weight="700" fill="#0f172a">Flaky Test Stress Ball</text>
+    <text x="632" y="590" fill="#64748b">₹199</text>
+    <rect x="812" y="558" width="84" height="34" rx="8" fill="#059669"/><text x="854" y="580" font-size="13" font-weight="600" fill="#fff" text-anchor="middle">Add</text>
+    <text x="632" y="612" font-size="10" font-family="JetBrains Mono, monospace" fill="#94a3b8">product-ball / add-ball</text>
+  </g>
+  <text x="536" y="652" font-size="12" fill="#64748b">Demo items only — nothing is sold or charged.</text>
+
+  <!-- Screen 3: cart + confirmation -->
+  <text x="984" y="96" font-size="12" font-weight="700" fill="#64748b" letter-spacing="0.5">SCREEN 3 · CART → CONFIRMATION</text>
+  <rect x="984" y="112" width="392" height="380" rx="16" fill="#fff" stroke="#e2e8f0"/>
+  <text x="1016" y="160" font-size="22" font-weight="800" fill="#0f172a">Your cart</text>
+  <g font-size="14" fill="#0f172a">
+    <text x="1016" y="204">Bug Hunter Mug</text><text x="1344" y="204" text-anchor="end">₹449</text>
+    <text x="1016" y="236">Green Build Sticker Pack</text><text x="1344" y="236" text-anchor="end">₹99</text>
+    <text x="1016" y="252" font-size="10" font-family="JetBrains Mono, monospace" fill="#94a3b8">cart-item (×2) · remove-item</text>
+    <line x1="1016" y1="268" x2="1344" y2="268" stroke="#e2e8f0"/>
+    <text x="1016" y="298" font-weight="800">Total</text><text x="1344" y="298" font-weight="800" text-anchor="end">₹548</text>
+    <text x="1344" y="316" font-size="10" font-family="JetBrains Mono, monospace" fill="#94a3b8" text-anchor="end">cart-total</text>
+  </g>
+  <rect x="1016" y="336" width="328" height="44" rx="10" fill="#059669"/>
+  <text x="1180" y="364" font-size="15" font-weight="600" fill="#fff" text-anchor="middle">Place order</text>
+  <text x="1016" y="396" font-size="10" font-family="JetBrains Mono, monospace" fill="#94a3b8">place-order</text>
+  <text x="1016" y="430" font-size="13" font-weight="700" fill="#2563eb">← Keep shopping</text>
+  <text x="1016" y="448" font-size="10" font-family="JetBrains Mono, monospace" fill="#94a3b8">back-to-products</text>
+
+  <rect x="984" y="512" width="392" height="160" rx="16" fill="#ecfdf5" stroke="#10b981"/>
+  <circle cx="1040" cy="568" r="24" fill="#059669"/><text x="1040" y="576" font-size="22" fill="#fff" text-anchor="middle">✓</text>
+  <text x="1080" y="562" font-size="18" font-weight="800" fill="#065f46">Order placed</text>
+  <text x="1080" y="586" font-size="14" fill="#047857">Order #DP-1042 · 2 items · ₹548</text>
+  <text x="1016" y="640" font-size="10" font-family="JetBrains Mono, monospace" fill="#059669">order-confirmation / order-id</text>
+
+  <!-- notes -->
+  <rect x="64" y="712" width="1312" height="150" rx="12" fill="#fffbeb" stroke="#f59e0b" stroke-dasharray="4 4"/>
+  <text x="88" y="742" font-size="13" font-weight="700" fill="#b45309">Design notes</text>
+  <g font-size="13" fill="#92400e">
+    <text x="88" y="768">· One URL, three screens swapped in place, so learners must model page state (not just URLs). Reports go to the same event API as stages 1–2.</text>
+    <text x="88" y="790">· Verified events: "pom-login" on sign-in, "pom-cart" when 2+ items are in the cart, "pom-checkout" on Place order. Same automation checks as before (no hand-driven runs).</text>
+    <text x="88" y="812">· Product order is shuffled per load and test ids stay stable — rewards testid locators over nth-child, and a real reason to centralise them in page objects.</text>
+    <text x="88" y="834">· Credentials come from the token (like stage 2), so the .env from stage 2 is reused.</text>
+  </g>
+</svg>
