@@ -5,8 +5,10 @@ import type { Reason, Signals, Verdict } from "@/lib/verification";
 export const UI_AUTOMATION = "ui-automation";
 export const FRAMEWORK_SETUP = "framework-setup";
 export const PAGE_OBJECTS = "page-objects";
-export type AssignmentSlug = typeof UI_AUTOMATION | typeof FRAMEWORK_SETUP | typeof PAGE_OBJECTS;
-export const ASSIGNMENT_SLUGS: AssignmentSlug[] = [UI_AUTOMATION, FRAMEWORK_SETUP, PAGE_OBJECTS];
+export const MANUAL_TESTING = "manual-testing";
+export type AssignmentSlug = typeof UI_AUTOMATION | typeof FRAMEWORK_SETUP | typeof PAGE_OBJECTS | typeof MANUAL_TESTING;
+export const AUTOMATION_SLUGS = [UI_AUTOMATION, FRAMEWORK_SETUP, PAGE_OBJECTS] as const;
+export const ASSIGNMENT_SLUGS: AssignmentSlug[] = [MANUAL_TESTING, ...AUTOMATION_SLUGS];
 export const isAssignmentSlug = (v: unknown): v is AssignmentSlug => ASSIGNMENT_SLUGS.includes(v as AssignmentSlug);
 
 export type StepId =
@@ -26,7 +28,11 @@ export type StepId =
   | "pom-checkout"
   | "repo-pages"
   | "repo-fixture"
-  | "repo-specs";
+  | "repo-specs"
+  | "manual-fundamentals"
+  | "manual-test-design"
+  | "manual-test-cases"
+  | "manual-exploratory";
 
 type Step = { id: StepId; group: string; label: string };
 
@@ -62,10 +68,25 @@ export const POM_STEPS: Step[] = [
 
 export const REPO_STEPS = new Set<StepId>(["repo-config", "repo-ignore", "repo-ci", "repo-pages", "repo-fixture", "repo-specs"]);
 
-const STEPS_BY_SLUG: Record<string, Step[]> = { [UI_AUTOMATION]: STEPS, [FRAMEWORK_SETUP]: FRAMEWORK_STEPS, [PAGE_OBJECTS]: POM_STEPS };
+// Manual testing track: one step per lesson, done when a signed-in learner scores 5/5 on its quiz
+// (graded on the server, see lib/manual-quizzes.ts). Not reported through the automation event API.
+export const MANUAL_STEPS: Step[] = [
+  { id: "manual-fundamentals", group: "Manual testing", label: "Testing fundamentals" },
+  { id: "manual-test-design", group: "Manual testing", label: "Test design techniques" },
+  { id: "manual-test-cases", group: "Manual testing", label: "Test cases & bug reports" },
+  { id: "manual-exploratory", group: "Manual testing", label: "Exploratory testing" },
+];
+const MANUAL_STEP_IDS = new Set<string>(MANUAL_STEPS.map((s) => s.id));
+
+const STEPS_BY_SLUG: Record<string, Step[]> = {
+  [UI_AUTOMATION]: STEPS,
+  [FRAMEWORK_SETUP]: FRAMEWORK_STEPS,
+  [PAGE_OBJECTS]: POM_STEPS,
+  [MANUAL_TESTING]: MANUAL_STEPS,
+};
 export const stepsFor = (slug: string): Step[] => STEPS_BY_SLUG[slug] ?? STEPS;
 
-const STEP_IDS = new Set<string>([...STEPS, ...FRAMEWORK_STEPS, ...POM_STEPS].map((s) => s.id));
+const STEP_IDS = new Set<string>([...STEPS, ...FRAMEWORK_STEPS, ...POM_STEPS, ...MANUAL_STEPS].map((s) => s.id));
 export const isStepId = (v: unknown): v is StepId => typeof v === "string" && STEP_IDS.has(v);
 
 export type AssignmentStatus = {
@@ -150,6 +171,7 @@ export type RecordResult = {
 export async function recordEvent(token: string, step: StepId, verdict: Verdict, signals: Signals): Promise<RecordResult | null> {
   const a = await prisma.assignment.findUnique({ where: { token }, select: { id: true, slug: true } });
   if (!a) return null;
+  if (a.slug === MANUAL_TESTING || MANUAL_STEP_IDS.has(step)) return null; // manual steps are only completed by passing a quiz
   const list = stepsFor(a.slug);
   if (!list.some((s) => s.id === step)) return null; // step belongs to a different stage
 
@@ -185,6 +207,35 @@ export async function recordEvent(token: string, step: StepId, verdict: Verdict,
   if (!status) return null;
   const mine = status.steps.find((s) => s.id === step);
   return { status, verified: Boolean(mine?.done), reason: mine?.done ? null : (mine?.rejected ?? verdict.reason) };
+}
+
+// Manual testing: records a quiz attempt. The first attempt starts the learner's manual-testing
+// record (their start time on the leaderboard); a perfect score marks the step done. A done step is
+// never undone by a later attempt.
+export async function recordManualQuiz(userId: string, step: StepId, perfect: boolean): Promise<AssignmentStatus> {
+  if (!MANUAL_STEP_IDS.has(step)) throw new Error(`not a manual testing step: ${step}`);
+  const status = await startAssignment(userId, MANUAL_TESTING);
+  if (!perfect) return status;
+
+  const a = await prisma.assignment.findUnique({ where: { token: status.token }, select: { id: true } });
+  if (!a) return status;
+  const existing = await prisma.assignmentEvent.findUnique({ where: { assignmentId_name: { assignmentId: a.id, name: step } } });
+  const detail = { source: "quiz", score: "5/5" };
+  if (!existing) {
+    await prisma.assignmentEvent.create({ data: { assignmentId: a.id, name: step, verified: true, signals: detail } }).catch(() => {});
+  } else if (!existing.verified) {
+    await prisma.assignmentEvent.update({ where: { id: existing.id }, data: { verified: true, reason: null, signals: detail, createdAt: new Date() } });
+  }
+
+  const verifiedEvents = await prisma.assignmentEvent.findMany({
+    where: { assignmentId: a.id, verified: true },
+    select: { createdAt: true },
+    orderBy: { createdAt: "desc" },
+  });
+  if (verifiedEvents.length >= MANUAL_STEPS.length) {
+    await prisma.assignment.update({ where: { id: a.id }, data: { completedAt: verifiedEvents[0].createdAt } });
+  }
+  return (await getStatusByToken(status.token)) ?? status;
 }
 
 // Records the outcome of a repository scan. A passing check becomes a verified step (never

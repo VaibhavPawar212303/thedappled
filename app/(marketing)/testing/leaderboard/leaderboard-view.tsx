@@ -8,14 +8,47 @@ import { Button } from "@/components/ui/button";
 import { formatMinutes } from "@/lib/leaderboard-utils";
 import type { Board, BoardRow } from "@/lib/leaderboard";
 import type { AssignmentSlug } from "@/lib/assignments";
+import { BoardTabs } from "./board-tabs";
 
 type Tab = "all" | "completed" | "progress";
 
-// Per-stage copy, links and accent colour (green for UI automation and Page objects, purple for Framework setup).
+// Per-stage copy, links and accent colour (blue for Manual testing, green for UI automation and Page
+// objects, purple for Framework setup). continueHref is where "Continue" sends a learner on the board.
 const STAGES = {
+  "manual-testing": {
+    label: "Manual testing",
+    href: "/testing/manual-testing/fundamentals",
+    continueHref: "/testing#roadmap",
+    startLabel: "Start the track",
+    continueLabel: "Continue track",
+    doneLabel: "View your progress",
+    unit: "steps",
+    sub: "See how learners are doing on the Manual testing track.",
+    startText: "Pass a lesson quiz with 5 of 5 to take the first position.",
+    checks: 4,
+    blob: "bg-blue-200/50 dark:bg-blue-900/20",
+    live: "text-blue-700 dark:text-blue-400",
+    icon: "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300",
+    solid: "bg-blue-600 text-white hover:bg-blue-700",
+    border: "border-blue-500",
+    bar: "bg-blue-600",
+    strong: "text-blue-700 dark:text-blue-400",
+    banner: "bg-blue-700",
+    bannerLabel: "text-blue-200",
+    bannerText: "text-blue-100",
+    bannerBtn: "bg-white text-blue-700 hover:bg-blue-50",
+    row: "bg-blue-50 dark:bg-blue-950/30",
+    pill: "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300",
+    tab: "border-blue-500",
+  },
   "ui-automation": {
     label: "UI automation",
     href: "/testing/ui-automation",
+    continueHref: "/testing/ui-automation/assignment",
+    startLabel: "Start the assignment",
+    continueLabel: "Continue assignment",
+    doneLabel: "View results",
+    unit: "checks",
     sub: "See how learners are doing on the UI automation assignment.",
     startText: "Complete the UI automation assignment to take the first position.",
     checks: 6,
@@ -37,6 +70,11 @@ const STAGES = {
   "framework-setup": {
     label: "Framework setup",
     href: "/testing/framework-setup",
+    continueHref: "/testing/framework-setup/assignment",
+    startLabel: "Start the assignment",
+    continueLabel: "Continue assignment",
+    doneLabel: "View results",
+    unit: "checks",
     sub: "See how learners are doing on the Framework setup assignment.",
     startText: "Complete the Framework setup assignment to take the first position.",
     checks: 5,
@@ -58,6 +96,11 @@ const STAGES = {
   "page-objects": {
     label: "Page objects",
     href: "/testing/page-objects",
+    continueHref: "/testing/page-objects/assignment",
+    startLabel: "Start the assignment",
+    continueLabel: "Continue assignment",
+    doneLabel: "View results",
+    unit: "checks",
     sub: "See how learners are doing on the Page objects & fixtures assignment.",
     startText: "Complete the Page objects assignment to take the first position.",
     checks: 6,
@@ -77,6 +120,7 @@ const STAGES = {
     tab: "border-emerald-500",
   },
 } as const;
+
 const PAGE = 10;
 
 const MEDAL = ["bg-amber-500", "bg-slate-400", "bg-orange-700"];
@@ -163,20 +207,7 @@ export function LeaderboardView({ stage, board, signedIn, hasAssignment }: { sta
           <h1 className="mt-5 text-4xl font-extrabold tracking-tight md:text-5xl">Leaderboard</h1>
           <p className="mt-3 text-lg text-muted-foreground">{st.sub}</p>
           <p className={`mt-4 text-[13px] font-semibold ${st.live}`}>● Live · updates as learners complete checks</p>
-          <div role="navigation" aria-label="Choose a stage" className="mt-6 flex flex-wrap items-center gap-3">
-            <span className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Stage</span>
-            {(Object.keys(STAGES) as AssignmentSlug[]).map((id) => (
-              <Link
-                key={id}
-                href={id === "ui-automation" ? "/testing/leaderboard" : `/testing/leaderboard?stage=${id}`}
-                data-testid={`stage-${id}`}
-                aria-current={id === stage ? "page" : undefined}
-                className={`rounded-full border px-4 py-2 text-sm font-bold transition ${id === stage ? "border-slate-900 bg-slate-900 text-white dark:border-slate-100 dark:bg-slate-100 dark:text-slate-900" : "bg-card text-muted-foreground hover:text-foreground"}`}
-              >
-                {STAGES[id].label}
-              </Link>
-            ))}
-          </div>
+          <BoardTabs current={stage} />
         </div>
       </section>
 
@@ -198,7 +229,7 @@ export function LeaderboardView({ stage, board, signedIn, hasAssignment }: { sta
             <h2 className="mt-6 text-2xl font-extrabold">No one is on the board yet</h2>
             <p className="mt-2 text-muted-foreground">{st.startText}</p>
             <Button asChild size="lg" className={`mt-6 ${st.solid}`}>
-              <Link href={st.href}>Start the assignment</Link>
+              <Link href={st.href}>{st.startLabel}</Link>
             </Button>
           </section>
         ) : (
@@ -217,7 +248,7 @@ export function LeaderboardView({ stage, board, signedIn, hasAssignment }: { sta
                           <Avatar name={r.name} i={r.rank} size="h-12 w-12 text-sm" />
                           <div className="min-w-0">
                             <p className="truncate text-lg font-extrabold">{r.name}{r.isYou ? " (you)" : ""}</p>
-                            <p className="text-[13px] text-muted-foreground">Completed all {r.total} checks</p>
+                            <p className="text-[13px] text-muted-foreground">Completed all {r.total} {st.unit}</p>
                           </div>
                         </div>
                         <div className={`mt-5 h-2 rounded-full ${st.bar}`} aria-hidden="true" />
@@ -244,20 +275,22 @@ export function LeaderboardView({ stage, board, signedIn, hasAssignment }: { sta
                   <p className={`text-[15px] font-medium ${st.bannerText}`}>
                     {you.completed
                       ? `Finished in ${formatMinutes(you.minutes)} — nice work!`
-                      : `${you.done} of ${you.total} checks done · keep going to climb the board`}
+                      : `${you.done} of ${you.total} ${st.unit} done · keep going to climb the board`}
                   </p>
                 </div>
                 <Button asChild className={st.bannerBtn}>
-                  <Link href={`${st.href}/assignment`}>{you.completed ? "View results" : "Continue assignment"}</Link>
+                  <Link href={st.continueHref}>{you.completed ? st.doneLabel : st.continueLabel}</Link>
                 </Button>
               </>
             ) : (
               <>
                 <p className="text-[15px] font-semibold">
-                  {hasAssignment ? "You’re on the board once your first check passes." : "You’re not on the board yet — start the assignment to join."}
+                  {hasAssignment
+                    ? `You’re on the board once your first ${st.unit === "steps" ? "step" : "check"} passes.`
+                    : `You’re not on the board yet — ${st.startLabel.toLowerCase()} to join.`}
                 </p>
                 <Button asChild className={st.bannerBtn}>
-                  <Link href={st.href}>{hasAssignment ? "Open assignment" : "Start the assignment"} <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                  <Link href={hasAssignment ? st.continueHref : st.href}>{hasAssignment ? st.continueLabel : st.startLabel} <ArrowRight className="ml-2 h-4 w-4" /></Link>
                 </Button>
               </>
             )}
@@ -332,7 +365,7 @@ export function LeaderboardView({ stage, board, signedIn, hasAssignment }: { sta
               </div>
             )}
             <p className="mt-6 text-center text-[13px] text-muted-foreground">
-              Names come from each learner’s profile. Ranked by time to finish, then by checks completed (out of {total}).
+              Names come from each learner’s profile. Ranked by time to finish, then by {st.unit} completed (out of {total}).
             </p>
           </section>
         )}

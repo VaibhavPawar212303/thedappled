@@ -2,7 +2,7 @@ import { createHash } from "crypto";
 import { unstable_cache } from "next/cache";
 import { clerkClient } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db";
-import { stepsFor, UI_AUTOMATION, type AssignmentSlug } from "@/lib/assignments";
+import { ASSIGNMENT_SLUGS, AUTOMATION_SLUGS, MANUAL_TESTING, stepsFor, UI_AUTOMATION, type AssignmentSlug } from "@/lib/assignments";
 import { minutesBetween } from "@/lib/leaderboard-utils";
 
 export { formatMinutes, minutesBetween } from "@/lib/leaderboard-utils";
@@ -233,6 +233,128 @@ export async function getBoard(currentUserId: string | null, slug: AssignmentSlu
     completed: completed.length,
     inProgress: rows.length - completed.length,
     fastestMinutes: completed.length ? completed[0].minutes : null,
+  };
+}
+
+// ---- All tracks board ------------------------------------------------------------------------
+// One row per learner across every board: Manual testing (4 steps) + the three Automation stages.
+// Ranked by total verified checks, then by who reached that total first.
+
+export const STAGE_LABEL: Record<AssignmentSlug, string> = {
+  [MANUAL_TESTING]: "Manual testing",
+  "ui-automation": "UI automation",
+  "framework-setup": "Framework setup",
+  "page-objects": "Page objects",
+};
+
+export const ALL_TRACKS_MAX = ASSIGNMENT_SLUGS.reduce((n, s) => n + stepsFor(s).length, 0);
+
+type StageProgress = { slug: AssignmentSlug; done: number; total: number; complete: boolean };
+
+export type AllTracksRow = {
+  rank: number;
+  name: string;
+  total: number;
+  max: number;
+  manual: { started: boolean; done: number; total: number; complete: boolean };
+  automation: { started: boolean; stagesDone: number; stages: number };
+  current: (StageProgress & { label: string }) | null; // the stage of the learner's latest passed check
+  allDone: boolean;
+  isYou: boolean;
+};
+
+export type AllTracksBoard = {
+  rows: AllTracksRow[];
+  learners: number;
+  finishedAll: number;
+  checksVerified: number;
+  mostChecks: number;
+  max: number;
+};
+
+type CachedAllRow = Omit<AllTracksRow, "rank" | "isYou"> & { key: string };
+
+type RawAssignment = Raw & { slug: string };
+type Acc = { userId: string; total: number; firstStart: number; lastAt: number; stages: Map<string, StageProgress>; current: StageProgress | null; currentAt: number };
+
+// Pure: combines each learner's assignments across all tracks and ranks them (no names, no I/O).
+export function rankAllTracks(raw: RawAssignment[]): Acc[] {
+  const byUser = new Map<string, Acc>();
+  for (const a of raw) {
+    const slug = a.slug as AssignmentSlug;
+    const steps = stepsFor(slug);
+    const ids = new Set<string>(steps.map((s) => s.id));
+    const valid = a.events.filter((e) => e.verified && ids.has(e.name));
+    const done = valid.length;
+    const last = valid.reduce((m, e) => Math.max(m, e.createdAt.getTime()), 0);
+    const progress: StageProgress = { slug, done, total: steps.length, complete: Boolean(a.completedAt) && done >= steps.length };
+
+    let u = byUser.get(a.userId);
+    if (!u) {
+      u = { userId: a.userId, total: 0, firstStart: a.startedAt.getTime(), lastAt: 0, stages: new Map(), current: null, currentAt: 0 };
+      byUser.set(a.userId, u);
+    }
+    u.total += done;
+    u.firstStart = Math.min(u.firstStart, a.startedAt.getTime());
+    u.lastAt = Math.max(u.lastAt, last);
+    u.stages.set(slug, progress);
+    if (done > 0 && last >= u.currentAt) {
+      u.current = progress;
+      u.currentAt = last;
+    }
+  }
+
+  return [...byUser.values()].sort((x, y) => {
+    if (x.total !== y.total) return y.total - x.total;
+    if (x.total > 0) return x.lastAt - y.lastAt;
+    return x.firstStart - y.firstStart;
+  });
+}
+
+async function buildAllTracks(strict: boolean): Promise<{ rows: CachedAllRow[] }> {
+  const raw = await prisma.assignment.findMany({
+    where: { slug: { in: ASSIGNMENT_SLUGS } },
+    select: { userId: true, slug: true, startedAt: true, completedAt: true, events: { select: { name: true, createdAt: true, verified: true } } },
+    take: 8000,
+  });
+  const ranked = rankAllTracks(raw);
+  const names = await resolveNames(ranked.map((r) => r.userId), strict);
+
+  return {
+    rows: ranked.map((u) => {
+      const m = u.stages.get(MANUAL_TESTING);
+      const autos = AUTOMATION_SLUGS.map((s) => u.stages.get(s)).filter((p): p is StageProgress => Boolean(p));
+      return {
+        key: learnerKey(u.userId),
+        name: names.get(u.userId) ?? formatName(null, null, u.userId),
+        total: u.total,
+        max: ALL_TRACKS_MAX,
+        manual: { started: Boolean(m), done: m?.done ?? 0, total: stepsFor(MANUAL_TESTING).length, complete: Boolean(m?.complete) },
+        automation: { started: autos.length > 0, stagesDone: autos.filter((p) => p.complete).length, stages: AUTOMATION_SLUGS.length },
+        current: u.current ? { ...u.current, label: STAGE_LABEL[u.current.slug] } : null,
+        allDone: u.total >= ALL_TRACKS_MAX,
+      };
+    }),
+  };
+}
+
+const loadAllTracks = unstable_cache(() => buildAllTracks(true), ["testing-leaderboard-all-tracks"], { revalidate: 30 });
+
+export async function getAllTracksBoard(currentUserId: string | null): Promise<AllTracksBoard> {
+  let rows: CachedAllRow[];
+  try {
+    ({ rows } = await loadAllTracks());
+  } catch {
+    ({ rows } = await buildAllTracks(false));
+  }
+  const myKey = currentUserId ? learnerKey(currentUserId) : null;
+  return {
+    rows: rows.map(({ key, ...r }, i) => ({ ...r, rank: i + 1, isYou: myKey !== null && key === myKey })),
+    learners: rows.length,
+    finishedAll: rows.filter((r) => r.allDone).length,
+    checksVerified: rows.reduce((n, r) => n + r.total, 0),
+    mostChecks: rows[0]?.total ?? 0,
+    max: ALL_TRACKS_MAX,
   };
 }
 

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { LessonLayout, SectionHead } from "../_components/lesson-layout";
-import { LessonQuiz, type QuizQuestion } from "../_components/lesson-quiz";
 
 // Design: Penpot "26 - Testing Learning Path", page "Manual testing", board "Manual 1 - Testing fundamentals".
 
@@ -56,44 +55,10 @@ const TRAITS = [
   { t: "User-minded", d: "Thinks like the people who use it." },
 ];
 
-const QUIZ: QuizQuestion[] = [
-  {
-    q: "Which level tests the whole application against the requirements?",
-    options: ["Unit testing", "Integration testing", "System testing", "Acceptance testing"],
-    answer: 2,
-    why: "System testing checks the complete, integrated application end to end against the requirements. Acceptance testing comes after, with users or the business.",
-  },
-  {
-    q: "A quick check that a new build's critical features work, before deeper testing, is called…",
-    options: ["Regression testing", "Smoke testing", "Exploratory testing", "Sanity testing"],
-    answer: 1,
-    why: "A smoke test is a broad, shallow check of a new build. Sanity testing is narrower: it checks one specific fix or change.",
-  },
-  {
-    q: "“Exhaustive testing is impossible” means testers should…",
-    options: ["Test every combination of inputs anyway", "Prioritise tests by risk", "Skip testing small features", "Only test at the end of the project"],
-    answer: 1,
-    why: "You can't test every input and path, so you focus effort where failures are most likely or most costly.",
-  },
-  {
-    q: "In which STLC phase are test cases written?",
-    options: ["Test planning", "Test case design", "Test execution", "Test closure"],
-    answer: 1,
-    why: "Test planning decides scope and approach; test case design turns that into concrete cases with steps and expected results.",
-  },
-  {
-    q: "Re-running tests after a change to make sure nothing that worked is now broken is…",
-    options: ["Regression testing", "Sanity testing", "Acceptance testing", "Unit testing"],
-    answer: 0,
-    why: "Regression testing protects existing behaviour after a code change, a bug fix or a new feature.",
-  },
-];
-
 export default function TestingFundamentalsPage() {
   return (
     <LessonLayout
-      step={1}
-      title="Testing fundamentals"
+      lesson="fundamentals"
       intro="What testing is, where it fits in a project, the levels and types of testing, and the principles every tester works by."
       minutes={20}
       toc={TOC}
@@ -200,8 +165,6 @@ export default function TestingFundamentalsPage() {
           ))}
         </ul>
       </section>
-
-      <LessonQuiz questions={QUIZ} doneText="nice work, you're ready for step 2." />
     </LessonLayout>
   );
 }

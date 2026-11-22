@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1540" viewBox="0 0 1440 1540" font-family="Inter, sans-serif">
+  <!-- /testing/leaderboard?stage=all — combined board across Manual testing + the 3 Automation stages (4+6+5+6 = 21 checks). -->
+  <rect width="1440" height="1540" fill="#ffffff"/>
+  <rect width="1440" height="72" fill="#fff"/><line x1="0" y1="72" x2="1440" y2="72" stroke="#e2e8f0"/>
+  <rect x="40" y="20" width="32" height="32" rx="8" fill="#0f172a"/><text x="56" y="42" font-size="16" font-weight="800" fill="#fff" text-anchor="middle">D</text>
+  <text x="84" y="42" font-size="20" font-weight="800" fill="#0f172a">Thedappled</text>
+  <g font-size="15" fill="#475569"><text x="520" y="42">Courses</text><text x="610" y="42">Books</text><text x="685" y="42">Blogs</text><text x="755" y="42" font-weight="700" fill="#047857">Testing</text><text x="840" y="42">Compiler</text></g>
+
+  <!-- hero -->
+  <rect y="72" width="1440" height="330" fill="#f8fafc"/>
+  <circle cx="1280" cy="190" r="120" fill="#e0e7ff" opacity="0.8"/>
+  <text x="120" y="122" font-size="14" fill="#64748b">Testing  /  <tspan font-weight="700" fill="#0f172a">Leaderboard</tspan></text>
+  <text x="120" y="196" font-size="48" font-weight="800" fill="#0f172a">Leaderboard</text>
+  <text x="120" y="236" font-size="18" fill="#475569">See how learners are doing across every track — manual and automation.</text>
+  <text x="120" y="270" font-size="13" font-weight="700" fill="#4338ca">● Live · updates as learners complete checks</text>
+  <text x="120" y="330" font-size="12" font-weight="700" fill="#64748b" letter-spacing="0.5">BOARD</text>
+  <g font-size="14" font-weight="700" text-anchor="middle">
+    <rect x="182" y="308" width="112" height="38" rx="19" fill="#0f172a"/><text x="238" y="332" fill="#fff">All tracks</text>
+    <rect x="304" y="308" width="146" height="38" rx="19" fill="#fff" stroke="#e2e8f0"/><text x="377" y="332" fill="#1d4ed8">Manual testing</text>
+    <rect x="460" y="308" width="134" height="38" rx="19" fill="#fff" stroke="#e2e8f0"/><text x="527" y="332" fill="#64748b">UI automation</text>
+    <rect x="604" y="308" width="150" height="38" rx="19" fill="#fff" stroke="#e2e8f0"/><text x="679" y="332" fill="#64748b">Framework setup</text>
+    <rect x="764" y="308" width="124" height="38" rx="19" fill="#fff" stroke="#e2e8f0"/><text x="826" y="332" fill="#64748b">Page objects</text>
+  </g>
+  <text x="904" y="332" font-size="12" fill="#94a3b8">← "Manual testing" is a new stage tab (blue), same layout as the others</text>
+
+  <!-- stats -->
+  <g>
+    <rect x="120" y="432" width="290" height="104" rx="16" fill="#fff" stroke="#e2e8f0"/><text x="144" y="482" font-size="32" font-weight="800" fill="#0f172a">48</text><text x="144" y="510" font-size="14" fill="#64748b">Learners</text>
+    <rect x="426" y="432" width="290" height="104" rx="16" fill="#fff" stroke="#e2e8f0"/><text x="450" y="482" font-size="32" font-weight="800" fill="#4338ca">3</text><text x="450" y="510" font-size="14" fill="#64748b">Finished every track</text>
+    <rect x="732" y="432" width="290" height="104" rx="16" fill="#fff" stroke="#e2e8f0"/><text x="756" y="482" font-size="32" font-weight="800" fill="#b45309">412</text><text x="756" y="510" font-size="14" fill="#64748b">Checks verified</text>
+    <rect x="1038" y="432" width="282" height="104" rx="16" fill="#fff" stroke="#e2e8f0"/><text x="1062" y="482" font-size="32" font-weight="800" fill="#2563eb">21 / 21</text><text x="1062" y="510" font-size="14" fill="#64748b">Most checks</text>
+  </g>
+
+  <!-- you banner -->
+  <rect x="120" y="566" width="1200" height="84" rx="16" fill="#4338ca"/>
+  <text x="152" y="600" font-size="12" font-weight="700" fill="#c7d2fe" letter-spacing="0.5">YOUR POSITION</text>
+  <text x="152" y="630" font-size="24" font-weight="800" fill="#fff">#9 of 48</text>
+  <text x="330" y="620" font-size="15" fill="#e0e7ff">12 of 21 checks · current stage: Framework setup (3/5)</text>
+  <rect x="1124" y="588" width="172" height="40" rx="10" fill="#fff"/><text x="1210" y="613" font-size="14" font-weight="700" fill="#4338ca" text-anchor="middle">Continue →</text>
+
+  <!-- table -->
+  <rect x="120" y="680" width="1200" height="640" rx="14" fill="#fff" stroke="#e2e8f0"/>
+  <rect x="120" y="680" width="1200" height="46" rx="14" fill="#f8fafc"/><rect x="120" y="712" width="1200" height="14" fill="#f8fafc"/>
+  <g font-size="12" font-weight="700" fill="#64748b" letter-spacing="0.5"><text x="148" y="709">#</text><text x="210" y="709">LEARNER</text><text x="460" y="709">TOTAL CHECKS</text><text x="720" y="709">TRACKS</text><text x="1020" y="709">CURRENT STAGE</text></g>
+
+  <g font-size="14">
+    <!-- row 1 -->
+    <circle cx="154" cy="770" r="14" fill="#f59e0b"/><text x="154" y="775" font-size="12" font-weight="800" fill="#fff" text-anchor="middle">1</text>
+    <circle cx="226" cy="770" r="18" fill="#dbeafe"/><text x="226" y="775" font-size="12" font-weight="800" fill="#1e3a8a" text-anchor="middle">AK</text><text x="254" y="775" font-weight="700" fill="#0f172a">Asha K.</text>
+    <rect x="460" y="765" width="170" height="8" rx="4" fill="#e2e8f0"/><rect x="460" y="765" width="170" height="8" rx="4" fill="#4338ca"/><text x="644" y="775" font-weight="700" fill="#334155">21/21</text>
+    <rect x="720" y="758" width="104" height="24" rx="12" fill="#dbeafe"/><text x="772" y="774" font-size="12" font-weight="700" fill="#1d4ed8" text-anchor="middle">Manual ✓</text>
+    <rect x="832" y="758" width="128" height="24" rx="12" fill="#f3e8ff"/><text x="896" y="774" font-size="12" font-weight="700" fill="#7e22ce" text-anchor="middle">Automation 3/3</text>
+    <rect x="1020" y="758" width="128" height="24" rx="12" fill="#e0e7ff"/><text x="1084" y="774" font-size="12" font-weight="700" fill="#4338ca" text-anchor="middle">★ All tracks done</text>
+    <line x1="140" y1="800" x2="1300" y2="800" stroke="#f1f5f9"/>
+    <!-- row 2 -->
+    <circle cx="154" cy="836" r="14" fill="#94a3b8"/><text x="154" y="841" font-size="12" font-weight="800" fill="#fff" text-anchor="middle">2</text>
+    <circle cx="226" cy="836" r="18" fill="#f3e8ff"/><text x="226" y="841" font-size="12" font-weight="800" fill="#581c87" text-anchor="middle">RM</text><text x="254" y="841" font-weight="700" fill="#0f172a">Rahul M.</text>
+    <rect x="460" y="831" width="170" height="8" rx="4" fill="#e2e8f0"/><rect x="460" y="831" width="146" height="8" rx="4" fill="#2563eb"/><text x="644" y="841" font-weight="700" fill="#334155">18/21</text>
+    <rect x="720" y="824" width="104" height="24" rx="12" fill="#dbeafe"/><text x="772" y="840" font-size="12" font-weight="700" fill="#1d4ed8" text-anchor="middle">Manual ✓</text>
+    <rect x="832" y="824" width="128" height="24" rx="12" fill="#f3e8ff"/><text x="896" y="840" font-size="12" font-weight="700" fill="#7e22ce" text-anchor="middle">Automation 2/3</text>
+    <text x="1020" y="841" fill="#334155">Page objects <tspan fill="#64748b">· 3/6</tspan></text>
+    <line x1="140" y1="866" x2="1300" y2="866" stroke="#f1f5f9"/>
+    <!-- row 3 -->
+    <circle cx="154" cy="902" r="14" fill="#c2410c"/><text x="154" y="907" font-size="12" font-weight="800" fill="#fff" text-anchor="middle">3</text>
+    <circle cx="226" cy="902" r="18" fill="#d1fae5"/><text x="226" y="907" font-size="12" font-weight="800" fill="#064e3b" text-anchor="middle">PS</text><text x="254" y="907" font-weight="700" fill="#0f172a">Priya S.</text>
+    <rect x="460" y="897" width="170" height="8" rx="4" fill="#e2e8f0"/><rect x="460" y="897" width="129" height="8" rx="4" fill="#2563eb"/><text x="644" y="907" font-weight="700" fill="#334155">16/21</text>
+    <rect x="720" y="890" width="104" height="24" rx="12" fill="#f1f5f9"/><text x="772" y="906" font-size="12" font-weight="700" fill="#64748b" text-anchor="middle">Manual 3/4</text>
+    <rect x="832" y="890" width="128" height="24" rx="12" fill="#f3e8ff"/><text x="896" y="906" font-size="12" font-weight="700" fill="#7e22ce" text-anchor="middle">Automation 2/3</text>
+    <text x="1020" y="907" fill="#334155">Exploratory testing <tspan fill="#64748b">· step 4</tspan></text>
+    <line x1="140" y1="932" x2="1300" y2="932" stroke="#f1f5f9"/>
+    <!-- you row -->
+    <rect x="121" y="934" width="1198" height="64" fill="#eef2ff"/>
+    <text x="154" y="973" font-size="14" font-weight="700" fill="#64748b" text-anchor="middle">9</text>
+    <circle cx="226" cy="968" r="18" fill="#fef3c7"/><text x="226" y="973" font-size="12" font-weight="800" fill="#78350f" text-anchor="middle">VP</text><text x="254" y="973" font-weight="800" fill="#0f172a">You (Vaibhav P.)</text>
+    <rect x="460" y="963" width="170" height="8" rx="4" fill="#e2e8f0"/><rect x="460" y="963" width="97" height="8" rx="4" fill="#2563eb"/><text x="644" y="973" font-weight="700" fill="#334155">12/21</text>
+    <rect x="720" y="956" width="104" height="24" rx="12" fill="#dbeafe"/><text x="772" y="972" font-size="12" font-weight="700" fill="#1d4ed8" text-anchor="middle">Manual ✓</text>
+    <rect x="832" y="956" width="128" height="24" rx="12" fill="#f1f5f9"/><text x="896" y="972" font-size="12" font-weight="700" fill="#64748b" text-anchor="middle">Automation 1/3</text>
+    <text x="1020" y="973" fill="#334155">Framework setup <tspan fill="#64748b">· 3/5</tspan></text>
+    <!-- row 10 -->
+    <text x="154" y="1039" font-size="14" font-weight="700" fill="#64748b" text-anchor="middle">10</text>
+    <circle cx="226" cy="1034" r="18" fill="#ffe4e6"/><text x="226" y="1039" font-size="12" font-weight="800" fill="#881337" text-anchor="middle">SR</text><text x="254" y="1039" font-weight="700" fill="#0f172a">Sneha R.</text>
+    <rect x="460" y="1029" width="170" height="8" rx="4" fill="#e2e8f0"/><rect x="460" y="1029" width="32" height="8" rx="4" fill="#2563eb"/><text x="644" y="1039" font-weight="700" fill="#334155">4/21</text>
+    <rect x="720" y="1022" width="104" height="24" rx="12" fill="#dbeafe"/><text x="772" y="1038" font-size="12" font-weight="700" fill="#1d4ed8" text-anchor="middle">Manual ✓</text>
+    <rect x="832" y="1022" width="128" height="24" rx="12" fill="#f1f5f9"/><text x="896" y="1038" font-size="12" font-weight="700" fill="#64748b" text-anchor="middle">Not started</text>
+    <text x="1020" y="1039" fill="#334155">Manual testing <tspan fill="#64748b">· done</tspan></text>
+    <line x1="140" y1="1064" x2="1300" y2="1064" stroke="#f1f5f9"/>
+  </g>
+  <rect x="640" y="1100" width="160" height="40" rx="10" fill="#fff" stroke="#e2e8f0"/><text x="720" y="1125" font-size="14" font-weight="700" fill="#0f172a" text-anchor="middle">Show more</text>
+  <text x="720" y="1180" font-size="13" fill="#64748b" text-anchor="middle">Ranked by total checks verified across all tracks, then by who got there first.</text>
+  <text x="720" y="1202" font-size="13" fill="#64748b" text-anchor="middle">Manual testing: 4 steps (5/5 on each quiz) · UI automation 6 · Framework setup 5 · Page objects 6.</text>
+
+  <rect x="120" y="1360" width="1200" height="120" rx="14" fill="#fffbeb" stroke="#f59e0b" stroke-dasharray="6 4"/>
+  <text x="144" y="1394" font-size="14" font-weight="700" fill="#b45309">Design notes</text>
+  <g font-size="13" fill="#92400e">
+    <text x="144" y="1420">· "All tracks" is the new default board (indigo accent); stage tabs keep their own pages and colours.</text>
+    <text x="144" y="1442">· Current stage = the stage the learner most recently passed a check in, with its progress; "★ All tracks done" when 21/21.</text>
+    <text x="144" y="1464">· "Manual testing" tab reuses the stage board: progress out of 4 steps, time = first quiz attempt → last step passed.</text>
+  </g>
+</svg>

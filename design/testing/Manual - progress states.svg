@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1560" viewBox="0 0 1440 1560" font-family="Inter, sans-serif">
+  <!-- Progress states for the Manual testing track: lesson hero badge, sidebar progress, quiz save messages, roadmap card. -->
+  <rect width="1440" height="1560" fill="#ffffff"/>
+  <text x="80" y="80" font-size="32" font-weight="800" fill="#0f172a">Manual testing — progress states</text>
+  <text x="80" y="114" font-size="16" fill="#64748b">A step is complete when a signed-in learner scores 5 of 5 on its quiz (graded on the server).</text>
+
+  <!-- A: lesson hero, completed -->
+  <text x="80" y="176" font-size="12" font-weight="700" fill="#64748b" letter-spacing="0.6">A · LESSON HERO — COMPLETED STEP</text>
+  <rect x="80" y="192" width="820" height="230" rx="18" fill="#f8fafc" stroke="#e2e8f0"/>
+  <rect x="112" y="224" width="250" height="28" rx="14" fill="#dbeafe"/><text x="128" y="243" font-size="12" font-weight="700" fill="#1d4ed8">Manual testing · Step 1 · Beginner</text>
+  <rect x="372" y="224" width="112" height="28" rx="14" fill="#d1fae5"/><text x="428" y="243" font-size="12" font-weight="800" fill="#047857" text-anchor="middle">✓ Completed</text>
+  <text x="112" y="310" font-size="44" font-weight="800" fill="#0f172a">Testing fundamentals</text>
+  <text x="112" y="350" font-size="17" fill="#475569">What testing is, where it fits in a project, the levels and types of testing…</text>
+  <text x="112" y="392" font-size="14" fill="#64748b">⏱  About 20 minutes · 6 short sections · 5-question check at the end</text>
+
+  <!-- B: sidebar progress -->
+  <text x="960" y="176" font-size="12" font-weight="700" fill="#64748b" letter-spacing="0.6">B · SIDEBAR — YOUR PROGRESS</text>
+  <rect x="960" y="192" width="400" height="230" rx="18" fill="#fff" stroke="#e2e8f0"/>
+  <text x="988" y="232" font-size="12" font-weight="700" fill="#64748b" letter-spacing="0.5">YOUR PROGRESS</text>
+  <text x="1332" y="232" font-size="14" font-weight="800" fill="#1d4ed8" text-anchor="end">2 of 4 steps</text>
+  <rect x="988" y="248" width="344" height="8" rx="4" fill="#e2e8f0"/><rect x="988" y="248" width="172" height="8" rx="4" fill="#2563eb"/>
+  <g font-size="14">
+    <circle cx="998" cy="288" r="9" fill="#059669"/><path d="M994 288 l3 3 l5 -6" stroke="#fff" stroke-width="2" fill="none"/><text x="1016" y="293" fill="#334155">1. Testing fundamentals</text>
+    <circle cx="998" cy="320" r="9" fill="#059669"/><path d="M994 320 l3 3 l5 -6" stroke="#fff" stroke-width="2" fill="none"/><text x="1016" y="325" fill="#334155">2. Test design techniques</text>
+    <circle cx="998" cy="352" r="9" fill="#fff" stroke="#2563eb" stroke-width="2"/><text x="1016" y="357" font-weight="700" fill="#1d4ed8">3. Test cases &amp; bug reports</text>
+    <circle cx="998" cy="384" r="9" fill="#fff" stroke="#cbd5e1" stroke-width="2"/><text x="1016" y="389" fill="#94a3b8">4. Exploratory testing</text>
+  </g>
+
+  <!-- C: quiz result messages -->
+  <text x="80" y="486" font-size="12" font-weight="700" fill="#64748b" letter-spacing="0.6">C · QUIZ RESULT — THREE CASES (shown under the score)</text>
+  <g font-size="15">
+    <rect x="80" y="502" width="1280" height="76" rx="14" fill="#ecfdf5" stroke="#6ee7b7"/>
+    <circle cx="116" cy="540" r="14" fill="#059669"/><path d="M110 540 l4 4 l8 -9" stroke="#fff" stroke-width="2.5" fill="none"/>
+    <text x="144" y="535" font-weight="800" fill="#047857">5 of 5 — step complete, progress saved.</text><text x="144" y="557" font-size="13" fill="#047857">2 of 4 Manual testing steps done · you're on the leaderboard.</text>
+    <rect x="1170" y="520" width="168" height="40" rx="10" fill="#059669"/><text x="1254" y="545" font-size="14" font-weight="700" fill="#fff" text-anchor="middle">Next step →</text>
+
+    <rect x="80" y="594" width="1280" height="76" rx="14" fill="#fffbeb" stroke="#fcd34d"/>
+    <circle cx="116" cy="632" r="14" fill="#d97706"/><text x="116" y="638" font-size="16" font-weight="800" fill="#fff" text-anchor="middle">!</text>
+    <text x="144" y="627" font-weight="800" fill="#b45309">4 of 5 — score 5 of 5 to complete this step.</text><text x="144" y="649" font-size="13" fill="#92400e">Read the notes under each question, then try again. Nothing is lost.</text>
+    <rect x="1170" y="612" width="168" height="40" rx="10" fill="#fff" stroke="#d97706"/><text x="1254" y="637" font-size="14" font-weight="700" fill="#b45309" text-anchor="middle">Try again</text>
+
+    <rect x="80" y="686" width="1280" height="76" rx="14" fill="#eff6ff" stroke="#93c5fd"/>
+    <circle cx="116" cy="724" r="14" fill="#2563eb"/><text x="116" y="730" font-size="15" font-weight="800" fill="#fff" text-anchor="middle">i</text>
+    <text x="144" y="719" font-weight="800" fill="#1d4ed8">Sign in to save your progress.</text><text x="144" y="741" font-size="13" fill="#1e3a8a">The quiz still works without an account, but only signed-in learners appear on the leaderboard.</text>
+    <rect x="1170" y="704" width="168" height="40" rx="10" fill="#2563eb"/><text x="1254" y="729" font-size="14" font-weight="700" fill="#fff" text-anchor="middle">Sign in</text>
+  </g>
+
+  <!-- D: roadmap cards with progress -->
+  <text x="80" y="826" font-size="12" font-weight="700" fill="#64748b" letter-spacing="0.6">D · /testing ROADMAP — SIGNED-IN LEARNER</text>
+  <rect x="80" y="842" width="620" height="640" rx="24" fill="#fff" stroke="#e2e8f0"/><rect x="80" y="842" width="620" height="8" rx="4" fill="#2563eb"/>
+  <text x="112" y="902" font-size="24" font-weight="800" fill="#0f172a">Manual testing</text>
+  <text x="668" y="902" font-size="14" font-weight="800" fill="#1d4ed8" text-anchor="end">2 of 4 done</text>
+  <rect x="112" y="918" width="556" height="8" rx="4" fill="#e2e8f0"/><rect x="112" y="918" width="278" height="8" rx="4" fill="#2563eb"/>
+  <g font-size="14">
+    <rect x="112" y="952" width="556" height="104" rx="16" fill="#f0fdf4" stroke="#bbf7d0"/><rect x="132" y="972" width="40" height="40" rx="10" fill="#059669"/><path d="M144 992 l5 5 l10 -11" stroke="#fff" stroke-width="2.5" fill="none"/><text x="188" y="986" font-size="11" font-weight="700" fill="#64748b">STEP 1</text><text x="188" y="1008" font-size="16" font-weight="700" fill="#0f172a">Testing fundamentals</text><rect x="572" y="1018" width="76" height="24" rx="12" fill="#d1fae5"/><text x="610" y="1034" font-size="11" font-weight="800" fill="#047857" text-anchor="middle">✓ Done</text>
+    <rect x="112" y="1068" width="556" height="104" rx="16" fill="#f0fdf4" stroke="#bbf7d0"/><rect x="132" y="1088" width="40" height="40" rx="10" fill="#059669"/><path d="M144 1108 l5 5 l10 -11" stroke="#fff" stroke-width="2.5" fill="none"/><text x="188" y="1102" font-size="11" font-weight="700" fill="#64748b">STEP 2</text><text x="188" y="1124" font-size="16" font-weight="700" fill="#0f172a">Test design techniques</text><rect x="572" y="1134" width="76" height="24" rx="12" fill="#d1fae5"/><text x="610" y="1150" font-size="11" font-weight="800" fill="#047857" text-anchor="middle">✓ Done</text>
+    <rect x="112" y="1184" width="556" height="104" rx="16" fill="#f8fafc" stroke="#2563eb" stroke-width="1.5"/><rect x="132" y="1204" width="40" height="40" rx="10" fill="#dbeafe"/><text x="152" y="1230" font-size="16" font-weight="800" fill="#1d4ed8" text-anchor="middle">3</text><text x="188" y="1218" font-size="11" font-weight="700" fill="#64748b">STEP 3 · UP NEXT</text><text x="188" y="1240" font-size="16" font-weight="700" fill="#0f172a">Test cases &amp; bug reports</text><text x="648" y="1266" font-size="13" font-weight="700" fill="#2563eb" text-anchor="end">Continue →</text>
+    <rect x="112" y="1300" width="556" height="104" rx="16" fill="#f8fafc" stroke="#e2e8f0"/><rect x="132" y="1320" width="40" height="40" rx="10" fill="#dbeafe"/><text x="152" y="1346" font-size="16" font-weight="800" fill="#1d4ed8" text-anchor="middle">4</text><text x="188" y="1334" font-size="11" font-weight="700" fill="#64748b">STEP 4</text><text x="188" y="1356" font-size="16" font-weight="700" fill="#0f172a">Exploratory testing</text><text x="648" y="1382" font-size="13" font-weight="700" fill="#2563eb" text-anchor="end">Start step →</text>
+  </g>
+  <text x="112" y="1446" font-size="13" font-weight="700" fill="#4338ca">View the all-tracks leaderboard →</text>
+
+  <rect x="740" y="842" width="620" height="640" rx="24" fill="#fff" stroke="#e2e8f0"/><rect x="740" y="842" width="620" height="8" rx="4" fill="#9333ea"/>
+  <text x="772" y="902" font-size="24" font-weight="800" fill="#0f172a">Automation learning</text>
+  <text x="1328" y="902" font-size="14" font-weight="800" fill="#7e22ce" text-anchor="end">1 of 3 stages done</text>
+  <rect x="772" y="918" width="556" height="8" rx="4" fill="#e2e8f0"/><rect x="772" y="918" width="185" height="8" rx="4" fill="#9333ea"/>
+  <g font-size="14">
+    <rect x="772" y="952" width="556" height="104" rx="16" fill="#f0fdf4" stroke="#bbf7d0"/><rect x="792" y="972" width="40" height="40" rx="10" fill="#059669"/><path d="M804 992 l5 5 l10 -11" stroke="#fff" stroke-width="2.5" fill="none"/><text x="848" y="986" font-size="11" font-weight="700" fill="#64748b">STEP 1</text><text x="848" y="1008" font-size="16" font-weight="700" fill="#0f172a">UI automation</text><rect x="1232" y="1018" width="76" height="24" rx="12" fill="#d1fae5"/><text x="1270" y="1034" font-size="11" font-weight="800" fill="#047857" text-anchor="middle">✓ Done</text>
+    <rect x="772" y="1068" width="556" height="104" rx="16" fill="#f8fafc" stroke="#9333ea" stroke-width="1.5"/><rect x="792" y="1088" width="40" height="40" rx="10" fill="#f3e8ff"/><text x="812" y="1114" font-size="16" font-weight="800" fill="#7e22ce" text-anchor="middle">2</text><text x="848" y="1102" font-size="11" font-weight="700" fill="#64748b">STEP 2 · IN PROGRESS</text><text x="848" y="1124" font-size="16" font-weight="700" fill="#0f172a">Framework setup</text><rect x="848" y="1136" width="160" height="6" rx="3" fill="#e9d5ff"/><rect x="848" y="1136" width="96" height="6" rx="3" fill="#9333ea"/><text x="1018" y="1143" font-size="12" font-weight="700" fill="#7e22ce">3/5 checks</text><text x="1308" y="1150" font-size="13" font-weight="700" fill="#9333ea" text-anchor="end">Continue →</text>
+    <rect x="772" y="1184" width="556" height="104" rx="16" fill="#f8fafc" stroke="#e2e8f0"/><rect x="792" y="1204" width="40" height="40" rx="10" fill="#f3e8ff"/><text x="812" y="1230" font-size="16" font-weight="800" fill="#7e22ce" text-anchor="middle">3</text><text x="848" y="1218" font-size="11" font-weight="700" fill="#64748b">STEP 3</text><text x="848" y="1240" font-size="16" font-weight="700" fill="#0f172a">Page objects &amp; fixtures</text><text x="1308" y="1266" font-size="13" font-weight="700" fill="#9333ea" text-anchor="end">Start step →</text>
+  </g>
+  <text x="772" y="1336" font-size="13" fill="#64748b">Signed-out visitors see the cards exactly as today (no progress bars or Done chips).</text>
+</svg>

@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Check, FlaskConical, Search, X } from "lucide-react";
 import { SignedIn, SignedOut, SignUpButton } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 import { Button } from "@/components/ui/button";
+import { AUTOMATION_SLUGS, getAssignmentForUser } from "@/lib/assignments";
+import { getManualProgress } from "@/lib/manual-progress";
 
 export const metadata: Metadata = {
   title: "Learn Software Testing – Testing Learning Path",
@@ -21,8 +24,21 @@ const TONES: Record<Tone, { chip: string; text: string }> = {
 
 // Design: Penpot "26 - Testing Learning Path", Roadmap page, board "Testing roadmap — manual + automation tracks (new)".
 // Two tracks side by side. Steps without an href have no page yet and show "Coming soon".
-type Step = { n: number; title: string; blurb: string; href?: string; isNew?: boolean };
-type Track = { id: string; title: string; level: string; tone: Tone; Icon: typeof FlaskConical; isNew?: boolean; blurb: string; steps: Step[]; stepTestId: (n: number) => string };
+// progressKey: the Manual testing step id, or the Automation stage slug, used to look up the learner's progress.
+type Step = { n: number; title: string; blurb: string; href?: string; isNew?: boolean; progressKey: string };
+type Track = {
+  id: string;
+  title: string;
+  level: string;
+  tone: Tone;
+  Icon: typeof FlaskConical;
+  isNew?: boolean;
+  blurb: string;
+  steps: Step[];
+  stepTestId: (n: number) => string;
+  unit: string; // "done" / "stages done" in the progress summary
+  activeLabel: string; // label for the step the learner is on
+};
 
 const TRACKS: Track[] = [
   {
@@ -34,12 +50,14 @@ const TRACKS: Track[] = [
     isNew: true,
     blurb: "Learn how testers think before you automate: plan tests, design cases, report bugs clearly and explore an app to find what breaks.",
     steps: [
-      { n: 1, title: "Testing fundamentals", blurb: "SDLC and STLC, test levels and types, and what makes a good tester.", href: "/testing/manual-testing/fundamentals" },
-      { n: 2, title: "Test design techniques", blurb: "Equivalence partitioning, boundary values and decision tables.", href: "/testing/manual-testing/test-design" },
-      { n: 3, title: "Test cases & bug reports", blurb: "Write clear test cases and defect reports with steps, severity and priority.", href: "/testing/manual-testing/test-cases" },
-      { n: 4, title: "Exploratory testing", blurb: "Charters, time-boxed sessions and notes that find real bugs.", href: "/testing/manual-testing/exploratory" },
+      { n: 1, title: "Testing fundamentals", blurb: "SDLC and STLC, test levels and types, and what makes a good tester.", href: "/testing/manual-testing/fundamentals", progressKey: "manual-fundamentals" },
+      { n: 2, title: "Test design techniques", blurb: "Equivalence partitioning, boundary values and decision tables.", href: "/testing/manual-testing/test-design", progressKey: "manual-test-design" },
+      { n: 3, title: "Test cases & bug reports", blurb: "Write clear test cases and defect reports with steps, severity and priority.", href: "/testing/manual-testing/test-cases", progressKey: "manual-test-cases" },
+      { n: 4, title: "Exploratory testing", blurb: "Charters, time-boxed sessions and notes that find real bugs.", href: "/testing/manual-testing/exploratory", progressKey: "manual-exploratory" },
     ],
     stepTestId: (n) => `manual-step-card-${n}`,
+    unit: "done",
+    activeLabel: "Up next",
   },
   {
     id: "automation-learning",
@@ -49,13 +67,42 @@ const TRACKS: Track[] = [
     Icon: FlaskConical,
     blurb: "Learn Playwright and Cypress by automating real pages, set up the framework the way teams do, then structure it with page objects and fixtures.",
     steps: [
-      { n: 1, title: "UI automation", blurb: "Playwright & Cypress: locators, waits, page objects, debugging.", href: "/testing/ui-automation" },
-      { n: 2, title: "Framework setup", blurb: "Config and credentials in .env, tests that read them, and the project saved on GitHub with secrets.", href: "/testing/framework-setup" },
-      { n: 3, title: "Page objects & fixtures", blurb: "Move locators into page classes, share setup with fixtures, keep specs readable.", href: "/testing/page-objects", isNew: true },
+      { n: 1, title: "UI automation", blurb: "Playwright & Cypress: locators, waits, page objects, debugging.", href: "/testing/ui-automation", progressKey: "ui-automation" },
+      { n: 2, title: "Framework setup", blurb: "Config and credentials in .env, tests that read them, and the project saved on GitHub with secrets.", href: "/testing/framework-setup", progressKey: "framework-setup" },
+      { n: 3, title: "Page objects & fixtures", blurb: "Move locators into page classes, share setup with fixtures, keep specs readable.", href: "/testing/page-objects", isNew: true, progressKey: "page-objects" },
     ],
     stepTestId: (n) => `step-card-${n}`, // unchanged ids for the existing track
+    unit: "stages done",
+    activeLabel: "In progress",
   },
 ];
+
+// A signed-in learner's state for each roadmap step. "active" = in progress (Automation: started,
+// not complete) or up next (Manual: the first step not yet done).
+type StepState = { state: "done" | "active" | "todo"; done: number; total: number };
+
+async function loadRoadmapProgress(userId: string | null): Promise<Map<string, StepState> | null> {
+  if (!userId) return null;
+  try {
+    const [manual, ...autos] = await Promise.all([getManualProgress(userId), ...AUTOMATION_SLUGS.map((s) => getAssignmentForUser(userId, s))]);
+    const map = new Map<string, StepState>();
+    const manualDone = new Set<string>(manual?.done ?? []);
+    let upNextSet = false;
+    for (const st of TRACKS[0].steps) {
+      const done = manualDone.has(st.progressKey);
+      const active = !done && !upNextSet;
+      if (active) upNextSet = true;
+      map.set(st.progressKey, { state: done ? "done" : active ? "active" : "todo", done: done ? 1 : 0, total: 1 });
+    }
+    AUTOMATION_SLUGS.forEach((slug, i) => {
+      const a = autos[i];
+      map.set(slug, !a ? { state: "todo", done: 0, total: 0 } : a.completedAt ? { state: "done", done: a.total, total: a.total } : { state: "active", done: a.done, total: a.total });
+    });
+    return map;
+  } catch {
+    return null; // database unavailable: show the roadmap without progress
+  }
+}
 
 const BAR: Record<Tone, string> = { blue: "bg-blue-600", purple: "bg-purple-600", green: "bg-emerald-600" };
 
@@ -69,7 +116,10 @@ const RUN = [
   { name: "sends confirmation email", time: "2.1s", pass: true },
 ];
 
-export default function TestingPage() {
+export default async function TestingPage() {
+  const { userId } = await auth();
+  const progress = await loadRoadmapProgress(userId);
+
   return (
     <div className="bg-background text-foreground">
       {/* HERO */}
@@ -135,6 +185,8 @@ export default function TestingPage() {
         <div className="mt-12 grid items-stretch gap-8 lg:grid-cols-2">
           {TRACKS.map((track) => {
             const tone = TONES[track.tone];
+            const doneCount = progress ? track.steps.filter((s) => progress.get(s.progressKey)?.state === "done").length : 0;
+            const activeBorder = track.tone === "blue" ? "border-blue-600" : "border-purple-600";
             return (
               <article key={track.id} data-testid={`track-${track.id}`} className="flex flex-col overflow-hidden rounded-3xl border bg-card shadow-sm">
                 <div className={`h-2 ${BAR[track.tone]}`} />
@@ -156,22 +208,57 @@ export default function TestingPage() {
                   </div>
                   <p className="mt-5 text-[15px] leading-relaxed text-muted-foreground">{track.blurb}</p>
 
+                  {progress && (
+                    <div data-testid={`track-progress-${track.id}`} className="mt-5">
+                      <p className={`text-right text-sm font-extrabold ${tone.text}`}>
+                        {doneCount} of {track.steps.length} {track.unit}
+                      </p>
+                      <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700" aria-hidden="true">
+                        <div className={`h-full rounded-full ${BAR[track.tone]}`} style={{ width: `${(doneCount / track.steps.length) * 100}%` }} />
+                      </div>
+                    </div>
+                  )}
+
                   <ol className="m-0 mt-6 grid list-none gap-4 p-0">
                     {track.steps.map((st) => {
+                      const ps = progress?.get(st.progressKey);
+                      const state = ps?.state ?? "todo";
+                      const href = st.href && state === "active" && track.id === "automation-learning" ? `${st.href}/assignment` : st.href;
                       const body = (
                         <>
-                          <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-lg font-extrabold ${tone.chip}`}>{st.n}</span>
+                          {state === "done" ? (
+                            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white" aria-label="Done">
+                              <Check className="h-5 w-5" />
+                            </span>
+                          ) : (
+                            <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-lg font-extrabold ${tone.chip}`}>{st.n}</span>
+                          )}
                           <span className="min-w-0 flex-1">
                             <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
                               Step {st.n}
+                              {state === "active" && <> · {track.activeLabel}</>}
                               {st.isNew && <span className={`rounded-full px-2 py-0.5 text-[11px] normal-case tracking-normal ${TONES.green.chip}`}>New</span>}
                             </span>
                             <span className="mt-0.5 block text-lg font-bold">{st.title}</span>
                             <span className="mt-1 block text-sm leading-relaxed text-muted-foreground">{st.blurb}</span>
+                            {state === "active" && ps && ps.total > 1 && (
+                              <span className="mt-2 flex items-center gap-2">
+                                <span className="h-1.5 w-40 overflow-hidden rounded-full bg-purple-200 dark:bg-purple-900" aria-hidden="true">
+                                  <span className="block h-full rounded-full bg-purple-600" style={{ width: `${(ps.done / ps.total) * 100}%` }} />
+                                </span>
+                                <span className="text-xs font-bold text-purple-700 dark:text-purple-300">
+                                  {ps.done}/{ps.total} checks
+                                </span>
+                              </span>
+                            )}
                           </span>
-                          {st.href ? (
+                          {state === "done" ? (
+                            <span className="inline-flex shrink-0 items-center gap-1 self-end rounded-full bg-emerald-100 px-3 py-1 text-xs font-extrabold text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
+                              <Check className="h-3 w-3" /> Done
+                            </span>
+                          ) : st.href ? (
                             <span className={`inline-flex shrink-0 items-center gap-1 self-end text-sm font-semibold ${tone.text}`}>
-                              Start step <ArrowRight className="h-4 w-4" />
+                              {state === "active" ? "Continue" : "Start step"} <ArrowRight className="h-4 w-4" />
                             </span>
                           ) : (
                             <span className="shrink-0 self-end rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-500 dark:bg-slate-800 dark:text-slate-400">
@@ -180,11 +267,17 @@ export default function TestingPage() {
                           )}
                         </>
                       );
-                      const cls = "flex items-start gap-4 rounded-2xl border bg-slate-50 p-5 dark:bg-slate-900/40";
+                      const cls = `flex items-start gap-4 rounded-2xl p-5 ${
+                        state === "done"
+                          ? "border border-emerald-200 bg-emerald-50 dark:border-emerald-900 dark:bg-emerald-950/30"
+                          : state === "active"
+                            ? `border-[1.5px] ${activeBorder} bg-slate-50 dark:bg-slate-900/40`
+                            : "border bg-slate-50 dark:bg-slate-900/40"
+                      }`;
                       return (
-                        <li key={st.title} data-testid={track.stepTestId(st.n)}>
-                          {st.href ? (
-                            <Link href={st.href} className={`${cls} transition hover:shadow-md`}>{body}</Link>
+                        <li key={st.title} data-testid={track.stepTestId(st.n)} data-state={progress ? state : undefined}>
+                          {href ? (
+                            <Link href={href} className={`${cls} transition hover:shadow-md`}>{body}</Link>
                           ) : (
                             <div className={cls} aria-disabled="true">{body}</div>
                           )}
@@ -192,6 +285,11 @@ export default function TestingPage() {
                       );
                     })}
                   </ol>
+                  {progress && track.id === "manual-testing" && (
+                    <Link href="/testing/leaderboard" className="mt-6 inline-block text-sm font-bold text-indigo-700 hover:underline dark:text-indigo-300">
+                      View the all-tracks leaderboard →
+                    </Link>
+                  )}
                 </div>
               </article>
             );

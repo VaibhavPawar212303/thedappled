@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { LessonLayout, SectionHead } from "../_components/lesson-layout";
-import { LessonQuiz, type QuizQuestion } from "../_components/lesson-quiz";
 
 // Design: Penpot "26 - Testing Learning Path", page "Manual testing", board "Manual 2 - Test design techniques".
 
@@ -56,44 +55,10 @@ const GUESSES = [
   "Browser back after submitting",
 ];
 
-const QUIZ: QuizQuestion[] = [
-  {
-    q: "A field accepts 1–100. Which values does boundary value analysis test?",
-    options: ["1, 50, 100", "0, 1, 100, 101", "Every value from 1 to 100", "-1 and 1,000"],
-    answer: 1,
-    why: "Test on each boundary (1 and 100) and just outside it (0 and 101) — that's where off-by-one bugs hide.",
-  },
-  {
-    q: "Same field (1–100): how many equivalence partitions are there?",
-    options: ["1", "2", "3", "100"],
-    answer: 2,
-    why: "Below 1 (invalid), 1 to 100 (valid) and above 100 (invalid) — one test from each covers the field.",
-  },
-  {
-    q: "A full decision table with 3 yes/no conditions has how many rules?",
-    options: ["3", "6", "8", "9"],
-    answer: 2,
-    why: "Each yes/no condition doubles the combinations: 2 × 2 × 2 = 8 rules.",
-  },
-  {
-    q: "An account locks after 3 wrong passwords. Which technique fits best?",
-    options: ["Equivalence partitioning", "State transition testing", "Decision tables", "Error guessing"],
-    answer: 1,
-    why: "The result depends on what happened before (how many wrong attempts), so you map the states and test every transition.",
-  },
-  {
-    q: "Trying empty input, very long text and special characters because they often break forms is…",
-    options: ["Boundary value analysis", "Error guessing", "Regression testing", "Decision tables"],
-    answer: 1,
-    why: "Error guessing uses experience of where bugs usually hide, rather than a formal rule.",
-  },
-];
-
 export default function TestDesignPage() {
   return (
     <LessonLayout
-      step={2}
-      title="Test design techniques"
+      lesson="test-design"
       intro="You can't test everything — so pick the few tests that catch the most bugs. Five techniques, each with a worked example you can reuse."
       minutes={25}
       toc={TOC}
@@ -234,8 +199,6 @@ export default function TestDesignPage() {
           ))}
         </ul>
       </section>
-
-      <LessonQuiz questions={QUIZ} doneText="nice work, you're ready for step 3." />
     </LessonLayout>
   );
 }

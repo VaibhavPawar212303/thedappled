@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Paperclip } from "lucide-react";
 import { LessonLayout, SectionHead } from "../_components/lesson-layout";
-import { LessonQuiz, type QuizQuestion } from "../_components/lesson-quiz";
 
 // Design: Penpot "26 - Testing Learning Path", page "Manual testing", board "Manual 3 - Test cases & bug reports".
 
@@ -42,49 +41,10 @@ const GRID = [
 
 const LIFE = ["New", "Assigned", "In progress", "Fixed", "Retest", "Closed"];
 
-const QUIZ: QuizQuestion[] = [
-  {
-    q: "A typo in the company name on the homepage is usually…",
-    options: ["High severity, high priority", "Low severity, high priority", "High severity, low priority", "Low severity, low priority"],
-    answer: 1,
-    why: "Nothing breaks, so severity is low — but every visitor sees it and it hurts trust, so it should be fixed soon.",
-  },
-  {
-    q: "Which test case title is best?",
-    options: ["Login test", "Test 3", "Wrong password shows the error banner", "Check everything on the login page"],
-    answer: 2,
-    why: "A good title names one behaviour and its outcome, so anyone can tell what failed from the title alone.",
-  },
-  {
-    q: "Which is a proper expected result?",
-    options: [
-      "Login should work",
-      "The banner “Invalid email or password.” appears and the user stays on the sign-in page",
-      "Click Sign in",
-      "Tester: Priya",
-    ],
-    answer: 1,
-    why: "An expected result is specific and checkable — exact text and exact state — so pass or fail is never a judgement call.",
-  },
-  {
-    q: "For a developer, the most important part of a bug report is…",
-    options: ["Steps to reproduce", "Severity", "Bug ID", "Reporter's name"],
-    answer: 0,
-    why: "If the developer can't reproduce the bug, they can't fix it or confirm the fix.",
-  },
-  {
-    q: "After a developer marks a bug as fixed, the tester should…",
-    options: ["Close it right away", "Retest it, then close it or reopen it", "Delete the test case", "Lower its priority"],
-    answer: 1,
-    why: "Retest the exact steps on the new build: close the bug if it passes, reopen it if it still fails.",
-  },
-];
-
 export default function TestCasesPage() {
   return (
     <LessonLayout
-      step={3}
-      title="Test cases & bug reports"
+      lesson="test-cases"
       intro="Write test cases anyone can run, and bug reports a developer can fix on the first read — with templates you can copy."
       minutes={25}
       toc={TOC}
@@ -270,8 +230,6 @@ export default function TestCasesPage() {
           <p className="mt-4 text-sm font-semibold text-red-700 dark:text-red-400">↺ Reopened — if it still fails on retest, it goes back to In progress.</p>
         </figure>
       </section>
-
-      <LessonQuiz questions={QUIZ} doneText="nice work, you're ready for step 4." />
     </LessonLayout>
   );
 }

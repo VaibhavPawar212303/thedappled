@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { LessonLayout, SectionHead } from "../_components/lesson-layout";
-import { LessonQuiz, type QuizQuestion } from "../_components/lesson-quiz";
 
 // Design: Penpot "26 - Testing Learning Path", page "Manual testing", board "Manual 4 - Exploratory testing".
 
@@ -64,49 +63,29 @@ const TRY = [
   { t: "Sign-up, keyboard only", d: "Explore sign-up without a mouse to discover focus and accessibility problems.", href: "/testing/ui-automation/signup" },
 ];
 
-const QUIZ: QuizQuestion[] = [
-  {
-    q: "Exploratory testing is best described as…",
-    options: ["Random clicking around", "Learning, designing and running tests at the same time", "Re-running the regression suite", "Testing only when there are no requirements"],
-    answer: 1,
-    why: "Each test teaches you something that shapes the next one. It's structured by a charter and a time-box, not random.",
-  },
-  {
-    q: "Which is a good charter?",
-    options: ["Test the app", "Explore the sign-up form with unusual inputs to discover validation gaps", "Click every button", "Find all the bugs"],
-    answer: 1,
-    why: "A good charter names a target, the resources or approach, and the information you're looking for.",
-  },
-  {
-    q: "Why time-box an exploratory session?",
-    options: ["So testers work faster", "It keeps the session focused and makes coverage easy to report", "Bugs only appear in the first hour", "It replaces test cases"],
-    answer: 1,
-    why: "A fixed slot keeps you on the charter, and the debrief shows what was covered in that time.",
-  },
-  {
-    q: "During a session you wonder “Should emails be case-insensitive?” You should…",
-    options: ["Log it as a bug", "Note it as a question to raise with the team", "Ignore it", "Mark the session as passed"],
-    answer: 1,
-    why: "It isn't a bug until someone decides the expected behaviour — record it as a question and bring it to the debrief.",
-  },
-  {
-    q: "Refreshing the page and pressing Back in the middle of checkout uses which heuristic?",
-    options: ["Goldilocks", "Interrupt", "CRUD", "Personas"],
-    answer: 1,
-    why: "The Interrupt heuristic breaks a flow halfway to see whether the app recovers or ends up in a bad state.",
-  },
-];
+const TRACK_DONE = (
+  <div data-testid="track-done" className="flex flex-wrap items-center justify-between gap-6 rounded-2xl border border-purple-300 bg-purple-50 p-6 dark:border-purple-900 dark:bg-purple-950/30 sm:p-8">
+    <div>
+      <p className="text-xs font-bold uppercase tracking-wider text-purple-700 dark:text-purple-300">Manual testing track · Done</p>
+      <p className="mt-1 text-xl font-extrabold">Ready to automate what you just tested by hand?</p>
+      <p className="mt-1 text-sm text-muted-foreground">The Automation track starts with the same sign-in and sign-up pages.</p>
+    </div>
+    <Link href="/testing/ui-automation" className="inline-flex h-11 items-center gap-1.5 rounded-[10px] bg-purple-700 px-5 text-sm font-bold text-white hover:bg-purple-800">
+      Start UI automation <ArrowRight className="h-4 w-4" />
+    </Link>
+  </div>
+);
 
 export default function ExploratoryTestingPage() {
   return (
     <LessonLayout
-      step={4}
-      title="Exploratory testing"
+      lesson="exploratory"
       intro="Find the bugs no script would: learn the app, design tests and run them at the same time — guided by a charter and a time-box."
       minutes={25}
       toc={TOC}
       prev={{ label: "3. Test cases & bug reports", href: "/testing/manual-testing/test-cases" }}
       next={{ label: "UI automation", href: "/testing/ui-automation", track: true }}
+      after={TRACK_DONE}
     >
       <section>
         <SectionHead n={1} id="what" title="What is exploratory testing?" />
@@ -217,19 +196,6 @@ export default function ExploratoryTestingPage() {
           ))}
         </ul>
       </section>
-
-      <LessonQuiz questions={QUIZ} doneText="nice work — you've finished the manual testing track." />
-
-      <div data-testid="track-done" className="flex flex-wrap items-center justify-between gap-6 rounded-2xl border border-purple-300 bg-purple-50 p-6 dark:border-purple-900 dark:bg-purple-950/30 sm:p-8">
-        <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-purple-700 dark:text-purple-300">Manual testing track · Done</p>
-          <p className="mt-1 text-xl font-extrabold">Ready to automate what you just tested by hand?</p>
-          <p className="mt-1 text-sm text-muted-foreground">The Automation track starts with the same sign-in and sign-up pages.</p>
-        </div>
-        <Link href="/testing/ui-automation" className="inline-flex h-11 items-center gap-1.5 rounded-[10px] bg-purple-700 px-5 text-sm font-bold text-white hover:bg-purple-800">
-          Start UI automation <ArrowRight className="h-4 w-4" />
-        </Link>
-      </div>
     </LessonLayout>
   );
 }
