@@ -7,6 +7,10 @@ import { minutesBetween } from "@/lib/leaderboard-utils";
 
 export { formatMinutes, minutesBetween } from "@/lib/leaderboard-utils";
 
+// Cache tag on every board (stage boards + All tracks). Expire it when a learner's progress changes
+// so the change shows on the next load instead of waiting for the timed refresh.
+export const LEADERBOARD_TAG = "testing-leaderboard";
+
 export type BoardRow = {
   rank: number;
   name: string;
@@ -202,7 +206,7 @@ const loaders = new Map<string, () => Promise<CachedBoard>>();
 function loadBoard(slug: AssignmentSlug) {
   let load = loaders.get(slug);
   if (!load) {
-    load = unstable_cache(() => buildBoard(slug, true), [`testing-leaderboard-${slug}`], { revalidate: 30 });
+    load = unstable_cache(() => buildBoard(slug, true), [`testing-leaderboard-${slug}`], { revalidate: 30, tags: [LEADERBOARD_TAG] });
     loaders.set(slug, load);
   }
   return load();
@@ -338,7 +342,7 @@ async function buildAllTracks(strict: boolean): Promise<{ rows: CachedAllRow[] }
   };
 }
 
-const loadAllTracks = unstable_cache(() => buildAllTracks(true), ["testing-leaderboard-all-tracks"], { revalidate: 30 });
+const loadAllTracks = unstable_cache(() => buildAllTracks(true), ["testing-leaderboard-all-tracks"], { revalidate: 30, tags: [LEADERBOARD_TAG] });
 
 export async function getAllTracksBoard(currentUserId: string | null): Promise<AllTracksBoard> {
   let rows: CachedAllRow[];

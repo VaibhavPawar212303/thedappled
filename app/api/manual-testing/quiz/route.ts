@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { auth } from "@clerk/nextjs/server";
+import { LEADERBOARD_TAG } from "@/lib/leaderboard";
 import { MANUAL_STEPS, recordManualQuiz } from "@/lib/assignments";
 import { gradeQuiz, manualLesson } from "@/lib/manual-quizzes";
 
@@ -18,6 +20,9 @@ export async function POST(req: NextRequest) {
   const { score, total } = gradeQuiz(lesson, body?.answers);
   const passed = score === total;
   const status = await recordManualQuiz(userId, lesson.step, passed);
+  // First attempt adds the learner to the boards; a pass changes their score. Either way, expire the
+  // cached boards now so the change is visible on the next leaderboard load.
+  revalidateTag(LEADERBOARD_TAG, { expire: 0 });
 
   return NextResponse.json({
     score,
