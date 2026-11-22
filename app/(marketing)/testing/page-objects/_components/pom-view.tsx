@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Check, Copy } from "lucide-react";
+import { Check, Copy, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { POM_STEPS, type AssignmentStatus } from "@/lib/assignments";
 import { REASON_TEXT } from "@/lib/verification";
@@ -11,7 +11,7 @@ type Env = { BASE_URL: string; ASSIGNMENT_TOKEN: string; SHOP_EMAIL: string; SHO
 type RepoCheck = { ok: boolean; message: string };
 type Scan = { repo: string; branch: string; checks: Record<"repo-pages" | "repo-fixture" | "repo-specs", RepoCheck> };
 
-function CopyButton({ text, testid }: { text: string; testid?: string }) {
+function CopyButton({ text, testid, className = "bg-slate-700 text-white hover:bg-slate-600" }: { text: string; testid?: string; className?: string }) {
   const [copied, setCopied] = React.useState(false);
   return (
     <button
@@ -24,7 +24,7 @@ function CopyButton({ text, testid }: { text: string; testid?: string }) {
           setTimeout(() => setCopied(false), 1500);
         } catch {}
       }}
-      className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg bg-slate-700 px-3 text-xs font-semibold text-white hover:bg-slate-600"
+      className={`inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg px-3 text-xs font-semibold ${className}`}
     >
       <Copy className="h-3 w-3" /> {copied ? "Copied" : "Copy"}
     </button>
@@ -252,10 +252,30 @@ export function PomView({ initial, env, rank }: { initial: AssignmentStatus; env
                   </button>
                 </div>
               </div>
-              <p className="mt-3 text-[13px] text-muted-foreground">
-                Shop:{" "}
-                <Link href={shopPath} data-testid="shop-link" className="break-all font-mono text-foreground hover:underline">{shopPath}</Link>
-              </p>
+              <div data-testid="shop-url" className="mt-4 rounded-xl border-[1.5px] border-emerald-500 bg-emerald-50 p-4 dark:bg-emerald-950/40">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-[11px] font-bold uppercase tracking-wide text-emerald-700 dark:text-emerald-300">Your shop URL</span>
+                  <span className="flex gap-2">
+                    <CopyButton
+                      text={`${env.BASE_URL}${shopPath}`}
+                      testid="copy-shop-url"
+                      className="border border-emerald-500 bg-white text-emerald-700 hover:bg-emerald-100 dark:bg-transparent dark:text-emerald-300 dark:hover:bg-emerald-900/40"
+                    />
+                    <Link
+                      href={shopPath}
+                      target="_blank"
+                      rel="noopener"
+                      data-testid="open-shop"
+                      className="inline-flex h-8 items-center gap-1 rounded-lg bg-emerald-600 px-3 text-xs font-semibold text-white hover:bg-emerald-700"
+                    >
+                      Open <ExternalLink className="h-3 w-3" />
+                    </Link>
+                  </span>
+                </div>
+                <Link href={shopPath} target="_blank" rel="noopener" data-testid="shop-link" className="mt-2 block break-all font-mono text-[13px] font-bold text-emerald-800 hover:underline dark:text-emerald-200">
+                  {shopPath}
+                </Link>
+              </div>
             </section>
 
             <section className="min-w-0 rounded-2xl border bg-card p-6 shadow-sm sm:p-8">

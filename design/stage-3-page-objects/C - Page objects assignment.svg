@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1180" viewBox="0 0 1440 1180" font-family="Inter, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1240" viewBox="0 0 1440 1240" font-family="Inter, sans-serif">
   <!-- /testing/page-objects/assignment — in-progress state (2 of 6 verified, one repo check failing). -->
-  <rect width="1440" height="1180" fill="#f8fafc"/>
+  <rect width="1440" height="1240" fill="#f8fafc"/>
 
   <!-- header -->
   <rect width="1440" height="72" fill="#ffffff"/>
@@ -73,7 +73,7 @@
 
   <!-- RIGHT column -->
   <!-- your values -->
-  <rect x="788" y="260" width="468" height="292" rx="16" fill="#fff" stroke="#e2e8f0"/>
+  <rect x="788" y="260" width="468" height="352" rx="16" fill="#fff" stroke="#e2e8f0"/>
   <text x="820" y="304" font-size="20" font-weight="800" fill="#0f172a">Your shop link</text>
   <text x="820" y="328" font-size="13" fill="#64748b">Add these to your .env (from stage 2). Never commit it.</text>
   <rect x="820" y="346" width="404" height="150" rx="12" fill="#0f172a"/>
@@ -85,8 +85,14 @@
   </g>
   <rect x="838" y="460" width="70" height="26" rx="8" fill="#334155"/><text x="873" y="477" font-size="12" font-weight="600" fill="#fff" text-anchor="middle">Copy</text>
   <rect x="916" y="460" width="118" height="26" rx="8" fill="#334155"/><text x="975" y="477" font-size="12" font-weight="600" fill="#fff" text-anchor="middle">Show password</text>
-  <text x="820" y="528" font-size="13" fill="#64748b">Shop: <tspan font-family="JetBrains Mono, monospace" fill="#0f172a">/testing/page-objects/shop?a=k3Pq9xZr2mWb</tspan></text>
+  <!-- highlighted shop URL -->
+  <rect x="820" y="512" width="404" height="76" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/>
+  <text x="838" y="540" font-size="11" font-weight="700" fill="#047857" letter-spacing="0.6">YOUR SHOP URL</text>
+  <rect x="1088" y="522" width="56" height="26" rx="8" fill="#ffffff" stroke="#10b981"/><text x="1116" y="539" font-size="12" font-weight="600" fill="#047857" text-anchor="middle">Copy</text>
+  <rect x="1152" y="522" width="60" height="26" rx="8" fill="#059669"/><text x="1182" y="539" font-size="12" font-weight="600" fill="#fff" text-anchor="middle">Open ↗</text>
+  <text x="838" y="572" font-family="JetBrains Mono, monospace" font-size="13" font-weight="700" fill="#065f46">/testing/page-objects/shop?a=k3Pq9xZr2mWb</text>
 
+  <g transform="translate(0,60)">
   <!-- how it works -->
   <rect x="788" y="576" width="468" height="344" rx="16" fill="#fff" stroke="#e2e8f0"/>
   <text x="820" y="618" font-size="18" font-weight="800" fill="#0f172a">How it works</text>
@@ -116,4 +122,5 @@
   <text x="328" y="1110" font-size="13" fill="#a7f3d0">Took 74 minutes</text>
   <rect x="1060" y="1044" width="164" height="44" rx="10" fill="#fff"/>
   <text x="1142" y="1072" font-size="14" font-weight="600" fill="#047857" text-anchor="middle">Back to roadmap</text>
+  </g>
 </svg>
