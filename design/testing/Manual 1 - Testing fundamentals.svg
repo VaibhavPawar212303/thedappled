@@ -1,0 +1,156 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="3560" viewBox="0 0 1440 3560" font-family="Inter, sans-serif">
+  <!-- /testing/manual-testing/fundamentals — Manual testing track, step 1. Lesson + 5-question self-check (no sign-in). -->
+  <rect width="1440" height="3560" fill="#ffffff"/>
+
+  <!-- nav -->
+  <rect width="1440" height="72" fill="#fff"/><line x1="0" y1="72" x2="1440" y2="72" stroke="#e2e8f0"/>
+  <rect x="40" y="20" width="32" height="32" rx="8" fill="#0f172a"/><text x="56" y="42" font-size="16" font-weight="800" fill="#fff" text-anchor="middle">D</text>
+  <text x="84" y="42" font-size="20" font-weight="800" fill="#0f172a">Thedappled</text>
+  <g font-size="15" fill="#475569"><text x="520" y="42">Courses</text><text x="610" y="42">Books</text><text x="685" y="42">Blogs</text><text x="755" y="42" font-weight="700" fill="#047857">Testing</text><text x="840" y="42">Compiler</text></g>
+
+  <!-- HERO -->
+  <rect y="72" width="1440" height="360" fill="#f8fafc"/>
+  <circle cx="1290" cy="200" r="150" fill="#dbeafe" opacity="0.7"/>
+  <text x="140" y="128" font-size="14" fill="#64748b">Testing  /  Manual testing  /  <tspan font-weight="700" fill="#0f172a">Testing fundamentals</tspan></text>
+  <rect x="140" y="152" width="250" height="28" rx="14" fill="#dbeafe"/><text x="156" y="171" font-size="12" font-weight="700" fill="#1d4ed8">Manual testing · Step 1 · Beginner</text>
+  <text x="140" y="246" font-size="52" font-weight="800" fill="#0f172a">Testing fundamentals</text>
+  <text x="140" y="290" font-size="19" fill="#475569">What testing is, where it fits in a project, the levels and types of testing,</text>
+  <text x="140" y="316" font-size="19" fill="#475569">and the principles every tester works by.</text>
+  <g font-size="14" fill="#64748b">
+    <text x="140" y="372">⏱  About 20 minutes</text><text x="310" y="372">·</text><text x="328" y="372">6 short sections</text><text x="458" y="372">·</text><text x="476" y="372">5-question check at the end</text>
+  </g>
+
+  <!-- RIGHT SIDEBAR: on this page -->
+  <rect x="980" y="480" width="320" height="380" rx="18" fill="#fff" stroke="#e2e8f0"/>
+  <text x="1008" y="520" font-size="12" font-weight="700" fill="#64748b" letter-spacing="0.6">ON THIS PAGE</text>
+  <g font-size="14" fill="#334155">
+    <rect x="996" y="536" width="4" height="26" rx="2" fill="#2563eb"/><text x="1012" y="554" font-weight="700" fill="#1d4ed8">1. What is software testing?</text>
+    <text x="1012" y="590">2. SDLC and STLC</text>
+    <text x="1012" y="622">3. Test levels</text>
+    <text x="1012" y="654">4. Test types</text>
+    <text x="1012" y="686">5. The 7 testing principles</text>
+    <text x="1012" y="718">6. What makes a good tester</text>
+    <text x="1012" y="750">7. Check your understanding</text>
+  </g>
+  <line x1="1008" y1="776" x2="1272" y2="776" stroke="#e2e8f0"/>
+  <text x="1008" y="804" font-size="12" font-weight="700" fill="#64748b">NEXT STEP</text>
+  <text x="1008" y="830" font-size="14" font-weight="700" fill="#0f172a">2. Test design techniques</text>
+  <rect x="1196" y="815" width="88" height="22" rx="11" fill="#f1f5f9"/><text x="1240" y="830" font-size="11" font-weight="700" fill="#64748b" text-anchor="middle">Coming soon</text>
+
+  <!-- MAIN COLUMN x=140..900 -->
+  <!-- 1 -->
+  <text x="140" y="510" font-size="13" font-weight="700" fill="#2563eb" letter-spacing="0.6">SECTION 1</text>
+  <text x="140" y="546" font-size="30" font-weight="800" fill="#0f172a">What is software testing?</text>
+  <g font-size="16" fill="#334155">
+    <text x="140" y="586">Testing is checking that software does what it should — and finding where it</text>
+    <text x="140" y="612">doesn't — before users do. It covers both verification (are we building the</text>
+    <text x="140" y="638">product right?) and validation (are we building the right product?).</text>
+  </g>
+  <rect x="140" y="664" width="760" height="80" rx="14" fill="#eff6ff" stroke="#bfdbfe"/>
+  <rect x="140" y="664" width="6" height="80" rx="3" fill="#2563eb"/>
+  <text x="168" y="698" font-size="15" font-weight="700" fill="#1d4ed8">Key idea</text>
+  <text x="168" y="724" font-size="15" fill="#1e3a8a">Testing shows that defects are present — it can never prove there are none.</text>
+
+  <!-- 2 SDLC/STLC -->
+  <text x="140" y="820" font-size="13" font-weight="700" fill="#2563eb" letter-spacing="0.6">SECTION 2</text>
+  <text x="140" y="856" font-size="30" font-weight="800" fill="#0f172a">SDLC and STLC</text>
+  <rect x="140" y="884" width="370" height="170" rx="16" fill="#fff" stroke="#e2e8f0"/>
+  <text x="164" y="920" font-size="17" font-weight="800" fill="#0f172a">SDLC</text>
+  <text x="164" y="944" font-size="13" fill="#64748b">Software Development Life Cycle</text>
+  <g font-size="14" fill="#334155"><text x="164" y="980">How the whole product is built: requirements,</text><text x="164" y="1002">design, development, testing, release and</text><text x="164" y="1024">maintenance.</text></g>
+  <rect x="530" y="884" width="370" height="170" rx="16" fill="#fff" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="554" y="920" font-size="17" font-weight="800" fill="#0f172a">STLC</text>
+  <text x="554" y="944" font-size="13" fill="#64748b">Software Testing Life Cycle</text>
+  <g font-size="14" fill="#334155"><text x="554" y="980">The testing activities inside the SDLC — from</text><text x="554" y="1002">reading requirements to closing the test cycle.</text><text x="554" y="1024">Its six phases are below.</text></g>
+  <g font-size="13" font-weight="600">
+    <rect x="140" y="1076" width="124" height="56" rx="12" fill="#eff6ff"/><text x="202" y="1100" fill="#1d4ed8" text-anchor="middle">1 · Requirement</text><text x="202" y="1118" fill="#1d4ed8" text-anchor="middle">analysis</text>
+    <rect x="267" y="1076" width="124" height="56" rx="12" fill="#eff6ff"/><text x="329" y="1100" fill="#1d4ed8" text-anchor="middle">2 · Test</text><text x="329" y="1118" fill="#1d4ed8" text-anchor="middle">planning</text>
+    <rect x="394" y="1076" width="124" height="56" rx="12" fill="#eff6ff"/><text x="456" y="1100" fill="#1d4ed8" text-anchor="middle">3 · Test case</text><text x="456" y="1118" fill="#1d4ed8" text-anchor="middle">design</text>
+    <rect x="521" y="1076" width="124" height="56" rx="12" fill="#eff6ff"/><text x="583" y="1100" fill="#1d4ed8" text-anchor="middle">4 · Environment</text><text x="583" y="1118" fill="#1d4ed8" text-anchor="middle">setup</text>
+    <rect x="648" y="1076" width="124" height="56" rx="12" fill="#eff6ff"/><text x="710" y="1100" fill="#1d4ed8" text-anchor="middle">5 · Test</text><text x="710" y="1118" fill="#1d4ed8" text-anchor="middle">execution</text>
+    <rect x="775" y="1076" width="125" height="56" rx="12" fill="#eff6ff"/><text x="837" y="1100" fill="#1d4ed8" text-anchor="middle">6 · Test</text><text x="837" y="1118" fill="#1d4ed8" text-anchor="middle">closure</text>
+  </g>
+
+  <!-- 3 test levels -->
+  <text x="140" y="1210" font-size="13" font-weight="700" fill="#2563eb" letter-spacing="0.6">SECTION 3</text>
+  <text x="140" y="1246" font-size="30" font-weight="800" fill="#0f172a">Test levels</text>
+  <text x="140" y="1282" font-size="16" fill="#334155">Each level tests a bigger piece of the system. Bugs are cheapest to fix at the lowest level.</text>
+  <g>
+    <rect x="140" y="1304" width="760" height="76" rx="14" fill="#fff" stroke="#e2e8f0"/>
+    <rect x="160" y="1322" width="40" height="40" rx="10" fill="#dbeafe"/><text x="180" y="1348" font-size="16" font-weight="800" fill="#1d4ed8" text-anchor="middle">1</text>
+    <text x="220" y="1336" font-size="16" font-weight="700" fill="#0f172a">Unit testing</text><text x="220" y="1360" font-size="14" fill="#64748b">One function or component on its own. Usually written by developers.</text>
+    <rect x="140" y="1392" width="760" height="76" rx="14" fill="#fff" stroke="#e2e8f0"/>
+    <rect x="160" y="1410" width="40" height="40" rx="10" fill="#dbeafe"/><text x="180" y="1436" font-size="16" font-weight="800" fill="#1d4ed8" text-anchor="middle">2</text>
+    <text x="220" y="1424" font-size="16" font-weight="700" fill="#0f172a">Integration testing</text><text x="220" y="1448" font-size="14" fill="#64748b">Parts working together — modules, APIs, the database.</text>
+    <rect x="140" y="1480" width="760" height="76" rx="14" fill="#fff" stroke="#e2e8f0"/>
+    <rect x="160" y="1498" width="40" height="40" rx="10" fill="#dbeafe"/><text x="180" y="1524" font-size="16" font-weight="800" fill="#1d4ed8" text-anchor="middle">3</text>
+    <text x="220" y="1512" font-size="16" font-weight="700" fill="#0f172a">System testing</text><text x="220" y="1536" font-size="14" fill="#64748b">The whole application, end to end, checked against the requirements.</text>
+    <rect x="140" y="1568" width="760" height="76" rx="14" fill="#fff" stroke="#e2e8f0"/>
+    <rect x="160" y="1586" width="40" height="40" rx="10" fill="#dbeafe"/><text x="180" y="1612" font-size="16" font-weight="800" fill="#1d4ed8" text-anchor="middle">4</text>
+    <text x="220" y="1600" font-size="16" font-weight="700" fill="#0f172a">Acceptance testing (UAT)</text><text x="220" y="1624" font-size="14" fill="#64748b">Users or the business confirm it meets their needs before release.</text>
+  </g>
+
+  <!-- 4 test types -->
+  <text x="140" y="1720" font-size="13" font-weight="700" fill="#2563eb" letter-spacing="0.6">SECTION 4</text>
+  <text x="140" y="1756" font-size="30" font-weight="800" fill="#0f172a">Test types</text>
+  <rect x="140" y="1780" width="760" height="300" rx="14" fill="#fff" stroke="#e2e8f0"/>
+  <rect x="140" y="1780" width="760" height="44" rx="14" fill="#f8fafc"/><rect x="140" y="1810" width="760" height="14" fill="#f8fafc"/>
+  <g font-size="12" font-weight="700" fill="#64748b" letter-spacing="0.5"><text x="164" y="1808">TYPE</text><text x="380" y="1808">WHAT IT CHECKS</text></g>
+  <g font-size="14">
+    <text x="164" y="1854" font-weight="700" fill="#0f172a">Functional</text><text x="380" y="1854" fill="#475569">Features do what the requirements say.</text>
+    <line x1="164" y1="1872" x2="876" y2="1872" stroke="#f1f5f9"/>
+    <text x="164" y="1898" font-weight="700" fill="#0f172a">Non-functional</text><text x="380" y="1898" fill="#475569">How well it works: performance, usability, security.</text>
+    <line x1="164" y1="1916" x2="876" y2="1916" stroke="#f1f5f9"/>
+    <text x="164" y="1942" font-weight="700" fill="#0f172a">Smoke</text><text x="380" y="1942" fill="#475569">A quick check that a new build's critical features work.</text>
+    <line x1="164" y1="1960" x2="876" y2="1960" stroke="#f1f5f9"/>
+    <text x="164" y="1986" font-weight="700" fill="#0f172a">Sanity</text><text x="380" y="1986" fill="#475569">A narrow check that one specific fix or change works.</text>
+    <line x1="164" y1="2004" x2="876" y2="2004" stroke="#f1f5f9"/>
+    <text x="164" y="2030" font-weight="700" fill="#0f172a">Regression</text><text x="380" y="2030" fill="#475569">Re-testing after a change so nothing that worked is broken.</text>
+    <line x1="164" y1="2048" x2="876" y2="2048" stroke="#f1f5f9"/>
+    <text x="164" y="2068" font-weight="700" fill="#0f172a">Exploratory</text><text x="380" y="2068" fill="#475569">Learning and testing at the same time, without a script.</text>
+  </g>
+
+  <!-- 5 principles -->
+  <text x="140" y="2160" font-size="13" font-weight="700" fill="#2563eb" letter-spacing="0.6">SECTION 5</text>
+  <text x="140" y="2196" font-size="30" font-weight="800" fill="#0f172a">The 7 testing principles</text>
+  <g font-size="14">
+    <rect x="140" y="2220" width="372" height="92" rx="14" fill="#f8fafc" stroke="#e2e8f0"/><text x="162" y="2252" font-weight="800" fill="#1d4ed8">1</text><text x="184" y="2252" font-weight="700" fill="#0f172a">Testing shows defects are present</text><text x="184" y="2276" fill="#64748b">It can't prove the software is bug-free.</text>
+    <rect x="528" y="2220" width="372" height="92" rx="14" fill="#f8fafc" stroke="#e2e8f0"/><text x="550" y="2252" font-weight="800" fill="#1d4ed8">2</text><text x="572" y="2252" font-weight="700" fill="#0f172a">Exhaustive testing is impossible</text><text x="572" y="2276" fill="#64748b">Prioritise by risk instead.</text>
+    <rect x="140" y="2324" width="372" height="92" rx="14" fill="#f8fafc" stroke="#e2e8f0"/><text x="162" y="2356" font-weight="800" fill="#1d4ed8">3</text><text x="184" y="2356" font-weight="700" fill="#0f172a">Early testing saves time and money</text><text x="184" y="2380" fill="#64748b">Review requirements before code exists.</text>
+    <rect x="528" y="2324" width="372" height="92" rx="14" fill="#f8fafc" stroke="#e2e8f0"/><text x="550" y="2356" font-weight="800" fill="#1d4ed8">4</text><text x="572" y="2356" font-weight="700" fill="#0f172a">Defects cluster together</text><text x="572" y="2380" fill="#64748b">A few modules hold most of the bugs.</text>
+    <rect x="140" y="2428" width="372" height="92" rx="14" fill="#f8fafc" stroke="#e2e8f0"/><text x="162" y="2460" font-weight="800" fill="#1d4ed8">5</text><text x="184" y="2460" font-weight="700" fill="#0f172a">Beware the pesticide paradox</text><text x="184" y="2484" fill="#64748b">The same tests stop finding new bugs.</text>
+    <rect x="528" y="2428" width="372" height="92" rx="14" fill="#f8fafc" stroke="#e2e8f0"/><text x="550" y="2460" font-weight="800" fill="#1d4ed8">6</text><text x="572" y="2460" font-weight="700" fill="#0f172a">Testing is context dependent</text><text x="572" y="2484" fill="#64748b">A bank app and a game need different testing.</text>
+    <rect x="140" y="2532" width="760" height="92" rx="14" fill="#f8fafc" stroke="#e2e8f0"/><text x="162" y="2564" font-weight="800" fill="#1d4ed8">7</text><text x="184" y="2564" font-weight="700" fill="#0f172a">Absence of errors is a fallacy</text><text x="184" y="2588" fill="#64748b">Bug-free software that doesn't meet users' needs is still a failure.</text>
+  </g>
+
+  <!-- 6 good tester -->
+  <text x="140" y="2700" font-size="13" font-weight="700" fill="#2563eb" letter-spacing="0.6">SECTION 6</text>
+  <text x="140" y="2736" font-size="30" font-weight="800" fill="#0f172a">What makes a good tester</text>
+  <g font-size="14">
+    <rect x="140" y="2760" width="180" height="120" rx="14" fill="#fff" stroke="#e2e8f0"/><text x="160" y="2796" font-weight="700" fill="#0f172a">Curious</text><text x="160" y="2820" fill="#64748b">Asks "what if…?"</text><text x="160" y="2840" fill="#64748b">and tries it.</text>
+    <rect x="333" y="2760" width="180" height="120" rx="14" fill="#fff" stroke="#e2e8f0"/><text x="353" y="2796" font-weight="700" fill="#0f172a">Detail-oriented</text><text x="353" y="2820" fill="#64748b">Notices small</text><text x="353" y="2840" fill="#64748b">differences.</text>
+    <rect x="526" y="2760" width="180" height="120" rx="14" fill="#fff" stroke="#e2e8f0"/><text x="546" y="2796" font-weight="700" fill="#0f172a">Clear writer</text><text x="546" y="2820" fill="#64748b">Bug reports anyone</text><text x="546" y="2840" fill="#64748b">can reproduce.</text>
+    <rect x="719" y="2760" width="181" height="120" rx="14" fill="#fff" stroke="#e2e8f0"/><text x="739" y="2796" font-weight="700" fill="#0f172a">User-minded</text><text x="739" y="2820" fill="#64748b">Thinks like the</text><text x="739" y="2840" fill="#64748b">people who use it.</text>
+  </g>
+
+  <!-- 7 quiz -->
+  <rect x="140" y="2930" width="760" height="420" rx="20" fill="#fff" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="172" y="2974" font-size="13" font-weight="700" fill="#2563eb" letter-spacing="0.6">CHECK YOUR UNDERSTANDING</text>
+  <text x="172" y="3006" font-size="22" font-weight="800" fill="#0f172a">5 quick questions</text>
+  <text x="868" y="3006" font-size="14" font-weight="700" fill="#1d4ed8" text-anchor="end">Pick one answer for each</text>
+  <text x="172" y="3052" font-size="16" font-weight="700" fill="#0f172a">1. Which level tests the whole application against the requirements?</text>
+  <g font-size="15">
+    <rect x="172" y="3072" width="696" height="44" rx="10" fill="#fff" stroke="#e2e8f0"/><circle cx="196" cy="3094" r="8" fill="none" stroke="#cbd5e1" stroke-width="2"/><text x="216" y="3099" fill="#334155">Unit testing</text>
+    <rect x="172" y="3124" width="696" height="44" rx="10" fill="#fff" stroke="#e2e8f0"/><circle cx="196" cy="3146" r="8" fill="none" stroke="#cbd5e1" stroke-width="2"/><text x="216" y="3151" fill="#334155">Integration testing</text>
+    <rect x="172" y="3176" width="696" height="44" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/><circle cx="196" cy="3198" r="8" fill="#2563eb"/><circle cx="196" cy="3198" r="3" fill="#fff"/><text x="216" y="3203" font-weight="700" fill="#1d4ed8">System testing</text>
+    <rect x="172" y="3228" width="696" height="44" rx="10" fill="#fff" stroke="#e2e8f0"/><circle cx="196" cy="3250" r="8" fill="none" stroke="#cbd5e1" stroke-width="2"/><text x="216" y="3255" fill="#334155">Acceptance testing</text>
+  </g>
+  <rect x="172" y="3290" width="140" height="44" rx="10" fill="#2563eb"/><text x="242" y="3318" font-size="15" font-weight="700" fill="#fff" text-anchor="middle">Check answers</text>
+  <text x="332" y="3318" font-size="13" fill="#64748b">All 5 questions show at once on the page; results appear under each one.</text>
+
+  <!-- bottom nav -->
+  <line x1="140" y1="3400" x2="1300" y2="3400" stroke="#e2e8f0"/>
+  <text x="140" y="3448" font-size="15" font-weight="700" fill="#2563eb">← Back to roadmap</text>
+  <text x="1300" y="3440" font-size="12" font-weight="700" fill="#64748b" text-anchor="end">NEXT · COMING SOON</text>
+  <text x="1300" y="3464" font-size="16" font-weight="700" fill="#94a3b8" text-anchor="end">2. Test design techniques</text>
+</svg>
