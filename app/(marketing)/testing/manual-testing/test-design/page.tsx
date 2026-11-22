@@ -98,7 +98,7 @@ export default function TestDesignPage() {
       minutes={25}
       toc={TOC}
       prev={{ label: "1. Testing fundamentals", href: "/testing/manual-testing/fundamentals" }}
-      next={{ label: "3. Test cases & bug reports" }}
+      next={{ label: "3. Test cases & bug reports", href: "/testing/manual-testing/test-cases" }}
     >
       <section>
         <SectionHead n={1} id="why" title="Why test design?" />
@@ -235,7 +235,7 @@ export default function TestDesignPage() {
         </ul>
       </section>
 
-      <LessonQuiz questions={QUIZ} doneText="nice work — step 3 is coming soon." />
+      <LessonQuiz questions={QUIZ} doneText="nice work, you're ready for step 3." />
     </LessonLayout>
   );
 }

@@ -36,7 +36,7 @@ const TRACKS: Track[] = [
     steps: [
       { n: 1, title: "Testing fundamentals", blurb: "SDLC and STLC, test levels and types, and what makes a good tester.", href: "/testing/manual-testing/fundamentals" },
       { n: 2, title: "Test design techniques", blurb: "Equivalence partitioning, boundary values and decision tables.", href: "/testing/manual-testing/test-design" },
-      { n: 3, title: "Test cases & bug reports", blurb: "Write clear test cases and defect reports with steps, severity and priority." },
+      { n: 3, title: "Test cases & bug reports", blurb: "Write clear test cases and defect reports with steps, severity and priority.", href: "/testing/manual-testing/test-cases" },
       { n: 4, title: "Exploratory testing", blurb: "Charters, time-boxed sessions and notes that find real bugs." },
     ],
     stepTestId: (n) => `manual-step-card-${n}`,
