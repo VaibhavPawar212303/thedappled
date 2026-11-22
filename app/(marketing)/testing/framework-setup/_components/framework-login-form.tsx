@@ -52,7 +52,7 @@ export function FrameworkLoginForm() {
       </div>
       <div className="mt-5">
         <label htmlFor="env-password" className="text-sm font-semibold">Password</label>
-        <input id="env-password" data-testid="env-password" type="password" autoComplete="off" placeholder="Your password" value={password} onChange={(e) => setPassword(e.target.value)} className={inputClass} />
+        <input id="env-password" data-testid="env-password" type="password" autoComplete="new-password" placeholder="Your password" value={password} onChange={(e) => setPassword(e.target.value)} className={inputClass} />
       </div>
 
       <button type="submit" data-testid="env-submit" disabled={busy} className="mt-6 h-12 w-full rounded-[10px] bg-purple-600 text-[15px] font-semibold text-white transition hover:bg-purple-700 disabled:opacity-70">

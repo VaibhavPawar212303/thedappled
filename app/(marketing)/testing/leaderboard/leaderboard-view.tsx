@@ -11,7 +11,7 @@ import type { AssignmentSlug } from "@/lib/assignments";
 
 type Tab = "all" | "completed" | "progress";
 
-// Per-stage copy, links and accent colour (green for UI automation, purple for Framework setup).
+// Per-stage copy, links and accent colour (green for UI automation and Page objects, purple for Framework setup).
 const STAGES = {
   "ui-automation": {
     label: "UI automation",
@@ -54,6 +54,27 @@ const STAGES = {
     row: "bg-purple-50 dark:bg-purple-950/30",
     pill: "bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300",
     tab: "border-purple-500",
+  },
+  "page-objects": {
+    label: "Page objects",
+    href: "/testing/page-objects",
+    sub: "See how learners are doing on the Page objects & fixtures assignment.",
+    startText: "Complete the Page objects assignment to take the first position.",
+    checks: 6,
+    blob: "bg-emerald-200/50 dark:bg-emerald-900/20",
+    live: "text-emerald-700 dark:text-emerald-400",
+    icon: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300",
+    solid: "bg-emerald-600 text-white hover:bg-emerald-700",
+    border: "border-emerald-500",
+    bar: "bg-emerald-500",
+    strong: "text-emerald-700 dark:text-emerald-400",
+    banner: "bg-emerald-700",
+    bannerLabel: "text-emerald-200",
+    bannerText: "text-emerald-100",
+    bannerBtn: "bg-white text-emerald-700 hover:bg-emerald-50",
+    row: "bg-emerald-50 dark:bg-emerald-950/30",
+    pill: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300",
+    tab: "border-emerald-500",
   },
 } as const;
 const PAGE = 10;

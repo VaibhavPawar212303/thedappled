@@ -25,10 +25,11 @@ const TONES: Record<Tone, { chip: string; text: string }> = {
 const TRACK = {
   title: "Automation learning",
   level: "Intermediate",
-  blurb: "Learn Playwright and Cypress by automating real pages, then set up the framework the way teams do.",
+  blurb: "Learn Playwright and Cypress by automating real pages, set up the framework the way teams do, then structure it with page objects and fixtures.",
   steps: [
-    { n: 1, title: "UI automation", blurb: "Playwright & Cypress: locators, waits, page objects, debugging.", href: "/testing/ui-automation" },
-    { n: 2, title: "Framework setup", blurb: "Config and credentials in .env, tests that read them, and the project saved on GitHub with secrets.", href: "/testing/framework-setup" },
+    { n: 1, title: "UI automation", blurb: "Playwright & Cypress: locators, waits, page objects, debugging.", href: "/testing/ui-automation", isNew: false },
+    { n: 2, title: "Framework setup", blurb: "Config and credentials in .env, tests that read them, and the project saved on GitHub with secrets.", href: "/testing/framework-setup", isNew: false },
+    { n: 3, title: "Page objects & fixtures", blurb: "Move locators into page classes, share setup with fixtures, keep specs readable.", href: "/testing/page-objects", isNew: true },
   ],
 };
 
@@ -128,7 +129,10 @@ export default function TestingPage() {
                   <Link href={st.href} className="flex items-start gap-4 rounded-2xl border bg-slate-50 p-5 transition hover:shadow-md dark:bg-slate-900/40">
                     <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-lg font-extrabold ${TONES.purple.chip}`}>{st.n}</span>
                     <span className="min-w-0 flex-1">
-                      <span className="block text-xs font-bold uppercase tracking-wide text-muted-foreground">Step {st.n}</span>
+                      <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                        Step {st.n}
+                        {st.isNew && <span className={`rounded-full px-2 py-0.5 text-[11px] normal-case tracking-normal ${TONES.green.chip}`}>New</span>}
+                      </span>
                       <span className="mt-0.5 block text-lg font-bold">{st.title}</span>
                       <span className="mt-1 block text-sm leading-relaxed text-muted-foreground">{st.blurb}</span>
                     </span>

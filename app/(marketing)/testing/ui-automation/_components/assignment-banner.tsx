@@ -9,7 +9,8 @@ import { REASON_TEXT } from "@/lib/verification";
 // Shown on the demo pages only when opened from an assignment link (`?a=<token>`).
 export function AssignmentBanner() {
   const token = useSearchParams().get("a");
-  const stage = usePathname().startsWith("/testing/framework-setup") ? "framework-setup" : "ui-automation";
+  const path = usePathname();
+  const stage = path.startsWith("/testing/framework-setup") ? "framework-setup" : path.startsWith("/testing/page-objects") ? "page-objects" : "ui-automation";
   const [p, setP] = React.useState<Progress | null>(null);
   const [automated, setAutomated] = React.useState<boolean | null>(null);
 

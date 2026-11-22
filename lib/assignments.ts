@@ -4,7 +4,10 @@ import type { Reason, Signals, Verdict } from "@/lib/verification";
 
 export const UI_AUTOMATION = "ui-automation";
 export const FRAMEWORK_SETUP = "framework-setup";
-export type AssignmentSlug = typeof UI_AUTOMATION | typeof FRAMEWORK_SETUP;
+export const PAGE_OBJECTS = "page-objects";
+export type AssignmentSlug = typeof UI_AUTOMATION | typeof FRAMEWORK_SETUP | typeof PAGE_OBJECTS;
+export const ASSIGNMENT_SLUGS: AssignmentSlug[] = [UI_AUTOMATION, FRAMEWORK_SETUP, PAGE_OBJECTS];
+export const isAssignmentSlug = (v: unknown): v is AssignmentSlug => ASSIGNMENT_SLUGS.includes(v as AssignmentSlug);
 
 export type StepId =
   | "login-empty"
@@ -17,7 +20,13 @@ export type StepId =
   | "env-login-wrong"
   | "repo-config"
   | "repo-ignore"
-  | "repo-ci";
+  | "repo-ci"
+  | "pom-login"
+  | "pom-cart"
+  | "pom-checkout"
+  | "repo-pages"
+  | "repo-fixture"
+  | "repo-specs";
 
 type Step = { id: StepId; group: string; label: string };
 
@@ -40,12 +49,23 @@ export const FRAMEWORK_STEPS: Step[] = [
   { id: "repo-ci", group: "Save it on GitHub", label: "GitHub Actions run uses repository secrets" },
 ];
 
-export const REPO_STEPS = new Set<StepId>(["repo-config", "repo-ignore", "repo-ci"]);
+// Stage 3. The first three steps come from the learner's test run through the demo shop; the last
+// three from a scan of their public GitHub repository (page classes, a fixture, clean specs).
+export const POM_STEPS: Step[] = [
+  { id: "pom-login", group: "Run your tests", label: "Sign in to the shop through your LoginPage" },
+  { id: "pom-cart", group: "Run your tests", label: "Add two products to the cart" },
+  { id: "pom-checkout", group: "Run your tests", label: "Checkout shows the order confirmation" },
+  { id: "repo-pages", group: "Structure on GitHub", label: "pages/ has LoginPage, ProductsPage and CartPage" },
+  { id: "repo-fixture", group: "Structure on GitHub", label: "A fixture provides the page objects to tests" },
+  { id: "repo-specs", group: "Structure on GitHub", label: "Spec files use page objects only (no raw locators)" },
+];
 
-const STEPS_BY_SLUG: Record<string, Step[]> = { [UI_AUTOMATION]: STEPS, [FRAMEWORK_SETUP]: FRAMEWORK_STEPS };
+export const REPO_STEPS = new Set<StepId>(["repo-config", "repo-ignore", "repo-ci", "repo-pages", "repo-fixture", "repo-specs"]);
+
+const STEPS_BY_SLUG: Record<string, Step[]> = { [UI_AUTOMATION]: STEPS, [FRAMEWORK_SETUP]: FRAMEWORK_STEPS, [PAGE_OBJECTS]: POM_STEPS };
 export const stepsFor = (slug: string): Step[] => STEPS_BY_SLUG[slug] ?? STEPS;
 
-const STEP_IDS = new Set<string>([...STEPS, ...FRAMEWORK_STEPS].map((s) => s.id));
+const STEP_IDS = new Set<string>([...STEPS, ...FRAMEWORK_STEPS, ...POM_STEPS].map((s) => s.id));
 export const isStepId = (v: unknown): v is StepId => typeof v === "string" && STEP_IDS.has(v);
 
 export type AssignmentStatus = {

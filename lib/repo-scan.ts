@@ -22,7 +22,7 @@ const EXAMPLE_RE = /(^|\/)(\.env\.(example|sample|template|dist)|env\.example|ex
 const GITIGNORE_RE = /(^|\/)\.gitignore$/;
 const REAL_ENV_RE = /(^|\/)\.env(\.(local|development|production|test|staging))?$/;
 const TEXT_EXT_RE = /\.(ts|tsx|js|jsx|mjs|cjs|json|ya?ml|md|txt|env|example|sample|template)$/i;
-const SKIP_RE = /(^|\/)(node_modules|dist|build|playwright-report|test-results|\.next)\/|package-lock\.json$|pnpm-lock\.yaml$|yarn\.lock$/;
+export const SKIP_RE = /(^|\/)(node_modules|dist|build|playwright-report|test-results|\.next)\/|package-lock\.json$|pnpm-lock\.yaml$|yarn\.lock$/;
 const MAX_LEAK_FILES = 40;
 
 // Files written by Windows tools (e.g. PowerShell's `echo > .env.example`) are often UTF-16, which
