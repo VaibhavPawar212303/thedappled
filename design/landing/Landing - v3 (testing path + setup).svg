@@ -1,0 +1,321 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="5150" viewBox="0 0 1440 5150" font-family="Inter, sans-serif">
+  <!-- / (landing) v3 — courses, books and articles deep dives, the Testing path (3 stages), the framework "setup"
+       story, the AI section and the final CTA. -->
+  <rect width="1440" height="5150" fill="#ffffff"/>
+
+  <!-- nav -->
+  <rect width="1440" height="72" fill="#ffffff"/>
+  <line x1="0" y1="72" x2="1440" y2="72" stroke="#e2e8f0"/>
+  <rect x="40" y="20" width="32" height="32" rx="8" fill="#0f172a"/><text x="56" y="42" font-size="16" font-weight="800" fill="#fff" text-anchor="middle">D</text>
+  <text x="84" y="42" font-size="20" font-weight="800" fill="#0f172a">Thedappled</text>
+  <g font-size="15" fill="#475569">
+    <text x="520" y="42">Courses</text><text x="610" y="42">Books</text><text x="685" y="42">Blogs</text>
+    <text x="755" y="42">Testing</text><text x="840" y="42">Compiler</text>
+  </g>
+  <text x="1150" y="42" font-size="15" font-weight="500" fill="#0f172a">Log in</text>
+  <rect x="1230" y="16" width="170" height="40" rx="10" fill="#2563eb"/><text x="1315" y="41" font-size="14" font-weight="700" fill="#fff" text-anchor="middle">Start learning free</text>
+
+  <!-- HERO -->
+  <rect y="72" width="1440" height="600" fill="#f8fafc"/>
+  <circle cx="1300" cy="250" r="160" fill="#dbeafe" opacity="0.6"/>
+  <circle cx="150" cy="560" r="100" fill="#ede9fe" opacity="0.5"/>
+  <rect x="100" y="150" width="372" height="32" rx="16" fill="#d1fae5"/>
+  <circle cx="120" cy="166" r="5" fill="#059669"/>
+  <text x="134" y="171" font-size="13" font-weight="700" fill="#047857">New: Testing path — Stage 3 · Page objects</text>
+  <text x="100" y="250" font-size="60" font-weight="800" fill="#0f172a">Master modern tech</text>
+  <text x="100" y="320" font-size="60" font-weight="800" fill="#0f172a">with intelligent</text>
+  <text x="100" y="390" font-size="60" font-weight="800" fill="#2563eb">learning.</text>
+  <text x="100" y="440" font-size="18" fill="#475569">Video courses, interactive books, AI-researched articles and a</text>
+  <text x="100" y="468" font-size="18" fill="#475569">hands-on testing path — one platform built for developers.</text>
+  <rect x="100" y="500" width="210" height="56" rx="12" fill="#2563eb"/><text x="205" y="534" font-size="16" font-weight="700" fill="#fff" text-anchor="middle">Start learning free →</text>
+  <rect x="326" y="500" width="236" height="56" rx="12" fill="#fff" stroke="#cbd5e1"/><text x="444" y="534" font-size="16" font-weight="700" fill="#0f172a" text-anchor="middle">Explore the testing path</text>
+  <text x="100" y="600" font-size="14" fill="#64748b">Free to start · 3 testing stages with verified assignments · live leaderboard</text>
+
+  <!-- product preview -->
+  <rect x="740" y="150" width="620" height="460" rx="20" fill="#fff" stroke="#e2e8f0"/>
+  <rect x="740" y="150" width="620" height="40" rx="20" fill="#f1f5f9"/><rect x="740" y="170" width="620" height="20" fill="#f1f5f9"/>
+  <circle cx="766" cy="170" r="6" fill="#f87171"/><circle cx="786" cy="170" r="6" fill="#fbbf24"/><circle cx="806" cy="170" r="6" fill="#34d399"/>
+  <rect x="764" y="210" width="380" height="214" rx="14" fill="#0f172a"/>
+  <polygon points="944,296 944,340 980,318" fill="#fff"/>
+  <rect x="784" y="400" width="340" height="6" rx="3" fill="#334155"/><rect x="784" y="400" width="170" height="6" rx="3" fill="#3b82f6"/>
+  <g fill="#f1f5f9"><rect x="1160" y="210" width="176" height="34" rx="8"/><rect x="1160" y="254" width="176" height="34" rx="8" fill="#dbeafe"/><rect x="1160" y="298" width="176" height="34" rx="8"/><rect x="1160" y="342" width="176" height="34" rx="8"/><rect x="1160" y="386" width="176" height="38" rx="8"/></g>
+  <text x="764" y="452" font-size="14" font-weight="700" fill="#0f172a">Build a full-stack app — Chapter 3</text>
+  <rect x="764" y="464" width="572" height="6" rx="3" fill="#e2e8f0"/><rect x="764" y="464" width="380" height="6" rx="3" fill="#2563eb"/>
+  <rect x="764" y="488" width="180" height="98" rx="12" fill="#f3e8ff"/>
+  <text x="780" y="520" font-size="13" font-weight="700" fill="#7e22ce">Interactive books</text><text x="780" y="542" font-size="11" fill="#64748b">Bookmark &amp; track</text><text x="780" y="558" font-size="11" fill="#64748b">progress</text>
+  <rect x="960" y="488" width="180" height="98" rx="12" fill="#d1fae5"/>
+  <text x="976" y="520" font-size="13" font-weight="700" fill="#047857">AI articles</text><text x="976" y="542" font-size="11" fill="#64748b">Market-aware,</text><text x="976" y="558" font-size="11" fill="#64748b">every week</text>
+  <rect x="1156" y="488" width="180" height="98" rx="12" fill="#fef3c7"/>
+  <text x="1172" y="520" font-size="13" font-weight="700" fill="#b45309">Testing path</text><text x="1172" y="542" font-size="11" fill="#64748b">6 of 6 verified</text>
+  <rect x="1172" y="554" width="148" height="6" rx="3" fill="#fde68a"/><rect x="1172" y="554" width="148" height="6" rx="3" fill="#f59e0b"/>
+
+  <!-- STATS -->
+  <line x1="0" y1="672" x2="1440" y2="672" stroke="#e2e8f0"/>
+  <g text-anchor="middle">
+    <text x="240" y="736" font-size="36" font-weight="800" fill="#0f172a">10+</text><text x="240" y="764" font-size="14" fill="#64748b">Video courses</text>
+    <text x="560" y="736" font-size="36" font-weight="800" fill="#0f172a">5+</text><text x="560" y="764" font-size="14" fill="#64748b">Interactive books</text>
+    <text x="880" y="736" font-size="36" font-weight="800" fill="#0f172a">50+</text><text x="880" y="764" font-size="14" fill="#64748b">Tech articles</text>
+    <text x="1200" y="736" font-size="36" font-weight="800" fill="#b45309">3</text><text x="1200" y="764" font-size="14" fill="#64748b">Testing stages</text>
+  </g>
+  <line x1="0" y1="800" x2="1440" y2="800" stroke="#e2e8f0"/>
+
+  <!-- ECOSYSTEM (4 cards) -->
+  <text x="720" y="880" font-size="36" font-weight="800" fill="#0f172a" text-anchor="middle">Your complete learning ecosystem</text>
+  <text x="720" y="914" font-size="17" fill="#64748b" text-anchor="middle">Every developer learns differently — pick the format that fits you.</text>
+  <g>
+    <rect x="100" y="960" width="290" height="270" rx="20" fill="#fff" stroke="#e2e8f0"/>
+    <rect x="128" y="988" width="52" height="52" rx="14" fill="#dbeafe"/><rect x="144" y="1004" width="20" height="20" rx="4" fill="#2563eb"/>
+    <text x="128" y="1080" font-size="20" font-weight="700" fill="#0f172a">Video Courses</text>
+    <text x="128" y="1108" font-size="14" fill="#64748b">Project-based tutorials covering</text><text x="128" y="1128" font-size="14" fill="#64748b">full-stack development.</text>
+    <text x="128" y="1200" font-size="14" font-weight="700" fill="#2563eb">Browse courses →</text>
+
+    <rect x="410" y="960" width="290" height="270" rx="20" fill="#fff" stroke="#e2e8f0"/>
+    <rect x="438" y="988" width="52" height="52" rx="14" fill="#f3e8ff"/><rect x="454" y="1004" width="20" height="20" rx="4" fill="#9333ea"/>
+    <text x="438" y="1080" font-size="20" font-weight="700" fill="#0f172a">Interactive Books</text>
+    <text x="438" y="1108" font-size="14" fill="#64748b">Deep-dive reading with bookmarks</text><text x="438" y="1128" font-size="14" fill="#64748b">and progress tracking.</text>
+    <text x="438" y="1200" font-size="14" font-weight="700" fill="#9333ea">Explore books →</text>
+
+    <rect x="720" y="960" width="290" height="270" rx="20" fill="#fff" stroke="#e2e8f0"/>
+    <rect x="748" y="988" width="52" height="52" rx="14" fill="#d1fae5"/><rect x="764" y="1004" width="20" height="20" rx="4" fill="#10b981"/>
+    <text x="748" y="1080" font-size="20" font-weight="700" fill="#0f172a">Tech Insights</text>
+    <text x="748" y="1108" font-size="14" fill="#64748b">AI-researched articles on the</text><text x="748" y="1128" font-size="14" fill="#64748b">latest market trends.</text>
+    <text x="748" y="1200" font-size="14" font-weight="700" fill="#059669">Read articles →</text>
+
+    <rect x="1030" y="960" width="310" height="270" rx="20" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+    <rect x="1058" y="988" width="52" height="52" rx="14" fill="#fef3c7"/><path d="M1074 1014 l6 6 l12 -14" stroke="#d97706" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="1252" y="994" width="60" height="24" rx="12" fill="#d1fae5"/><text x="1282" y="1011" font-size="12" font-weight="700" fill="#047857" text-anchor="middle">New</text>
+    <text x="1058" y="1080" font-size="20" font-weight="700" fill="#0f172a">Testing Path</text>
+    <text x="1058" y="1108" font-size="14" fill="#64748b">Playwright &amp; Cypress, verified</text><text x="1058" y="1128" font-size="14" fill="#64748b">assignments and a leaderboard.</text>
+    <text x="1058" y="1200" font-size="14" font-weight="700" fill="#b45309">Start the path →</text>
+  </g>
+
+  <!-- LEARN YOUR WAY: courses, books, articles -->
+  <rect y="1290" width="1440" height="1400" fill="#f8fafc"/>
+  <line x1="0" y1="1290" x2="1440" y2="1290" stroke="#e2e8f0"/>
+  <text x="720" y="1370" font-size="36" font-weight="800" fill="#0f172a" text-anchor="middle">Learn your way — watch, read or explore</text>
+  <text x="720" y="1404" font-size="17" fill="#64748b" text-anchor="middle">Three formats, one account. Your progress follows you everywhere.</text>
+
+  <!-- row 1: courses (text left, mockup right) -->
+  <rect x="100" y="1460" width="112" height="30" rx="8" fill="#dbeafe"/><text x="116" y="1480" font-size="13" font-weight="700" fill="#1d4ed8">▶  Courses</text>
+  <text x="100" y="1538" font-size="32" font-weight="800" fill="#0f172a">Learn by building real projects</text>
+  <text x="100" y="1578" font-size="17" fill="#475569">Project-based video courses that take you from setup to a</text>
+  <text x="100" y="1604" font-size="17" fill="#475569">deployed app, one chapter at a time.</text>
+  <g font-size="15" fill="#334155">
+    <path d="M102 1646 l5 5 l9 -10" stroke="#2563eb" stroke-width="2.5" fill="none"/><text x="128" y="1651">Step-by-step video guidance</text>
+    <path d="M102 1680 l5 5 l9 -10" stroke="#2563eb" stroke-width="2.5" fill="none"/><text x="128" y="1685">Downloadable source code for every chapter</text>
+    <path d="M102 1714 l5 5 l9 -10" stroke="#2563eb" stroke-width="2.5" fill="none"/><text x="128" y="1719">Chapter-based progress tracking</text>
+  </g>
+  <text x="100" y="1772" font-size="15" font-weight="700" fill="#2563eb">Browse video courses →</text>
+  <rect x="760" y="1460" width="580" height="340" rx="18" fill="#fff" stroke="#e2e8f0"/>
+  <rect x="780" y="1480" width="360" height="210" rx="12" fill="#0f172a"/>
+  <circle cx="960" cy="1585" r="28" fill="#ffffff" opacity="0.15"/><polygon points="952,1571 952,1599 975,1585" fill="#fff"/>
+  <rect x="796" y="1668" width="328" height="5" rx="2.5" fill="#334155"/><rect x="796" y="1668" width="120" height="5" rx="2.5" fill="#3b82f6"/>
+  <text x="780" y="1718" font-size="14" font-weight="700" fill="#0f172a">Full-stack Next.js · Chapter 3 of 12</text>
+  <rect x="780" y="1732" width="360" height="6" rx="3" fill="#e2e8f0"/><rect x="780" y="1732" width="90" height="6" rx="3" fill="#2563eb"/>
+  <text x="780" y="1768" font-size="12" fill="#64748b">25% complete · resume where you left off</text>
+  <g font-size="12">
+    <text x="1160" y="1496" font-weight="700" fill="#64748b" letter-spacing="0.5">CHAPTERS</text>
+    <rect x="1156" y="1508" width="166" height="34" rx="8" fill="#f0fdf4"/><text x="1168" y="1530" fill="#047857">✓ 1. Project setup</text>
+    <rect x="1156" y="1548" width="166" height="34" rx="8" fill="#f0fdf4"/><text x="1168" y="1570" fill="#047857">✓ 2. Routing</text>
+    <rect x="1156" y="1588" width="166" height="34" rx="8" fill="#dbeafe"/><text x="1168" y="1610" font-weight="700" fill="#1d4ed8">▶ 3. Data fetching</text>
+    <rect x="1156" y="1628" width="166" height="34" rx="8" fill="#f8fafc"/><text x="1168" y="1650" fill="#64748b">4. Auth</text>
+    <rect x="1156" y="1668" width="166" height="34" rx="8" fill="#f8fafc"/><text x="1168" y="1690" fill="#64748b">5. Payments</text>
+  </g>
+
+  <!-- row 2: books (mockup left, text right) -->
+  <rect x="100" y="1860" width="580" height="340" rx="18" fill="#fff" stroke="#e2e8f0"/>
+  <rect x="100" y="1860" width="170" height="340" rx="18" fill="#faf5ff"/><rect x="250" y="1860" width="20" height="340" fill="#faf5ff"/>
+  <g font-size="12">
+    <text x="120" y="1892" font-weight="700" fill="#7e22ce" letter-spacing="0.5">CONTENTS</text>
+    <text x="120" y="1922" fill="#64748b">1. Pointers</text>
+    <text x="120" y="1948" font-weight="700" fill="#7e22ce">2. Memory layout</text>
+    <text x="120" y="1974" fill="#64748b">3. Linked lists</text>
+    <text x="120" y="2000" fill="#64748b">4. Trees</text>
+    <rect x="120" y="2160" width="130" height="6" rx="3" fill="#e9d5ff"/><rect x="120" y="2160" width="52" height="6" rx="3" fill="#9333ea"/>
+    <text x="120" y="2184" fill="#64748b">40% read</text>
+  </g>
+  <text x="294" y="1902" font-size="18" font-weight="800" fill="#0f172a">2. Memory layout</text>
+  <rect x="294" y="1918" width="360" height="8" rx="4" fill="#e2e8f0"/><rect x="294" y="1936" width="340" height="8" rx="4" fill="#e2e8f0"/><rect x="294" y="1954" width="250" height="8" rx="4" fill="#e2e8f0"/>
+  <rect x="294" y="1980" width="360" height="86" rx="10" fill="#0f172a"/>
+  <g font-family="JetBrains Mono, monospace" font-size="12" fill="#e2e8f0"><text x="310" y="2006">int *p = malloc(sizeof(int));</text><text x="310" y="2028">*p = 42;</text><text x="310" y="2050" fill="#a7f3d0">free(p); // heap released</text></g>
+  <rect x="294" y="2082" width="360" height="60" rx="10" fill="#faf5ff" stroke="#e9d5ff"/>
+  <text x="310" y="2106" font-size="13" font-weight="700" fill="#7e22ce">🔖 Bookmarked</text><text x="310" y="2126" font-size="12" fill="#64748b">Stack vs heap — come back to this before the quiz.</text>
+  <rect x="760" y="1860" width="96" height="30" rx="8" fill="#f3e8ff"/><text x="776" y="1880" font-size="13" font-weight="700" fill="#7e22ce">▤  Books</text>
+  <text x="760" y="1938" font-size="32" font-weight="800" fill="#0f172a">Deep knowledge, distraction free</text>
+  <text x="760" y="1978" font-size="17" fill="#475569">Interactive books let you read at your own pace, bookmark</text>
+  <text x="760" y="2004" font-size="17" fill="#475569">key ideas and master the theory behind the code.</text>
+  <g font-size="15" fill="#334155">
+    <path d="M762 2046 l5 5 l9 -10" stroke="#9333ea" stroke-width="2.5" fill="none"/><text x="788" y="2051">Rich text with runnable-looking code blocks</text>
+    <path d="M762 2080 l5 5 l9 -10" stroke="#9333ea" stroke-width="2.5" fill="none"/><text x="788" y="2085">Bookmarks and reading progress per chapter</text>
+    <path d="M762 2114 l5 5 l9 -10" stroke="#9333ea" stroke-width="2.5" fill="none"/><text x="788" y="2119">Read anywhere, pick up where you stopped</text>
+  </g>
+  <text x="760" y="2172" font-size="15" font-weight="700" fill="#9333ea">Explore the library →</text>
+
+  <!-- row 3: blogs (text left, mockup right) -->
+  <rect x="100" y="2260" width="136" height="30" rx="8" fill="#d1fae5"/><text x="116" y="2280" font-size="13" font-weight="700" fill="#047857">✦  AI Articles</text>
+  <text x="100" y="2338" font-size="32" font-weight="800" fill="#0f172a">Stay current with market intelligence</text>
+  <text x="100" y="2378" font-size="17" fill="#475569">Articles researched from live sources every week — tool</text>
+  <text x="100" y="2404" font-size="17" fill="#475569">comparisons, trends and summaries without the doom-scroll.</text>
+  <g font-size="15" fill="#334155">
+    <path d="M102 2446 l5 5 l9 -10" stroke="#059669" stroke-width="2.5" fill="none"/><text x="128" y="2451">Researched from live sources, with citations</text>
+    <path d="M102 2480 l5 5 l9 -10" stroke="#059669" stroke-width="2.5" fill="none"/><text x="128" y="2485">Unbiased tool comparisons</text>
+    <path d="M102 2514 l5 5 l9 -10" stroke="#059669" stroke-width="2.5" fill="none"/><text x="128" y="2519">Short, actionable takeaways</text>
+  </g>
+  <text x="100" y="2572" font-size="15" font-weight="700" fill="#059669">Read the latest articles →</text>
+  <rect x="760" y="2260" width="580" height="340" rx="18" fill="#fff" stroke="#e2e8f0"/>
+  <g>
+    <rect x="784" y="2284" width="532" height="92" rx="12" fill="#f0fdf4" stroke="#bbf7d0"/>
+    <rect x="800" y="2300" width="60" height="60" rx="10" fill="#bbf7d0"/>
+    <rect x="876" y="2302" width="70" height="20" rx="10" fill="#d1fae5"/><text x="911" y="2316" font-size="11" font-weight="700" fill="#047857" text-anchor="middle">This week</text>
+    <text x="876" y="2342" font-size="15" font-weight="700" fill="#0f172a">Playwright vs Cypress in 2026</text>
+    <text x="876" y="2362" font-size="12" fill="#64748b">6 min read · 12 sources</text>
+    <rect x="784" y="2390" width="532" height="92" rx="12" fill="#fff" stroke="#e2e8f0"/>
+    <rect x="800" y="2406" width="60" height="60" rx="10" fill="#f1f5f9"/>
+    <text x="876" y="2434" font-size="15" font-weight="700" fill="#0f172a">Next.js 16: what changed for app routes</text>
+    <text x="876" y="2456" font-size="12" fill="#64748b">5 min read · 9 sources</text>
+    <rect x="784" y="2496" width="532" height="88" rx="12" fill="#fff" stroke="#e2e8f0"/>
+    <rect x="800" y="2510" width="60" height="60" rx="10" fill="#f1f5f9"/>
+    <text x="876" y="2538" font-size="15" font-weight="700" fill="#0f172a">Postgres or SQLite for side projects?</text>
+    <text x="876" y="2560" font-size="12" fill="#64748b">4 min read · 7 sources</text>
+  </g>
+
+  <g transform="translate(0,1400)">
+  <!-- HANDS-ON TESTING PATH (new) -->
+  <rect y="1290" width="1440" height="640" fill="#ffffff"/>
+  <line x1="0" y1="1290" x2="1440" y2="1290" stroke="#e2e8f0"/>
+  <rect x="100" y="1370" width="210" height="30" rx="8" fill="#d1fae5"/><text x="116" y="1390" font-size="13" font-weight="700" fill="#047857">✓ Testing path · 3 stages</text>
+  <text x="100" y="1460" font-size="40" font-weight="800" fill="#0f172a">Learn test automation</text>
+  <text x="100" y="1510" font-size="40" font-weight="800" fill="#0f172a">by doing it for real</text>
+  <text x="100" y="1556" font-size="17" fill="#475569">Write Playwright or Cypress scripts against real demo pages.</text>
+  <text x="100" y="1582" font-size="17" fill="#475569">Every step is verified as automated, your repo is checked</text>
+  <text x="100" y="1608" font-size="17" fill="#475569">on GitHub, and you climb a live leaderboard.</text>
+  <g font-size="15" fill="#334155">
+    <circle cx="112" cy="1651" r="10" fill="#d1fae5"/><path d="M107 1651 l4 4 l7 -8" stroke="#059669" stroke-width="2" fill="none"/><text x="132" y="1656">Verified automation — hand-driven runs don't count</text>
+    <circle cx="112" cy="1687" r="10" fill="#d1fae5"/><path d="M107 1687 l4 4 l7 -8" stroke="#059669" stroke-width="2" fill="none"/><text x="132" y="1692">GitHub checks for .env, CI secrets and page objects</text>
+    <circle cx="112" cy="1723" r="10" fill="#d1fae5"/><path d="M107 1723 l4 4 l7 -8" stroke="#059669" stroke-width="2" fill="none"/><text x="132" y="1728">A live leaderboard for every stage</text>
+  </g>
+  <rect x="100" y="1772" width="236" height="52" rx="12" fill="#059669"/><text x="218" y="1804" font-size="15" font-weight="700" fill="#fff" text-anchor="middle">Start the testing path →</text>
+  <rect x="352" y="1772" width="176" height="52" rx="12" fill="#fff" stroke="#cbd5e1"/><text x="440" y="1804" font-size="15" font-weight="700" fill="#0f172a" text-anchor="middle">View leaderboard</text>
+
+  <!-- stage cards -->
+  <g>
+    <rect x="740" y="1360" width="600" height="150" rx="18" fill="#fff" stroke="#e2e8f0"/>
+    <rect x="768" y="1388" width="48" height="48" rx="12" fill="#f3e8ff"/><text x="792" y="1420" font-size="20" font-weight="800" fill="#7e22ce" text-anchor="middle">1</text>
+    <text x="836" y="1400" font-size="12" font-weight="700" fill="#64748b" letter-spacing="0.5">STAGE 1</text>
+    <text x="836" y="1426" font-size="19" font-weight="700" fill="#0f172a">UI automation</text>
+    <text x="836" y="1452" font-size="14" fill="#64748b">Locators, waits and assertions on real sign-in and sign-up pages.</text>
+    <rect x="836" y="1470" width="72" height="24" rx="12" fill="#f1f5f9"/><text x="872" y="1487" font-size="12" font-weight="600" fill="#475569" text-anchor="middle">6 checks</text>
+    <rect x="916" y="1470" width="146" height="24" rx="12" fill="#f1f5f9"/><text x="989" y="1487" font-size="12" font-weight="600" fill="#475569" text-anchor="middle">Playwright · Cypress</text>
+
+    <rect x="740" y="1530" width="600" height="150" rx="18" fill="#fff" stroke="#e2e8f0"/>
+    <rect x="768" y="1558" width="48" height="48" rx="12" fill="#f3e8ff"/><text x="792" y="1590" font-size="20" font-weight="800" fill="#7e22ce" text-anchor="middle">2</text>
+    <text x="836" y="1570" font-size="12" font-weight="700" fill="#64748b" letter-spacing="0.5">STAGE 2</text>
+    <text x="836" y="1596" font-size="19" font-weight="700" fill="#0f172a">Framework setup</text>
+    <text x="836" y="1622" font-size="14" fill="#64748b">Config in .env, tests that read it, and CI with GitHub secrets.</text>
+    <rect x="836" y="1640" width="72" height="24" rx="12" fill="#f1f5f9"/><text x="872" y="1657" font-size="12" font-weight="600" fill="#475569" text-anchor="middle">5 checks</text>
+    <rect x="916" y="1640" width="160" height="24" rx="12" fill="#f1f5f9"/><text x="996" y="1657" font-size="12" font-weight="600" fill="#475569" text-anchor="middle">.env · GitHub Actions</text>
+
+    <rect x="740" y="1700" width="600" height="150" rx="18" fill="#fff" stroke="#10b981" stroke-width="1.5"/>
+    <rect x="768" y="1728" width="48" height="48" rx="12" fill="#d1fae5"/><text x="792" y="1760" font-size="20" font-weight="800" fill="#047857" text-anchor="middle">3</text>
+    <text x="836" y="1740" font-size="12" font-weight="700" fill="#64748b" letter-spacing="0.5">STAGE 3</text>
+    <rect x="900" y="1726" width="46" height="20" rx="10" fill="#d1fae5"/><text x="923" y="1740" font-size="11" font-weight="700" fill="#047857" text-anchor="middle">New</text>
+    <text x="836" y="1766" font-size="19" font-weight="700" fill="#0f172a">Page objects &amp; fixtures</text>
+    <text x="836" y="1792" font-size="14" fill="#64748b">One class per page, fixtures for setup, specs that read like steps.</text>
+    <rect x="836" y="1810" width="72" height="24" rx="12" fill="#f1f5f9"/><text x="872" y="1827" font-size="12" font-weight="600" fill="#475569" text-anchor="middle">6 checks</text>
+    <rect x="916" y="1810" width="96" height="24" rx="12" fill="#f1f5f9"/><text x="964" y="1827" font-size="12" font-weight="600" fill="#475569" text-anchor="middle">Demo shop</text>
+  </g>
+
+  <!-- SET UP LIKE A REAL TEAM (new) -->
+  <text x="720" y="2010" font-size="36" font-weight="800" fill="#0f172a" text-anchor="middle">Set up your framework the way teams do</text>
+  <text x="720" y="2044" font-size="17" fill="#64748b" text-anchor="middle">The testing path doesn't stop at scripts — you leave with a project you could ship.</text>
+  <g font-family="JetBrains Mono, monospace" font-size="13">
+    <rect x="100" y="2090" width="396" height="300" rx="18" fill="#0f172a"/>
+    <text x="124" y="2126" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#94a3b8">.env  ·  git-ignored</text>
+    <text x="124" y="2170" fill="#e2e8f0">BASE_URL=https://thedappled.com</text>
+    <text x="124" y="2196" fill="#e2e8f0">ASSIGNMENT_TOKEN=k3Pq9xZr2mWb</text>
+    <text x="124" y="2222" fill="#e2e8f0">DEMO_EMAIL=demo-k3pq@…</text>
+    <text x="124" y="2248" fill="#e2e8f0">DEMO_PASSWORD=••••••••••</text>
+    <text x="124" y="2296" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#fff">Config from .env</text>
+    <text x="124" y="2320" font-family="Inter, sans-serif" font-size="13" fill="#94a3b8">Read with dotenv in playwright.config —</text>
+    <text x="124" y="2340" font-family="Inter, sans-serif" font-size="13" fill="#94a3b8">never hard-coded, never committed.</text>
+
+    <rect x="522" y="2090" width="396" height="300" rx="18" fill="#0f172a"/>
+    <text x="546" y="2126" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#94a3b8">.github/workflows/tests.yml</text>
+    <text x="546" y="2170" fill="#e2e8f0">- run: npx playwright test</text>
+    <text x="562" y="2196" fill="#e2e8f0">env:</text>
+    <text x="578" y="2222" fill="#a7f3d0">BASE_URL: ${{ secrets.BASE_URL }}</text>
+    <text x="578" y="2248" fill="#a7f3d0">DEMO_PASSWORD: ${{ secrets… }}</text>
+    <text x="546" y="2296" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#fff">CI with repository secrets</text>
+    <text x="546" y="2320" font-family="Inter, sans-serif" font-size="13" fill="#94a3b8">Your tests run in GitHub Actions; we</text>
+    <text x="546" y="2340" font-family="Inter, sans-serif" font-size="13" fill="#94a3b8">check the workflow when you submit.</text>
+
+    <rect x="944" y="2090" width="396" height="300" rx="18" fill="#0f172a"/>
+    <text x="968" y="2126" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#94a3b8">tests/</text>
+    <text x="968" y="2170" fill="#e2e8f0">├─ pages/LoginPage.ts</text>
+    <text x="968" y="2196" fill="#e2e8f0">├─ pages/CartPage.ts</text>
+    <text x="968" y="2222" fill="#a7f3d0">├─ fixtures.ts   test.extend()</text>
+    <text x="968" y="2248" fill="#e2e8f0">└─ checkout.spec.ts</text>
+    <text x="968" y="2296" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#fff">Page objects &amp; fixtures</text>
+    <text x="968" y="2320" font-family="Inter, sans-serif" font-size="13" fill="#94a3b8">Locators live in page classes; specs</text>
+    <text x="968" y="2340" font-family="Inter, sans-serif" font-size="13" fill="#94a3b8">only call page-object methods.</text>
+  </g>
+
+  <!-- HOW IT WORKS (updated copy) -->
+  <rect y="2450" width="1440" height="330" fill="#f8fafc"/>
+  <line x1="0" y1="2450" x2="1440" y2="2450" stroke="#e2e8f0"/>
+  <text x="720" y="2530" font-size="32" font-weight="800" fill="#0f172a" text-anchor="middle">How it works</text>
+  <g>
+    <circle cx="184" cy="2610" r="24" fill="#0f172a"/><text x="184" y="2617" font-size="18" font-weight="700" fill="#fff" text-anchor="middle">1</text>
+    <text x="160" y="2670" font-size="20" font-weight="700" fill="#0f172a">Pick a path</text>
+    <text x="160" y="2698" font-size="15" fill="#64748b">Courses, books, articles or the testing path.</text>
+    <circle cx="604" cy="2610" r="24" fill="#0f172a"/><text x="604" y="2617" font-size="18" font-weight="700" fill="#fff" text-anchor="middle">2</text>
+    <text x="580" y="2670" font-size="20" font-weight="700" fill="#0f172a">Learn by building</text>
+    <text x="580" y="2698" font-size="15" fill="#64748b">Ship projects and pass verified assignments.</text>
+    <circle cx="1024" cy="2610" r="24" fill="#0f172a"/><text x="1024" y="2617" font-size="18" font-weight="700" fill="#fff" text-anchor="middle">3</text>
+    <text x="1000" y="2670" font-size="20" font-weight="700" fill="#0f172a">Track progress</text>
+    <text x="1000" y="2698" font-size="15" fill="#64748b">Resume anywhere, see verified checks and your rank.</text>
+  </g>
+
+  </g>
+
+  <!-- AI SECTION -->
+  <rect y="4180" width="1440" height="520" fill="#0f172a"/>
+  <circle cx="120" cy="4330" r="140" fill="#3b82f6" opacity="0.12"/><circle cx="1360" cy="4560" r="130" fill="#a855f7" opacity="0.12"/>
+  <rect x="100" y="4256" width="300" height="32" rx="16" fill="#1e293b" stroke="#334155"/><text x="120" y="4277" font-size="13" font-weight="600" fill="#60a5fa">✦  Powered by Google Gemini &amp; Tavily</text>
+  <text x="100" y="4352" font-size="44" font-weight="800" fill="#fff">Create content at</text>
+  <text x="100" y="4404" font-size="44" font-weight="800" fill="#fff">the speed of AI</text>
+  <text x="100" y="4450" font-size="17" fill="#94a3b8">An agent researches the live web and drafts citation-backed</text>
+  <text x="100" y="4476" font-size="17" fill="#94a3b8">tutorials and comparisons — you stay in control of the final cut.</text>
+  <g font-size="15">
+    <circle cx="110" cy="4526" r="6" fill="#10b981"/><text x="128" y="4531" font-weight="600" fill="#fff">Real-time market research</text>
+    <circle cx="110" cy="4562" r="6" fill="#a855f7"/><text x="128" y="4567" font-weight="600" fill="#fff">Split-view studio</text>
+    <circle cx="110" cy="4598" r="6" fill="#3b82f6"/><text x="128" y="4603" font-weight="600" fill="#fff">Smart SEO tags</text>
+  </g>
+  <rect x="760" y="4250" width="580" height="360" rx="16" fill="#111c33" stroke="#334155"/>
+  <rect x="760" y="4250" width="580" height="32" rx="16" fill="#1e293b"/><rect x="760" y="4266" width="580" height="16" fill="#1e293b"/>
+  <circle cx="782" cy="4266" r="5" fill="#ef4444"/><circle cx="800" cy="4266" r="5" fill="#eab308"/><circle cx="818" cy="4266" r="5" fill="#22c55e"/>
+  <line x1="1050" y1="4282" x2="1050" y2="4610" stroke="#334155"/>
+  <g fill="#334155"><rect x="784" y="4304" width="200" height="10" rx="5"/><rect x="784" y="4326" width="240" height="10" rx="5"/><rect x="784" y="4348" width="220" height="10" rx="5"/></g>
+  <rect x="784" y="4380" width="244" height="120" rx="8" fill="none" stroke="#334155" stroke-dasharray="5 4"/><text x="906" y="4446" font-size="13" fill="#64748b" text-anchor="middle">Your editor</text>
+  <g fill="#6d28d9" opacity="0.6"><rect x="1074" y="4304" width="160" height="10" rx="5"/><rect x="1074" y="4326" width="240" height="10" rx="5"/><rect x="1074" y="4348" width="220" height="10" rx="5"/></g>
+  <rect x="1074" y="4540" width="242" height="44" rx="8" fill="#1e293b" stroke="#6d28d9"/><text x="1090" y="4567" font-size="12" fill="#ddd6fe">✨ Drafting from live sources…</text>
+
+  <!-- FINAL CTA -->
+  <rect x="100" y="4740" width="1240" height="200" rx="28" fill="#2563eb"/>
+  <text x="720" y="4816" font-size="36" font-weight="800" fill="#fff" text-anchor="middle">Start learning today — it's free</text>
+  <text x="720" y="4850" font-size="16" fill="#dbeafe" text-anchor="middle">Pick a path — courses, books, articles or testing — and build something real.</text>
+  <rect x="628" y="4874" width="184" height="48" rx="12" fill="#fff"/><text x="720" y="4904" font-size="15" font-weight="700" fill="#1d4ed8" text-anchor="middle">Create free account</text>
+
+  <!-- footer (updated blurb) -->
+  <g transform="translate(0,2070)">
+  <rect y="2910" width="1440" height="170" fill="#0f172a"/>
+  <rect x="100" y="2944" width="28" height="28" rx="7" fill="#fff"/><text x="114" y="2964" font-size="14" font-weight="800" fill="#0f172a" text-anchor="middle">D</text>
+  <text x="140" y="2965" font-size="18" font-weight="800" fill="#fff">Thedappled</text>
+  <text x="100" y="3004" font-size="13" fill="#94a3b8">Learn modern tech with courses, books, AI-powered</text>
+  <text x="100" y="3024" font-size="13" fill="#94a3b8">articles and a hands-on testing path.</text>
+  <text x="700" y="2965" font-size="14" font-weight="700" fill="#fff">Learn</text>
+  <g font-size="13" fill="#94a3b8"><text x="700" y="2995">Courses · Books · Blogs</text><text x="700" y="3017">Testing · Leaderboard · Compiler</text></g>
+  <text x="1000" y="2965" font-size="14" font-weight="700" fill="#fff">Company</text><text x="1000" y="2995" font-size="13" fill="#94a3b8">Contact Support</text>
+  <text x="1180" y="2965" font-size="14" font-weight="700" fill="#fff">Legal</text><text x="1180" y="2995" font-size="13" fill="#94a3b8">Privacy · Terms</text>
+  </g>
+</svg>
