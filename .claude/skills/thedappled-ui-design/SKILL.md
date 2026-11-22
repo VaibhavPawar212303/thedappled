@@ -11,6 +11,7 @@ Thedappled (this repo) and the Compiler (`c-architech-compiler`) share one visua
 
 1. **Design in Penpot first.** Team "theDappled", project **thedappled**.
    - One file per page, named `NN - Page Name` (site) or `C1`, `C2`, ... (compiler).
+   - **Exception — Testing:** all Testing designs (roadmap, stages, assignments, demo pages, leaderboard, verification) live in ONE file, `26 - Testing Learning Path`, one Penpot page per stage/area. Never create a separate file for them.
    - New page: create a new file. Changed page: update its file. Keep the current UI screenshot next to the new design so they can be compared.
 2. **Wait for the user's OK on the design** before changing code, unless they say to skip it.
 3. **Then update the UI code** to match the design. Say which Penpot file you used.
