@@ -5,7 +5,11 @@ import { ArrowLeft, Clock } from "lucide-react";
 // Shared frame for Manual testing lessons: hero, "On this page" sidebar, previous/next navigation.
 // Design: Penpot "26 - Testing Learning Path", page "Manual testing".
 
-type StepLink = { label: string; href?: string }; // no href = coming soon
+// No href = coming soon. track = the link leads to the next track (purple "Next track" styling).
+type StepLink = { label: string; href?: string; track?: boolean };
+
+const nextLinkClass = (next: StepLink) =>
+  next.track ? "text-purple-700 dark:text-purple-300" : "text-blue-600 dark:text-blue-400";
 
 export function SectionHead({ n, id, title }: { n: number; id: string; title: string }) {
   return (
@@ -88,9 +92,9 @@ export function LessonLayout({
             <div className="sm:text-right">
               {next && (
                 <>
-                  <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Next{next.href ? "" : " · Coming soon"}</p>
+                  <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{next.track ? "Next track" : "Next"}{next.href ? "" : " · Coming soon"}</p>
                   {next.href ? (
-                    <Link href={next.href} className="text-lg font-bold text-blue-600 hover:underline dark:text-blue-400">{next.label} →</Link>
+                    <Link href={next.href} className={`text-lg font-bold hover:underline ${nextLinkClass(next)}`}>{next.label} →</Link>
                   ) : (
                     <p className="text-lg font-bold text-slate-400">{next.label}</p>
                   )}
@@ -122,9 +126,9 @@ export function LessonLayout({
                 )}
                 {next && (
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Next step</p>
+                    <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{next.track ? "Next track" : "Next step"}</p>
                     {next.href ? (
-                      <Link href={next.href} className="mt-1 block text-sm font-bold text-blue-600 hover:underline dark:text-blue-400">{next.label} →</Link>
+                      <Link href={next.href} className={`mt-1 block text-sm font-bold hover:underline ${nextLinkClass(next)}`}>{next.label} →</Link>
                     ) : (
                       <>
                         <p className="mt-1 text-sm font-bold">{next.label}</p>

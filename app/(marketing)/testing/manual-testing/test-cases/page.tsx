@@ -89,7 +89,7 @@ export default function TestCasesPage() {
       minutes={25}
       toc={TOC}
       prev={{ label: "2. Test design techniques", href: "/testing/manual-testing/test-design" }}
-      next={{ label: "4. Exploratory testing" }}
+      next={{ label: "4. Exploratory testing", href: "/testing/manual-testing/exploratory" }}
     >
       <section>
         <SectionHead n={1} id="test-case" title="Anatomy of a test case" />
@@ -271,7 +271,7 @@ export default function TestCasesPage() {
         </figure>
       </section>
 
-      <LessonQuiz questions={QUIZ} doneText="nice work — step 4 is coming soon." />
+      <LessonQuiz questions={QUIZ} doneText="nice work, you're ready for step 4." />
     </LessonLayout>
   );
 }
