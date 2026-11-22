@@ -35,7 +35,7 @@ const TRACKS: Track[] = [
     blurb: "Learn how testers think before you automate: plan tests, design cases, report bugs clearly and explore an app to find what breaks.",
     steps: [
       { n: 1, title: "Testing fundamentals", blurb: "SDLC and STLC, test levels and types, and what makes a good tester.", href: "/testing/manual-testing/fundamentals" },
-      { n: 2, title: "Test design techniques", blurb: "Equivalence partitioning, boundary values and decision tables." },
+      { n: 2, title: "Test design techniques", blurb: "Equivalence partitioning, boundary values and decision tables.", href: "/testing/manual-testing/test-design" },
       { n: 3, title: "Test cases & bug reports", blurb: "Write clear test cases and defect reports with steps, severity and priority." },
       { n: 4, title: "Exploratory testing", blurb: "Charters, time-boxed sessions and notes that find real bugs." },
     ],

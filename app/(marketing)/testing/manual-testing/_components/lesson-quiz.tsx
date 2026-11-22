@@ -3,60 +3,27 @@
 import * as React from "react";
 import { Check, X } from "lucide-react";
 
-type Question = { q: string; options: string[]; answer: number; why: string };
+export type QuizQuestion = { q: string; options: string[]; answer: number; why: string };
 
-const QUESTIONS: Question[] = [
-  {
-    q: "Which level tests the whole application against the requirements?",
-    options: ["Unit testing", "Integration testing", "System testing", "Acceptance testing"],
-    answer: 2,
-    why: "System testing checks the complete, integrated application end to end against the requirements. Acceptance testing comes after, with users or the business.",
-  },
-  {
-    q: "A quick check that a new build's critical features work, before deeper testing, is called…",
-    options: ["Regression testing", "Smoke testing", "Exploratory testing", "Sanity testing"],
-    answer: 1,
-    why: "A smoke test is a broad, shallow check of a new build. Sanity testing is narrower: it checks one specific fix or change.",
-  },
-  {
-    q: "“Exhaustive testing is impossible” means testers should…",
-    options: ["Test every combination of inputs anyway", "Prioritise tests by risk", "Skip testing small features", "Only test at the end of the project"],
-    answer: 1,
-    why: "You can't test every input and path, so you focus effort where failures are most likely or most costly.",
-  },
-  {
-    q: "In which STLC phase are test cases written?",
-    options: ["Test planning", "Test case design", "Test execution", "Test closure"],
-    answer: 1,
-    why: "Test planning decides scope and approach; test case design turns that into concrete cases with steps and expected results.",
-  },
-  {
-    q: "Re-running tests after a change to make sure nothing that worked is now broken is…",
-    options: ["Regression testing", "Sanity testing", "Acceptance testing", "Unit testing"],
-    answer: 0,
-    why: "Regression testing protects existing behaviour after a code change, a bug fix or a new feature.",
-  },
-];
-
-// Self-check for the Testing fundamentals lesson. Runs entirely in the browser: nothing is sent or saved.
-export function FundamentalsQuiz() {
-  const [picked, setPicked] = React.useState<(number | null)[]>(() => QUESTIONS.map(() => null));
+// Self-check at the end of a Manual testing lesson. Runs entirely in the browser: nothing is sent or saved.
+export function LessonQuiz({ questions, doneText }: { questions: QuizQuestion[]; doneText: string }) {
+  const [picked, setPicked] = React.useState<(number | null)[]>(() => questions.map(() => null));
   const [checked, setChecked] = React.useState(false);
   const answered = picked.filter((p) => p !== null).length;
-  const score = picked.filter((p, i) => p === QUESTIONS[i].answer).length;
+  const score = picked.filter((p, i) => p === questions[i].answer).length;
 
   return (
-    <section id="quiz" data-testid="fundamentals-quiz" className="scroll-mt-24 rounded-2xl border-[1.5px] border-blue-600 bg-card p-6 sm:p-8">
+    <section id="quiz" data-testid="lesson-quiz" className="scroll-mt-24 rounded-2xl border-[1.5px] border-blue-600 bg-card p-6 sm:p-8">
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
           <p className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">Check your understanding</p>
-          <h2 className="mt-1 text-2xl font-extrabold">5 quick questions</h2>
+          <h2 className="mt-1 text-2xl font-extrabold">{questions.length} quick questions</h2>
         </div>
         <p className="text-sm font-bold text-blue-700 dark:text-blue-300">Pick one answer for each</p>
       </div>
 
       <ol className="m-0 mt-6 list-none space-y-8 p-0">
-        {QUESTIONS.map((item, qi) => {
+        {questions.map((item, qi) => {
           const sel = picked[qi];
           const correct = sel === item.answer;
           return (
@@ -120,22 +87,22 @@ export function FundamentalsQuiz() {
               Check answers
             </button>
             <p className="text-sm text-muted-foreground">
-              {answered} of {QUESTIONS.length} answered · nothing is saved
+              {answered} of {questions.length} answered · nothing is saved
             </p>
           </>
         ) : (
           <>
             <p data-testid="quiz-score" role="status" className="text-lg font-extrabold">
-              {score} of {QUESTIONS.length} correct
+              {score} of {questions.length} correct
               <span className="ml-2 text-sm font-semibold text-muted-foreground">
-                {score === QUESTIONS.length ? "— nice work, you're ready for step 2." : "— read the notes above and try again."}
+                {score === questions.length ? `— ${doneText}` : "— read the notes above and try again."}
               </span>
             </p>
             <button
               type="button"
               data-testid="quiz-reset"
               onClick={() => {
-                setPicked(QUESTIONS.map(() => null));
+                setPicked(questions.map(() => null));
                 setChecked(false);
               }}
               className="h-11 rounded-[10px] border px-5 text-[15px] font-semibold hover:bg-slate-50 dark:hover:bg-slate-800"
