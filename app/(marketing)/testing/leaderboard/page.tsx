@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
 import { getBoard } from "@/lib/leaderboard";
-import { FRAMEWORK_SETUP, getAssignmentForUser, UI_AUTOMATION, type AssignmentSlug } from "@/lib/assignments";
+import { getAssignmentForUser, isAssignmentSlug, UI_AUTOMATION, type AssignmentSlug } from "@/lib/assignments";
 import { LeaderboardView } from "./leaderboard-view";
 
 export const metadata: Metadata = {
@@ -15,7 +15,7 @@ export const dynamic = "force-dynamic";
 
 export default async function LeaderboardPage({ searchParams }: { searchParams: Promise<{ stage?: string }> }) {
   const { stage: raw } = await searchParams;
-  const stage: AssignmentSlug = raw === FRAMEWORK_SETUP ? FRAMEWORK_SETUP : UI_AUTOMATION;
+  const stage: AssignmentSlug = isAssignmentSlug(raw) ? raw : UI_AUTOMATION;
 
   const { userId } = await auth();
   const [board, mine] = await Promise.all([

@@ -13,3 +13,13 @@ export function demoCredentials(token: string): { email: string; password: strin
     password: `Dp${mac.slice(0, 8)}!7`,
   };
 }
+
+// Stage 3 (page objects): the demo shop sign-in, derived the same way under its own label so it
+// differs from the stage 2 login.
+export function shopCredentials(token: string): { email: string; password: string } {
+  const mac = createHmac("sha256", secret()).update(`page-objects:${token}`).digest("base64url");
+  return {
+    email: `shop-${token.toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 8)}@thedappled.test`,
+    password: `Sh${mac.slice(0, 8)}!3`,
+  };
+}
