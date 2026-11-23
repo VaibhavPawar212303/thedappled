@@ -55,6 +55,7 @@ const structuredData = {
         height: 630,
       },
       sameAs: [
+        'https://www.instagram.com/thedappled_/',
         'https://github.com/VaibhavPawar212303',
         'https://c-architech-compiler.vercel.app',
       ],
