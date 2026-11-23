@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { SignedIn, SignedOut } from "@clerk/nextjs";
+import { useAuth } from "@clerk/nextjs";
 import { Logo } from "./logo";
 
 interface AppLogoLinkProps {
@@ -11,19 +11,20 @@ interface AppLogoLinkProps {
 
 // Logo always goes to the dashboard when signed in, and to the landing
 // page when signed out — used everywhere the logo doubles as a nav link.
+//
+// Rendered unconditionally (not inside <SignedIn>/<SignedOut>) so the brand
+// name is in the server HTML of statically generated pages — those Clerk
+// wrappers render nothing until auth loads, which hid "Thedappled" from
+// crawlers. Before auth loads, `isSignedIn` is undefined, so it links home.
 export const AppLogoLink = ({ showText = true, className }: AppLogoLinkProps) => {
+  const { isSignedIn } = useAuth();
   return (
-    <>
-      <SignedIn>
-        <Link href="/dashboard" className={className} aria-label="Go to dashboard">
-          <Logo showText={showText} />
-        </Link>
-      </SignedIn>
-      <SignedOut>
-        <Link href="/" className={className} aria-label="Go to home">
-          <Logo showText={showText} />
-        </Link>
-      </SignedOut>
-    </>
+    <Link
+      href={isSignedIn ? "/dashboard" : "/"}
+      className={className}
+      aria-label={isSignedIn ? "TheDappled – go to dashboard" : "TheDappled – go to home"}
+    >
+      <Logo showText={showText} />
+    </Link>
   );
 };

@@ -282,6 +282,9 @@ export default function LandingContent({ stats }: LandingContentProps) {
             </motion.div>
 
             <motion.h1 variants={fadeIn} className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6 leading-[1.1]">
+              <span className="block text-2xl md:text-3xl font-bold tracking-tight text-slate-500 dark:text-slate-400 mb-3">
+                The Dappled
+              </span>
               Master modern tech with{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500">intelligent learning.</span>
             </motion.h1>

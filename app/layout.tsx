@@ -22,11 +22,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'TheDappled – Learn programming with courses, books & a C memory visualizer',
+    default: 'The Dappled (TheDappled) – E-Learning Platform for Developers',
     template: '%s | TheDappled',
   },
   description:
-    'TheDappled is a learning platform for developers: step-by-step courses, books and articles, plus a free C compiler visualizer that shows the stack and heap as your code runs.',
+    'The Dappled (TheDappled) is an e-learning platform for developers: step-by-step courses, books and articles, plus a free C compiler visualizer that shows the stack and heap as your code runs.',
   applicationName: 'TheDappled',
   keywords: ['TheDappled', 'The Dappled', 'learn programming', 'developer courses', 'C memory visualizer', 'stack and heap'],
   openGraph: {

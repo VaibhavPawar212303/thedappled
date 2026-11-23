@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   openGraph: {
     url: "/",
     images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
-    title: "TheDappled – Learn programming with courses, books & a C memory visualizer",
+    title: "The Dappled (TheDappled) – E-Learning Platform for Developers",
     description:
       "Step-by-step courses, books and articles for developers, plus a free C compiler visualizer that shows the stack and heap as your code runs.",
   },
