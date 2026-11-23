@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1000" viewBox="0 0 1440 1000" font-family="Inter, sans-serif">
+  <!-- Testing page, roadmap: Automation learning track. Change = Step 4 "Cross-browser testing" card added (New). -->
+  <rect width="1440" height="1000" fill="#ffffff"/>
+  <rect width="1440" height="72" fill="#ffffff"/>
+  <line x1="0" y1="72" x2="1440" y2="72" stroke="#e2e8f0"/>
+  <g transform="translate(64,22)">
+    <rect x="0" y="0" width="6" height="28" rx="2" fill="#0f172a"/>
+    <rect x="0" y="0" width="20" height="6" rx="2" fill="#0f172a"/>
+    <rect x="0" y="22" width="20" height="6" rx="2" fill="#0f172a"/>
+    <rect x="10" y="9" width="8" height="5" rx="2" fill="#3987e5"/>
+    <rect x="10" y="15" width="8" height="5" rx="2" fill="#3987e5"/>
+    <text x="30" y="21" font-size="20" font-weight="700" fill="#0f172a">Thedappled</text>
+  </g>
+  <g font-size="15" font-weight="500" fill="#64748b">
+    <text x="560" y="42">Courses</text><text x="650" y="42">Books</text><text x="725" y="42">Blogs</text>
+    <text x="800" y="42" fill="#047857" font-weight="700">Testing</text><text x="885" y="42">Compiler</text>
+  </g>
+  <text x="720" y="140" font-size="38" font-weight="800" fill="#0f172a" text-anchor="middle">Your testing roadmap</text>
+  <text x="720" y="176" font-size="18" fill="#64748b" text-anchor="middle">Two tracks — start with manual testing if you’re new, or jump straight into automation.</text>
+  <clipPath id="card"><rect x="336" y="210" width="768" height="760" rx="24"/></clipPath>
+  <rect x="336" y="210" width="768" height="760" rx="24" fill="#fff" stroke="#e2e8f0"/>
+  <rect x="336" y="210" width="768" height="8" fill="#9333ea" clip-path="url(#card)"/>
+  <rect x="368" y="250" width="56" height="56" rx="16" fill="#f3e8ff"/>
+  <text x="396" y="286" font-size="24" fill="#7e22ce" text-anchor="middle">⚗</text>
+  <text x="440" y="274" font-size="24" font-weight="800" fill="#0f172a">Automation learning</text>
+  <text x="440" y="298" font-size="14" fill="#64748b">4 steps</text>
+  <rect x="966" y="258" width="106" height="26" rx="13" fill="#f3e8ff"/>
+  <text x="1019" y="276" font-size="12" font-weight="600" fill="#7e22ce" text-anchor="middle">Intermediate</text>
+  <text x="368" y="344" font-size="15" fill="#64748b">Learn Playwright and Cypress by automating real pages, set up the framework the way teams do,</text>
+  <text x="368" y="366" font-size="15" fill="#64748b">structure it with page objects, then run it on Chrome, Firefox and WebKit.</text>
+  <rect x="368" y="396" width="704" height="108" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+  <rect x="390" y="416" width="44" height="44" rx="12" fill="#f3e8ff"/><text x="412" y="445" font-size="18" font-weight="800" fill="#7e22ce" text-anchor="middle">1</text>
+  <text x="454" y="428" font-size="12" font-weight="700" fill="#64748b" letter-spacing="0.6">STEP 1</text>
+  <text x="454" y="452" font-size="18" font-weight="700" fill="#0f172a">UI automation</text>
+  <text x="454" y="476" font-size="14" fill="#64748b">Playwright &amp; Cypress: locators, waits, page objects, debugging.</text>
+  <text x="1050" y="482" font-size="14" font-weight="600" fill="#9333ea" text-anchor="end">Start step →</text>
+  <rect x="368" y="520" width="704" height="108" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+  <rect x="390" y="540" width="44" height="44" rx="12" fill="#f3e8ff"/><text x="412" y="569" font-size="18" font-weight="800" fill="#7e22ce" text-anchor="middle">2</text>
+  <text x="454" y="552" font-size="12" font-weight="700" fill="#64748b" letter-spacing="0.6">STEP 2</text>
+  <text x="454" y="576" font-size="18" font-weight="700" fill="#0f172a">Framework setup</text>
+  <text x="454" y="600" font-size="14" fill="#64748b">Config and credentials in .env, tests that read them, and the project saved on GitHub.</text>
+  <text x="1050" y="606" font-size="14" font-weight="600" fill="#9333ea" text-anchor="end">Start step →</text>
+  <rect x="368" y="644" width="704" height="108" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+  <rect x="390" y="664" width="44" height="44" rx="12" fill="#f3e8ff"/><text x="412" y="693" font-size="18" font-weight="800" fill="#7e22ce" text-anchor="middle">3</text>
+  <text x="454" y="676" font-size="12" font-weight="700" fill="#64748b" letter-spacing="0.6">STEP 3</text>
+  <text x="454" y="700" font-size="18" font-weight="700" fill="#0f172a">Page objects &amp; fixtures</text>
+  <text x="454" y="724" font-size="14" fill="#64748b">Move locators into page classes, share setup with fixtures, keep specs readable.</text>
+  <text x="1050" y="730" font-size="14" font-weight="600" fill="#9333ea" text-anchor="end">Start step →</text>
+  <rect x="368" y="768" width="704" height="108" rx="16" fill="#faf5ff" stroke="#9333ea" stroke-width="1.5"/>
+  <rect x="390" y="788" width="44" height="44" rx="12" fill="#f3e8ff"/><text x="412" y="817" font-size="18" font-weight="800" fill="#7e22ce" text-anchor="middle">4</text>
+  <text x="454" y="800" font-size="12" font-weight="700" fill="#64748b" letter-spacing="0.6">STEP 4</text>
+  <rect x="510" y="787" width="40" height="18" rx="9" fill="#d1fae5"/><text x="530" y="800" font-size="11" font-weight="600" fill="#047857" text-anchor="middle">New</text>
+  <text x="454" y="824" font-size="18" font-weight="700" fill="#0f172a">Cross-browser testing</text>
+  <text x="454" y="848" font-size="14" fill="#64748b">Run the same spec on Chrome, Firefox and WebKit — locally and in GitHub Actions.</text>
+  <text x="1050" y="854" font-size="14" font-weight="600" fill="#9333ea" text-anchor="end">Start step →</text>
+  <text x="720" y="940" font-size="13" fill="#64748b" text-anchor="middle">Step 4 is outlined only to show the change; in code it uses the normal todo / active / done states.</text>
+</svg>

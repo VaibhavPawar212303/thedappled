@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1060" viewBox="0 0 1440 1060" font-family="Inter, sans-serif">
+  <!-- /testing/cross-browser — Stage 4 landing. Accent: blue-600. -->
+  <defs><clipPath id="card"><rect x="184" y="404" width="1072" height="372" rx="24"/></clipPath></defs>
+  <rect width="1440" height="1060" fill="#ffffff"/>
+  <rect width="1440" height="72" fill="#ffffff"/>
+  <line x1="0" y1="72" x2="1440" y2="72" stroke="#e2e8f0"/>
+  <g transform="translate(64,22)">
+    <rect x="0" y="0" width="6" height="28" rx="2" fill="#0f172a"/>
+    <rect x="0" y="0" width="20" height="6" rx="2" fill="#0f172a"/>
+    <rect x="0" y="22" width="20" height="6" rx="2" fill="#0f172a"/>
+    <rect x="10" y="9" width="8" height="5" rx="2" fill="#3987e5"/>
+    <rect x="10" y="15" width="8" height="5" rx="2" fill="#3987e5"/>
+    <text x="30" y="21" font-size="20" font-weight="700" fill="#0f172a">Thedappled</text>
+  </g>
+  <g font-size="15" font-weight="500" fill="#64748b">
+    <text x="560" y="42">Courses</text><text x="650" y="42">Books</text><text x="725" y="42">Blogs</text>
+    <text x="800" y="42" fill="#047857" font-weight="700">Testing</text><text x="885" y="42">Compiler</text>
+  </g>
+  <rect x="0" y="73" width="1440" height="295" fill="#f8fafc"/>
+  <circle cx="1250" cy="200" r="150" fill="#bfdbfe" opacity="0.35"/>
+  <text x="184" y="124" font-size="14" fill="#64748b">Testing   /   <tspan font-weight="600" fill="#0f172a">Cross-browser testing</tspan></text>
+  <rect x="184" y="148" width="172" height="26" rx="13" fill="#dbeafe"/>
+  <text x="270" y="166" font-size="12" font-weight="600" fill="#1d4ed8" text-anchor="middle">Stage 4 · Intermediate</text>
+  <text x="184" y="230" font-size="48" font-weight="800" fill="#0f172a" letter-spacing="-1">Cross-browser testing</text>
+  <text x="184" y="272" font-size="18" fill="#64748b">Run one spec on Chrome, Firefox and WebKit (the engine behind Safari). Configure browser</text>
+  <text x="184" y="296" font-size="18" fill="#64748b">projects, fix what breaks in only one engine, and run the whole matrix in GitHub Actions.</text>
+  <text x="184" y="340" font-size="14" font-weight="500" fill="#64748b">What you will practise: projects / --browser · Chromium, Firefox, WebKit · browser-specific bugs · CI matrix</text>
+  <g font-size="13" font-weight="600">
+    <rect x="1040" y="150" width="116" height="34" rx="17" fill="#fff" stroke="#e2e8f0"/><circle cx="1062" cy="167" r="7" fill="#2563eb"/><text x="1076" y="172" fill="#0f172a">Chromium</text>
+    <rect x="1040" y="194" width="116" height="34" rx="17" fill="#fff" stroke="#e2e8f0"/><circle cx="1062" cy="211" r="7" fill="#f59e0b"/><text x="1076" y="216" fill="#0f172a">Firefox</text>
+    <rect x="1040" y="238" width="116" height="34" rx="17" fill="#fff" stroke="#e2e8f0"/><circle cx="1062" cy="255" r="7" fill="#64748b"/><text x="1076" y="260" fill="#0f172a">WebKit</text>
+  </g>
+
+  <rect x="184" y="404" width="1072" height="372" rx="24" fill="#fff" stroke="#2563eb"/>
+  <rect x="184" y="404" width="1072" height="8" fill="#2563eb" clip-path="url(#card)"/>
+  <rect x="216" y="444" width="92" height="26" rx="13" fill="#dbeafe"/>
+  <text x="262" y="462" font-size="12" font-weight="600" fill="#1d4ed8" text-anchor="middle">Assignment</text>
+  <text x="216" y="512" font-size="30" font-weight="800" fill="#0f172a" letter-spacing="-0.5">One spec, three browsers</text>
+  <text x="216" y="546" font-size="16" fill="#64748b">Run your stage 3 checkout spec against the demo shop on Chromium, Firefox</text>
+  <text x="216" y="570" font-size="16" fill="#64748b">and WebKit. Each engine is detected and ticked off separately.</text>
+  <g font-size="15" font-weight="500" fill="#0f172a">
+    <circle cx="226" cy="614" r="10" fill="#dbeafe"/><text x="226" y="619" font-size="11" fill="#1d4ed8" text-anchor="middle">✓</text>
+    <text x="246" y="619">The same spec passes on Chromium, Firefox and WebKit</text>
+    <circle cx="226" cy="646" r="10" fill="#dbeafe"/><text x="226" y="651" font-size="11" fill="#1d4ed8" text-anchor="middle">✓</text>
+    <text x="246" y="651">Config defines one project per browser (Cypress: --browser runs)</text>
+    <circle cx="226" cy="678" r="10" fill="#dbeafe"/><text x="226" y="683" font-size="11" fill="#1d4ed8" text-anchor="middle">✓</text>
+    <text x="246" y="683">GitHub Actions runs the suite on all three browsers</text>
+  </g>
+
+  <rect x="852" y="444" width="372" height="300" rx="16" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="876" y="490" font-size="30" font-weight="800" fill="#0f172a">5 checks</text>
+  <text x="876" y="514" font-size="14" fill="#64748b">3 browser runs · 2 GitHub checks</text>
+  <rect x="876" y="534" width="324" height="8" rx="4" fill="#e2e8f0"/>
+  <text x="876" y="574" font-size="14" font-weight="500" fill="#64748b">Not started — 0 of 5 done</text>
+  <rect x="876" y="592" width="324" height="48" rx="10" fill="#2563eb"/>
+  <text x="1038" y="622" font-size="15" font-weight="600" fill="#fff" text-anchor="middle">Start assignment →</text>
+  <text x="1038" y="664" font-size="13" fill="#64748b" text-anchor="middle">Takes about 45–60 minutes</text>
+  <text x="1038" y="700" font-size="13" font-weight="700" fill="#2563eb" text-anchor="middle">View leaderboard →</text>
+
+  <rect x="184" y="812" width="1072" height="200" rx="16" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="216" y="856" font-size="20" font-weight="800" fill="#0f172a">How the assignment works</text>
+  <g font-size="14" fill="#64748b">
+    <text x="216" y="896" font-size="15" font-weight="700" fill="#1d4ed8">1. Add the browsers</text>
+    <text x="216" y="920">Add chromium, firefox and webkit projects to</text>
+    <text x="216" y="940">playwright.config (Cypress: run with --browser</text>
+    <text x="216" y="960">chrome, firefox, webkit).</text>
+    <text x="572" y="896" font-size="15" font-weight="700" fill="#1d4ed8">2. Run on every engine</text>
+    <text x="572" y="920">Run your checkout spec against the demo shop.</text>
+    <text x="572" y="940">Each run is detected by engine; fix anything</text>
+    <text x="572" y="960">that fails in only one browser.</text>
+    <text x="928" y="896" font-size="15" font-weight="700" fill="#1d4ed8">3. Run the matrix in CI</text>
+    <text x="928" y="920">Make GitHub Actions run all three browsers,</text>
+    <text x="928" y="940">push, and paste the repo URL so we can</text>
+    <text x="928" y="960">check the config and the workflow.</text>
+  </g>
+</svg>

@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1240" viewBox="0 0 1440 1240" font-family="Inter, sans-serif">
+  <!-- /testing/cross-browser/assignment — in progress: Chromium + Firefox verified, WebKit not yet, CI check failing. -->
+  <rect width="1440" height="1240" fill="#f8fafc"/>
+  <rect width="1440" height="72" fill="#ffffff"/>
+  <line x1="0" y1="72" x2="1440" y2="72" stroke="#e2e8f0"/>
+  <g transform="translate(64,22)">
+    <rect x="0" y="0" width="6" height="28" rx="2" fill="#0f172a"/>
+    <rect x="0" y="0" width="20" height="6" rx="2" fill="#0f172a"/>
+    <rect x="0" y="22" width="20" height="6" rx="2" fill="#0f172a"/>
+    <rect x="10" y="9" width="8" height="5" rx="2" fill="#3987e5"/>
+    <rect x="10" y="15" width="8" height="5" rx="2" fill="#3987e5"/>
+    <text x="30" y="21" font-size="20" font-weight="700" fill="#0f172a">Thedappled</text>
+  </g>
+  <g font-size="15" font-weight="500" fill="#64748b">
+    <text x="560" y="42">Courses</text><text x="650" y="42">Books</text><text x="725" y="42">Blogs</text>
+    <text x="800" y="42" fill="#047857" font-weight="700">Testing</text><text x="885" y="42">Compiler</text>
+  </g>
+  <text x="184" y="122" font-size="14" fill="#64748b">Testing   /   Cross-browser testing   /   <tspan font-weight="600" fill="#0f172a">Assignment</tspan></text>
+  <text x="184" y="182" font-size="36" font-weight="800" fill="#0f172a" letter-spacing="-0.5">Assignment: cross-browser testing</text>
+  <rect x="184" y="202" width="104" height="26" rx="13" fill="#fef3c7"/>
+  <text x="236" y="220" font-size="12" font-weight="600" fill="#b45309" text-anchor="middle">● In progress</text>
+  <text x="302" y="220" font-size="14" fill="#64748b">Browser runs update live · GitHub checks run when you submit your repo</text>
+  <rect x="1046" y="160" width="210" height="44" rx="12" fill="#fff" stroke="#e2e8f0"/>
+  <text x="1151" y="188" font-size="14" font-weight="700" fill="#2563eb" text-anchor="middle">View leaderboard →</text>
+
+  <rect x="184" y="260" width="580" height="640" rx="16" fill="#fff" stroke="#e2e8f0"/>
+  <text x="216" y="304" font-size="20" font-weight="800" fill="#0f172a">Requirements</text>
+  <text x="732" y="304" font-size="16" font-weight="800" fill="#1d4ed8" text-anchor="end">2 of 5 verified</text>
+  <rect x="216" y="322" width="516" height="8" rx="4" fill="#e2e8f0"/>
+  <rect x="216" y="322" width="206" height="8" rx="4" fill="#2563eb"/>
+
+  <text x="216" y="370" font-size="12" font-weight="700" fill="#64748b" letter-spacing="0.5">RUN ON EVERY BROWSER</text>
+  <g font-size="15">
+    <circle cx="228" cy="398" r="12" fill="#059669"/><text x="228" y="403" font-size="12" fill="#fff" text-anchor="middle">✓</text>
+    <text x="252" y="403" font-weight="500" fill="#0f172a">Checkout spec passes on Chromium</text>
+    <rect x="652" y="386" width="80" height="22" rx="11" fill="#d1fae5"/><text x="692" y="401" font-size="12" font-weight="600" fill="#047857" text-anchor="middle">Verified</text>
+    <circle cx="228" cy="438" r="12" fill="#059669"/><text x="228" y="443" font-size="12" fill="#fff" text-anchor="middle">✓</text>
+    <text x="252" y="443" font-weight="500" fill="#0f172a">Checkout spec passes on Firefox</text>
+    <rect x="652" y="426" width="80" height="22" rx="11" fill="#d1fae5"/><text x="692" y="441" font-size="12" font-weight="600" fill="#047857" text-anchor="middle">Verified</text>
+    <circle cx="228" cy="478" r="11" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
+    <text x="252" y="483" font-weight="500" fill="#64748b">Checkout spec passes on WebKit (Safari engine)</text>
+  </g>
+
+  <text x="216" y="536" font-size="12" font-weight="700" fill="#64748b" letter-spacing="0.5">CONFIGURE IT ON GITHUB</text>
+  <g font-size="15">
+    <circle cx="228" cy="564" r="11" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
+    <text x="252" y="569" font-weight="500" fill="#64748b">Config has chromium, firefox and webkit projects</text>
+    <circle cx="228" cy="604" r="11" fill="#fee2e2" stroke="#ef4444" stroke-width="2"/><text x="228" y="609" font-size="11" font-weight="800" fill="#b91c1c" text-anchor="middle">✕</text>
+    <text x="252" y="609" font-weight="500" fill="#0f172a">GitHub Actions runs all three browsers</text>
+    <text x="252" y="631" font-size="13" font-weight="600" fill="#b91c1c">Workflow only runs chromium. Add a browser matrix or drop --project.</text>
+  </g>
+
+  <line x1="216" y1="672" x2="732" y2="672" stroke="#e2e8f0"/>
+  <text x="216" y="704" font-size="12" font-weight="700" fill="#64748b" letter-spacing="0.5">GITHUB REPOSITORY</text>
+  <rect x="216" y="720" width="352" height="48" rx="10" fill="#fff" stroke="#cbd5e1"/>
+  <text x="232" y="750" font-size="14" fill="#0f172a">https://github.com/you/dappled-tests</text>
+  <rect x="580" y="720" width="152" height="48" rx="10" fill="#2563eb"/>
+  <text x="656" y="750" font-size="14" font-weight="600" fill="#fff" text-anchor="middle">Check again</text>
+  <text x="216" y="794" font-size="13" fill="#64748b">Public repos only. We read files through the GitHub API; nothing is cloned.</text>
+  <text x="216" y="824" font-size="13" fill="#64748b">Checked you/dappled-tests @ main just now.</text>
+
+  <rect x="788" y="260" width="468" height="340" rx="16" fill="#fff" stroke="#e2e8f0"/>
+  <text x="820" y="304" font-size="20" font-weight="800" fill="#0f172a">Your shop link</text>
+  <text x="820" y="328" font-size="13" fill="#64748b">Same demo shop as stage 3. We detect the engine of each run.</text>
+  <rect x="820" y="346" width="404" height="76" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="838" y="374" font-size="11" font-weight="700" fill="#1d4ed8" letter-spacing="0.6">YOUR SHOP URL</text>
+  <rect x="1088" y="356" width="56" height="26" rx="8" fill="#fff" stroke="#2563eb"/><text x="1116" y="373" font-size="12" font-weight="600" fill="#1d4ed8" text-anchor="middle">Copy</text>
+  <rect x="1152" y="356" width="60" height="26" rx="8" fill="#2563eb"/><text x="1182" y="373" font-size="12" font-weight="600" fill="#fff" text-anchor="middle">Open ↗</text>
+  <text x="838" y="406" font-family="JetBrains Mono, monospace" font-size="13" font-weight="700" fill="#1e3a8a">/testing/cross-browser/shop?a=k3Pq9xZr2mWb</text>
+  <text x="820" y="456" font-size="12" font-weight="700" fill="#64748b" letter-spacing="0.5">LATEST RUN PER BROWSER</text>
+  <g font-size="14">
+    <rect x="820" y="470" width="128" height="104" rx="12" fill="#ecfdf5" stroke="#a7f3d0"/>
+    <text x="884" y="500" font-weight="700" fill="#0f172a" text-anchor="middle">Chromium</text>
+    <text x="884" y="530" font-size="22" fill="#059669" text-anchor="middle">✓</text>
+    <text x="884" y="558" font-size="12" fill="#64748b" text-anchor="middle">2 min ago</text>
+    <rect x="958" y="470" width="128" height="104" rx="12" fill="#ecfdf5" stroke="#a7f3d0"/>
+    <text x="1022" y="500" font-weight="700" fill="#0f172a" text-anchor="middle">Firefox</text>
+    <text x="1022" y="530" font-size="22" fill="#059669" text-anchor="middle">✓</text>
+    <text x="1022" y="558" font-size="12" fill="#64748b" text-anchor="middle">1 min ago</text>
+    <rect x="1096" y="470" width="128" height="104" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="4 4"/>
+    <text x="1160" y="500" font-weight="700" fill="#0f172a" text-anchor="middle">WebKit</text>
+    <text x="1160" y="530" font-size="22" fill="#94a3b8" text-anchor="middle">—</text>
+    <text x="1160" y="558" font-size="12" fill="#64748b" text-anchor="middle">No run yet</text>
+  </g>
+
+  <rect x="788" y="624" width="468" height="276" rx="16" fill="#fff" stroke="#e2e8f0"/>
+  <text x="820" y="666" font-size="18" font-weight="800" fill="#0f172a">How it works</text>
+  <g font-size="14" font-weight="500" fill="#0f172a">
+    <circle cx="832" cy="698" r="12" fill="#0f172a"/><text x="832" y="703" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">1</text>
+    <text x="854" y="703">Install the browsers: npx playwright install</text>
+    <circle cx="832" cy="734" r="12" fill="#0f172a"/><text x="832" y="739" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">2</text>
+    <text x="854" y="739">Add a project per browser in the config</text>
+    <circle cx="832" cy="770" r="12" fill="#0f172a"/><text x="832" y="775" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">3</text>
+    <text x="854" y="775">Run your checkout spec on all three</text>
+    <circle cx="832" cy="806" r="12" fill="#0f172a"/><text x="832" y="811" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">4</text>
+    <text x="854" y="811">Add a browser matrix to the CI workflow</text>
+  </g>
+  <text x="820" y="852" font-size="14" font-weight="700" fill="#1d4ed8">▸ Show a Playwright example</text>
+  <text x="820" y="876" font-size="12" fill="#64748b">Expands to: projects in playwright.config.ts + a CI matrix (dark code block).</text>
+
+  <text x="184" y="960" font-size="12" font-weight="700" fill="#64748b" letter-spacing="0.5">COMPLETED STATE (replaces the title row)</text>
+  <rect x="184" y="976" width="1072" height="140" rx="24" fill="#1d4ed8"/>
+  <circle cx="264" cy="1046" r="40" fill="#ffffff" opacity="0.15"/>
+  <text x="264" y="1060" font-size="36" fill="#fff" text-anchor="middle">✓</text>
+  <text x="328" y="1036" font-size="28" font-weight="800" fill="#fff">Assignment complete!</text>
+  <text x="328" y="1066" font-size="15" fill="#dbeafe">Your suite passes on Chromium, Firefox and WebKit — locally and in CI.</text>
+  <text x="328" y="1090" font-size="13" fill="#bfdbfe">Took 52 minutes</text>
+  <rect x="1060" y="1024" width="164" height="44" rx="10" fill="#fff"/>
+  <text x="1142" y="1052" font-size="14" font-weight="600" fill="#1d4ed8" text-anchor="middle">Back to roadmap</text>
+</svg>
