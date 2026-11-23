@@ -51,6 +51,7 @@ export async function generateMetadata({
         // page ever renders for them, but noindex keeps them out of results
         // for any crawler that does have access (e.g. via a logged-in fetch).
         robots: chapter.isFree ? undefined : { index: false, follow: true },
+        alternates: { canonical: `/course/${courseId}/chapters/${chapterId}` },
         openGraph: {
             title,
             description,
