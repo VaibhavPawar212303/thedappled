@@ -227,20 +227,29 @@ export async function recordEvent(token: string, step: StepId, verdict: Verdict,
 
 // Manual testing: records a quiz attempt. The first attempt starts the learner's manual-testing
 // record (their start time on the leaderboard); a perfect score marks the step done. A done step is
-// never undone by a later attempt.
-export async function recordManualQuiz(userId: string, step: StepId, perfect: boolean): Promise<AssignmentStatus> {
+// never undone by a later attempt. A step passed with hints is done (own progress) but its signals
+// carry `hints`, so the leaderboards leave it out; a later clean pass does not change that.
+export async function recordManualQuiz(
+  userId: string,
+  step: StepId,
+  perfect: boolean,
+  hints = 0,
+): Promise<{ status: AssignmentStatus; counted: boolean }> {
   if (!MANUAL_STEP_IDS.has(step)) throw new Error(`not a manual testing step: ${step}`);
   const status = await startAssignment(userId, MANUAL_TESTING);
-  if (!perfect) return status;
+  if (!perfect) return { status, counted: false };
 
   const a = await prisma.assignment.findUnique({ where: { token: status.token }, select: { id: true } });
-  if (!a) return status;
+  if (!a) return { status, counted: false };
   const existing = await prisma.assignmentEvent.findUnique({ where: { assignmentId_name: { assignmentId: a.id, name: step } } });
-  const detail = { source: "quiz", score: "5/5" };
+  const detail = { source: "quiz", score: "5/5", hints };
+  let counted = hints === 0;
   if (!existing) {
     await prisma.assignmentEvent.create({ data: { assignmentId: a.id, name: step, verified: true, signals: detail } }).catch(() => {});
   } else if (!existing.verified) {
     await prisma.assignmentEvent.update({ where: { id: existing.id }, data: { verified: true, reason: null, signals: detail, createdAt: new Date() } });
+  } else {
+    counted = countsOnBoard(existing); // already done: keep its original result
   }
 
   const verifiedEvents = await prisma.assignmentEvent.findMany({
@@ -251,7 +260,15 @@ export async function recordManualQuiz(userId: string, step: StepId, perfect: bo
   if (verifiedEvents.length >= MANUAL_STEPS.length) {
     await prisma.assignment.update({ where: { id: a.id }, data: { completedAt: verifiedEvents[0].createdAt } });
   }
-  return (await getStatusByToken(status.token)) ?? status;
+  return { status: (await getStatusByToken(status.token)) ?? status, counted };
+}
+
+// Whether a step event earns leaderboard credit: it must be verified, and a Manual testing quiz
+// passed with hints does not count (it still counts as done in the learner's own progress).
+export function countsOnBoard(e: { verified: boolean; signals?: unknown }): boolean {
+  if (!e.verified) return false;
+  const sig = e.signals as { hints?: unknown } | null | undefined;
+  return !(sig && typeof sig === "object" && typeof sig.hints === "number" && sig.hints > 0);
 }
 
 // Records the outcome of a repository scan. A passing check becomes a verified step (never

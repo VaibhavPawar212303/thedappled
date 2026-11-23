@@ -2,7 +2,7 @@ import { createHash } from "crypto";
 import { unstable_cache } from "next/cache";
 import { clerkClient } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db";
-import { ASSIGNMENT_SLUGS, AUTOMATION_SLUGS, MANUAL_TESTING, stepsFor, UI_AUTOMATION, type AssignmentSlug } from "@/lib/assignments";
+import { ASSIGNMENT_SLUGS, AUTOMATION_SLUGS, countsOnBoard, MANUAL_TESTING, stepsFor, UI_AUTOMATION, type AssignmentSlug } from "@/lib/assignments";
 import { minutesBetween } from "@/lib/leaderboard-utils";
 
 export { formatMinutes, minutesBetween } from "@/lib/leaderboard-utils";
@@ -33,7 +33,7 @@ type Raw = {
   userId: string;
   startedAt: Date;
   completedAt: Date | null;
-  events: { name: string; createdAt: Date; verified: boolean }[];
+  events: { name: string; createdAt: Date; verified: boolean; signals?: unknown }[];
 };
 
 type NameHints = { username?: string | null; email?: string | null };
@@ -90,7 +90,7 @@ export function rankLearners(raw: Raw[], slug: string = UI_AUTOMATION): Ranked[]
   const total = steps.length;
   const ids = new Set<string>(steps.map((s) => s.id));
   const items = raw.map((a) => {
-    const valid = a.events.filter((e) => e.verified && ids.has(e.name));
+    const valid = a.events.filter((e) => countsOnBoard(e) && ids.has(e.name));
     const done = valid.length;
     const lastAt = valid.reduce((m, e) => Math.max(m, e.createdAt.getTime()), 0);
     const completed = Boolean(a.completedAt) && done >= total;
@@ -182,7 +182,7 @@ type CachedBoard = {
 async function buildBoard(slug: AssignmentSlug, strict: boolean): Promise<CachedBoard> {
   const raw = await prisma.assignment.findMany({
     where: { slug },
-    select: { userId: true, startedAt: true, completedAt: true, events: { select: { name: true, createdAt: true, verified: true } } },
+    select: { userId: true, startedAt: true, completedAt: true, events: { select: { name: true, createdAt: true, verified: true, signals: true } } },
     take: 2000,
   });
   const ranked = rankLearners(raw, slug);
@@ -289,7 +289,7 @@ export function rankAllTracks(raw: RawAssignment[]): Acc[] {
     const slug = a.slug as AssignmentSlug;
     const steps = stepsFor(slug);
     const ids = new Set<string>(steps.map((s) => s.id));
-    const valid = a.events.filter((e) => e.verified && ids.has(e.name));
+    const valid = a.events.filter((e) => countsOnBoard(e) && ids.has(e.name));
     const done = valid.length;
     const last = valid.reduce((m, e) => Math.max(m, e.createdAt.getTime()), 0);
     const progress: StageProgress = { slug, done, total: steps.length, complete: Boolean(a.completedAt) && done >= steps.length };
@@ -319,7 +319,7 @@ export function rankAllTracks(raw: RawAssignment[]): Acc[] {
 async function buildAllTracks(strict: boolean): Promise<{ rows: CachedAllRow[] }> {
   const raw = await prisma.assignment.findMany({
     where: { slug: { in: ASSIGNMENT_SLUGS } },
-    select: { userId: true, slug: true, startedAt: true, completedAt: true, events: { select: { name: true, createdAt: true, verified: true } } },
+    select: { userId: true, slug: true, startedAt: true, completedAt: true, events: { select: { name: true, createdAt: true, verified: true, signals: true } } },
     take: 8000,
   });
   const ranked = rankAllTracks(raw);
