@@ -5,6 +5,7 @@ import { Check } from "lucide-react";
 import { inputClass } from "../../ui-automation/_components/practice-layout";
 import { useAssignmentReporter } from "../../ui-automation/_components/assignment-reporter";
 import { AssignmentNote } from "../../ui-automation/_components/assignment-banner";
+import { engineStep, type Engine } from "@/lib/browser-engine";
 
 type Product = { id: string; name: string; price: number; tint: string };
 
@@ -31,10 +32,23 @@ const newOrderId = () => `DP-${1000 + Math.floor(Math.random() * 9000)}`;
 
 const primaryBtn = "h-12 w-full rounded-[10px] bg-emerald-600 text-[15px] font-semibold text-white transition hover:bg-emerald-700 disabled:opacity-60";
 
+// The engine this page is running in, from browser features (not the user agent, which the server
+// checks separately): Gecko exposes mozInnerScreenX, Chromium exposes navigator.userAgentData.
+export function detectEngine(): Engine {
+  const w = window as unknown as { mozInnerScreenX?: unknown };
+  if (typeof w.mozInnerScreenX === "number" || CSS.supports("-moz-appearance", "none")) return "firefox";
+  if ("userAgentData" in navigator) return "chromium";
+  return "webkit";
+}
+
+export type ShopStage = "page-objects" | "cross-browser";
+
 // The stage 3 practice shop: sign in → products → cart → confirmation, all on one URL, so tests
 // must model page state rather than navigate between URLs. Product order changes on every sign-in,
 // which rewards stable test-id locators kept in one place (a page class).
-export function DemoShop() {
+// Stage 4 reuses it: there only the confirmation is reported, once per browser engine.
+export function DemoShop({ stage = "page-objects" }: { stage?: ShopStage }) {
+  const xb = stage === "cross-browser";
   const { token, report } = useAssignmentReporter();
   const [screen, setScreen] = React.useState<Screen>("signin");
   const [email, setEmail] = React.useState("");
@@ -59,7 +73,7 @@ export function DemoShop() {
     setError(null);
     let ok = false;
     try {
-      const r = await fetch("/api/assignments/page-objects/login", {
+      const r = await fetch(`/api/assignments/${stage}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token, email, password }),
@@ -73,14 +87,14 @@ export function DemoShop() {
     }
     setOrder(shuffle(PRODUCTS));
     setScreen("products");
-    report("pom-login");
+    if (!xb) report("pom-login");
   };
 
   const add = (id: string) => {
     if (cart.includes(id)) return;
     const next = [...cart, id];
     setCart(next);
-    if (next.length >= 2 && !cartReported.current) {
+    if (!xb && next.length >= 2 && !cartReported.current) {
       cartReported.current = true;
       report("pom-cart");
     }
@@ -91,7 +105,12 @@ export function DemoShop() {
     setPlaced({ id: newOrderId(), items: items.length, total });
     setCart([]);
     setScreen("done");
-    report("pom-checkout");
+    if (xb) {
+      const engine = detectEngine();
+      report(engineStep(engine), { engine });
+    } else {
+      report("pom-checkout");
+    }
   };
 
   if (screen === "signin") {

@@ -5,9 +5,10 @@ import type { Reason, Signals, Verdict } from "@/lib/verification";
 export const UI_AUTOMATION = "ui-automation";
 export const FRAMEWORK_SETUP = "framework-setup";
 export const PAGE_OBJECTS = "page-objects";
+export const CROSS_BROWSER = "cross-browser";
 export const MANUAL_TESTING = "manual-testing";
-export type AssignmentSlug = typeof UI_AUTOMATION | typeof FRAMEWORK_SETUP | typeof PAGE_OBJECTS | typeof MANUAL_TESTING;
-export const AUTOMATION_SLUGS = [UI_AUTOMATION, FRAMEWORK_SETUP, PAGE_OBJECTS] as const;
+export type AssignmentSlug = typeof UI_AUTOMATION | typeof FRAMEWORK_SETUP | typeof PAGE_OBJECTS | typeof CROSS_BROWSER | typeof MANUAL_TESTING;
+export const AUTOMATION_SLUGS = [UI_AUTOMATION, FRAMEWORK_SETUP, PAGE_OBJECTS, CROSS_BROWSER] as const;
 export const ASSIGNMENT_SLUGS: AssignmentSlug[] = [MANUAL_TESTING, ...AUTOMATION_SLUGS];
 export const isAssignmentSlug = (v: unknown): v is AssignmentSlug => ASSIGNMENT_SLUGS.includes(v as AssignmentSlug);
 
@@ -29,6 +30,11 @@ export type StepId =
   | "repo-pages"
   | "repo-fixture"
   | "repo-specs"
+  | "xb-chromium"
+  | "xb-firefox"
+  | "xb-webkit"
+  | "repo-browsers"
+  | "repo-ci-matrix"
   | "manual-fundamentals"
   | "manual-test-design"
   | "manual-test-cases"
@@ -66,7 +72,17 @@ export const POM_STEPS: Step[] = [
   { id: "repo-specs", group: "Structure on GitHub", label: "Spec files use page objects only (no raw locators)" },
 ];
 
-export const REPO_STEPS = new Set<StepId>(["repo-config", "repo-ignore", "repo-ci", "repo-pages", "repo-fixture", "repo-specs"]);
+// Stage 4. The same checkout spec must pass on each browser engine (the engine is read from the request
+// on the server, see lib/browser-engine.ts); then a scan of the repo for browser projects and a CI matrix.
+export const CROSS_BROWSER_STEPS: Step[] = [
+  { id: "xb-chromium", group: "Run on every browser", label: "Checkout spec passes on Chromium" },
+  { id: "xb-firefox", group: "Run on every browser", label: "Checkout spec passes on Firefox" },
+  { id: "xb-webkit", group: "Run on every browser", label: "Checkout spec passes on WebKit (Safari engine)" },
+  { id: "repo-browsers", group: "Configure it on GitHub", label: "Config has chromium, firefox and webkit projects" },
+  { id: "repo-ci-matrix", group: "Configure it on GitHub", label: "GitHub Actions runs all three browsers" },
+];
+
+export const REPO_STEPS = new Set<StepId>(["repo-config", "repo-ignore", "repo-ci", "repo-pages", "repo-fixture", "repo-specs", "repo-browsers", "repo-ci-matrix"]);
 
 // Manual testing track: one step per lesson, done when a signed-in learner scores 5/5 on its quiz
 // (graded on the server, see lib/manual-quizzes.ts). Not reported through the automation event API.
@@ -86,7 +102,7 @@ const STEPS_BY_SLUG: Record<string, Step[]> = {
 };
 export const stepsFor = (slug: string): Step[] => STEPS_BY_SLUG[slug] ?? STEPS;
 
-const STEP_IDS = new Set<string>([...STEPS, ...FRAMEWORK_STEPS, ...POM_STEPS, ...MANUAL_STEPS].map((s) => s.id));
+const STEP_IDS = new Set<string>([...STEPS, ...FRAMEWORK_STEPS, ...POM_STEPS, ...CROSS_BROWSER_STEPS, ...MANUAL_STEPS].map((s) => s.id));
 export const isStepId = (v: unknown): v is StepId => typeof v === "string" && STEP_IDS.has(v);
 
 export type AssignmentStatus = {

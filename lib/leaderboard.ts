@@ -241,7 +241,7 @@ export async function getBoard(currentUserId: string | null, slug: AssignmentSlu
 }
 
 // ---- All tracks board ------------------------------------------------------------------------
-// One row per learner across every board: Manual testing (4 steps) + the three Automation stages.
+// One row per learner across every board: Manual testing (4 steps) + the Automation stages.
 // Ranked by total verified checks, then by who reached that total first.
 
 export const STAGE_LABEL: Record<AssignmentSlug, string> = {
@@ -249,6 +249,7 @@ export const STAGE_LABEL: Record<AssignmentSlug, string> = {
   "ui-automation": "UI automation",
   "framework-setup": "Framework setup",
   "page-objects": "Page objects",
+  "cross-browser": "Cross-browser",
 };
 
 export const ALL_TRACKS_MAX = ASSIGNMENT_SLUGS.reduce((n, s) => n + stepsFor(s).length, 0);

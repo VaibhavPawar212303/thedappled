@@ -15,6 +15,7 @@ const isPublicRoute = createRouteMatcher([
   '/api/assignments/event',
   '/api/assignments/framework-setup/login',
   '/api/assignments/page-objects/login',
+  '/api/assignments/cross-browser/login',
   '/opengraph-image(.*)',
   '/course',
   '/course/(.*)',

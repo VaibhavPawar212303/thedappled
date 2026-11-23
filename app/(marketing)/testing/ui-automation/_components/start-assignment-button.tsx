@@ -11,7 +11,7 @@ export function StartAssignmentButton({
   className = "bg-emerald-600 hover:bg-emerald-700",
 }: {
   label?: string;
-  slug?: "ui-automation" | "framework-setup" | "page-objects";
+  slug?: "ui-automation" | "framework-setup" | "page-objects" | "cross-browser";
   className?: string;
 }) {
   const router = useRouter();

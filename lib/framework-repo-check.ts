@@ -2,6 +2,7 @@ import { recordRepoChecks, type AssignmentStatus } from "@/lib/assignments";
 import { demoCredentials } from "@/lib/framework-creds";
 import { evaluateRepo, loadRepo, parseRepoUrl, RepoError, type RepoResult } from "@/lib/repo-scan";
 import { evaluatePomRepo, type PomRepoResult } from "@/lib/pom-repo-scan";
+import { evaluateCrossBrowserRepo, type CrossBrowserRepoResult } from "@/lib/xb-repo-scan";
 
 export type RepoCheckOutcome = { repo: string; branch: string; checks: RepoResult; assignment: AssignmentStatus | null };
 
@@ -36,6 +37,23 @@ export async function checkPomRepoForAssignment(token: string, repoUrl: string):
     "repo-pages": checks["repo-pages"].ok,
     "repo-fixture": checks["repo-fixture"].ok,
     "repo-specs": checks["repo-specs"].ok,
+  });
+  return { repo, branch, checks, assignment };
+}
+
+export type CrossBrowserRepoCheckOutcome = { repo: string; branch: string; checks: CrossBrowserRepoResult; assignment: AssignmentStatus | null };
+
+// Stage 4: scans for browser projects and a CI run on all three engines, and records the passing checks.
+export async function checkCrossBrowserRepoForAssignment(token: string, repoUrl: string): Promise<CrossBrowserRepoCheckOutcome> {
+  const parsed = parseRepoUrl(repoUrl);
+  if (!parsed) throw new RepoError("Enter a public GitHub repository URL, like https://github.com/you/your-repo.", 400);
+
+  const { snapshot, branch } = await loadRepo(parsed);
+  const checks = await evaluateCrossBrowserRepo(snapshot);
+  const repo = `${parsed.owner}/${parsed.repo}`;
+  const assignment = await recordRepoChecks(token, repo, {
+    "repo-browsers": checks["repo-browsers"].ok,
+    "repo-ci-matrix": checks["repo-ci-matrix"].ok,
   });
   return { repo, branch, checks, assignment };
 }

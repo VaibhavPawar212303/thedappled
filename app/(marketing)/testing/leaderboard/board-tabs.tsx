@@ -10,6 +10,7 @@ export const BOARDS: { id: BoardId; label: string }[] = [
   { id: "ui-automation", label: "UI automation" },
   { id: "framework-setup", label: "Framework setup" },
   { id: "page-objects", label: "Page objects" },
+  { id: "cross-browser", label: "Cross-browser" },
 ];
 
 export const boardHref = (id: BoardId) => (id === "all" ? "/testing/leaderboard" : `/testing/leaderboard?stage=${id}`);

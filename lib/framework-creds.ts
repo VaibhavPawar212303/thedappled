@@ -23,3 +23,12 @@ export function shopCredentials(token: string): { email: string; password: strin
     password: `Sh${mac.slice(0, 8)}!3`,
   };
 }
+
+// Stage 4 (cross-browser): the same demo shop, with its own sign-in under a stage 4 label.
+export function crossBrowserCredentials(token: string): { email: string; password: string } {
+  const mac = createHmac("sha256", secret()).update(`cross-browser:${token}`).digest("base64url");
+  return {
+    email: `xb-${token.toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 8)}@thedappled.test`,
+    password: `Xb${mac.slice(0, 8)}!4`,
+  };
+}

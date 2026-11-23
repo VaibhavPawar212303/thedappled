@@ -141,7 +141,7 @@ export function useAssignmentReporter() {
   }, [token]);
 
   const report = React.useCallback(
-    (step: StepId) => {
+    (step: StepId, extra?: { engine?: string }) => {
       if (!token) return;
       const s = stats.current;
       const gaps = s.keys.slice(1).map((t, i) => t - s.keys[i]);
@@ -166,7 +166,7 @@ export function useAssignmentReporter() {
       fetch("/api/assignments/event", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, event: step, signals }),
+        body: JSON.stringify({ token, event: step, signals, ...extra }),
         keepalive: true,
       })
         .then((r) => (r.ok ? r.json() : null))

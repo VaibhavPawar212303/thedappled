@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getStatusByToken, isStepId, recordEvent } from "@/lib/assignments";
 import { describeSignals, sanitizeSignals, verdictFromSignals } from "@/lib/verification";
+import { engineFromUserAgent, engineOfStep } from "@/lib/browser-engine";
 
 export const dynamic = "force-dynamic";
 
@@ -17,8 +18,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Bad request" }, { status: 400 });
   }
 
+  const ua = req.headers.get("user-agent") ?? "";
+  // Cross-browser steps name an engine. It only counts when the request's User-Agent and the
+  // engine the page detected from browser features both match it.
+  const wantEngine = engineOfStep(step);
+  if (wantEngine && (engineFromUserAgent(ua) !== wantEngine || body?.engine !== wantEngine)) {
+    return NextResponse.json({ error: "Browser engine mismatch" }, { status: 409 });
+  }
+
   const signals = sanitizeSignals(body?.signals);
-  const serverHeadlessUa = /HeadlessChrome/i.test(req.headers.get("user-agent") ?? "");
+  const serverHeadlessUa = /HeadlessChrome/i.test(ua);
   const verdict = verdictFromSignals(signals, serverHeadlessUa);
 
   const result = await recordEvent(token, step, verdict, signals);

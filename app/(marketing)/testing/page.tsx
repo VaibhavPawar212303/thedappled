@@ -65,11 +65,12 @@ const TRACKS: Track[] = [
     level: "Intermediate",
     tone: "purple",
     Icon: FlaskConical,
-    blurb: "Learn Playwright and Cypress by automating real pages, set up the framework the way teams do, then structure it with page objects and fixtures.",
+    blurb: "Learn Playwright and Cypress by automating real pages, set up the framework the way teams do, structure it with page objects, then run it on Chrome, Firefox and WebKit.",
     steps: [
       { n: 1, title: "UI automation", blurb: "Playwright & Cypress: locators, waits, page objects, debugging.", href: "/testing/ui-automation", progressKey: "ui-automation" },
       { n: 2, title: "Framework setup", blurb: "Config and credentials in .env, tests that read them, and the project saved on GitHub with secrets.", href: "/testing/framework-setup", progressKey: "framework-setup" },
-      { n: 3, title: "Page objects & fixtures", blurb: "Move locators into page classes, share setup with fixtures, keep specs readable.", href: "/testing/page-objects", isNew: true, progressKey: "page-objects" },
+      { n: 3, title: "Page objects & fixtures", blurb: "Move locators into page classes, share setup with fixtures, keep specs readable.", href: "/testing/page-objects", progressKey: "page-objects" },
+      { n: 4, title: "Cross-browser testing", blurb: "Run the same spec on Chrome, Firefox and WebKit — locally and in GitHub Actions.", href: "/testing/cross-browser", isNew: true, progressKey: "cross-browser" },
     ],
     stepTestId: (n) => `step-card-${n}`, // unchanged ids for the existing track
     unit: "stages done",
