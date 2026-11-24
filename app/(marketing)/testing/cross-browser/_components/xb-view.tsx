@@ -126,6 +126,12 @@ jobs:
 
 const SNIPPETS: Record<Tool, string> = { playwright: PLAYWRIGHT_SNIPPET, cypress: CYPRESS_SNIPPET };
 
+// The config requirement reads differently per tool (board D on the "Tools – Playwright & Cypress" page).
+const TOOL_STEP_LABEL: Record<Tool, Partial<Record<string, string>>> = {
+  playwright: { "repo-browsers": "playwright.config has chromium, firefox and webkit projects" },
+  cypress: { "repo-browsers": "cypress.config enables WebKit and runs cover all three browsers" },
+};
+
 function ago(iso: string, now: number) {
   const m = Math.round((now - new Date(iso).getTime()) / 60000);
   if (m < 1) return "just now";
@@ -270,7 +276,7 @@ export function XbView({ tool, initial, env, rank }: { tool: Tool; initial: Assi
                           {done ? <Check className="h-3.5 w-3.5" /> : rejected || repoMsg ? "✕" : null}
                         </span>
                         <span className="min-w-0 flex-1">
-                          <span className={`block font-medium ${done || rejected || repoMsg ? "" : "text-muted-foreground"}`}>{s.label}</span>
+                          <span className={`block font-medium ${done || rejected || repoMsg ? "" : "text-muted-foreground"}`}>{TOOL_STEP_LABEL[tool][s.id] ?? s.label}</span>
                           {rejected && <span className="mt-0.5 block text-[13px] font-semibold text-amber-700 dark:text-amber-400">{REASON_TEXT[rejected].short}</span>}
                           {repoMsg && <span data-testid={`why-${s.id}`} className="mt-0.5 block break-words text-[13px] font-semibold text-red-700 dark:text-red-400">{repoMsg}</span>}
                         </span>

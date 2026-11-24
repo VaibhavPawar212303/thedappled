@@ -3,7 +3,7 @@ import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { CROSS_BROWSER, getAssignmentForUser } from "@/lib/assignments";
 import { chosenTool } from "@/lib/tool-choice";
-import { otherTool } from "@/lib/tools";
+import { otherTool, type Tool } from "@/lib/tools";
 import { XbCard } from "./_components/xb-card";
 
 export const metadata: Metadata = {
@@ -17,8 +17,14 @@ export const dynamic = "force-dynamic";
 
 // Design: Penpot "26 - Testing Learning Path", page "Stage 4 – Cross-browser", board B.
 
-const STEPS = [
-  { h: "1. Add the browsers", d: "Add chromium, firefox and webkit projects to playwright.config (Cypress: run with --browser chrome, firefox, webkit)." },
+// Step 1 depends on the chosen tool (board D on the "Tools – Playwright & Cypress" page).
+const ADD_BROWSERS: Record<Tool, string> = {
+  playwright: "Add chromium, firefox and webkit projects to playwright.config.",
+  cypress: "Set experimentalWebKitSupport: true in cypress.config, install playwright-webkit, and run with --browser chrome, firefox and webkit.",
+};
+
+const stepsFor = (tool: Tool) => [
+  { h: "1. Add the browsers", d: ADD_BROWSERS[tool] },
   { h: "2. Run on every engine", d: "Run your checkout spec against the demo shop. Each run is detected by engine; fix anything that fails in only one browser." },
   { h: "3. Run the matrix in CI", d: "Make GitHub Actions run all three browsers, push, and paste the repo URL so we can check the config and the workflow." },
 ];
@@ -77,7 +83,7 @@ export default async function CrossBrowserPage({ searchParams }: { searchParams:
         <div className="rounded-2xl border bg-slate-50 p-8 dark:bg-slate-900/40">
           <h2 className="text-xl font-extrabold">How the assignment works</h2>
           <div className="mt-5 grid gap-6 md:grid-cols-3">
-            {STEPS.map((t) => (
+            {stepsFor(tool).map((t) => (
               <div key={t.h}>
                 <h3 className="text-[15px] font-bold text-blue-700 dark:text-blue-300">{t.h}</h3>
                 <p className="mt-1 text-sm text-muted-foreground">{t.d}</p>

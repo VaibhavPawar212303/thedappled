@@ -7,11 +7,19 @@ import { TOOL_LABEL, withTool, type Tool } from "@/lib/tools";
 import { CardToolPicker, completedTools, OtherToolStatus, ToolBadge } from "../../_components/card-tool";
 import { StartAssignmentButton } from "../../ui-automation/_components/start-assignment-button";
 
-const POINTS = [
-  "The same spec passes on Chromium, Firefox and WebKit",
-  "Config defines one project per browser (Cypress: --browser runs)",
-  "GitHub Actions runs the suite on all three browsers",
-];
+// Design: Penpot "26 - Testing Learning Path", page "Tools – Playwright & Cypress", board D.
+const POINTS: Record<Tool, string[]> = {
+  playwright: [
+    "The same spec passes on Chromium, Firefox and WebKit",
+    "playwright.config defines one project per browser",
+    "GitHub Actions runs every project, all three browsers",
+  ],
+  cypress: [
+    "The same spec passes on Chrome, Firefox and WebKit",
+    "cypress.config enables WebKit; runs use --browser for each",
+    "GitHub Actions runs a chrome, firefox, webkit matrix",
+  ],
+};
 
 export function XbCard({
   signedIn,
@@ -42,7 +50,7 @@ export function XbCard({
             ticked off separately.
           </p>
           <ul className="m-0 mt-6 list-none space-y-2.5 p-0 text-[15px] font-medium">
-            {POINTS.map((t) => (
+            {POINTS[tool].map((t) => (
               <li key={t} className="flex items-center gap-3">
                 <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
                   <Check className="h-3 w-3" />

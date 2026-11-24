@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="820" viewBox="0 0 1440 820" font-family="Inter, sans-serif">
+  <!-- /testing/cross-browser — the stage 4 card's points, requirement and "How it works" step 1 follow the chosen tool.
+       Left: ?tool=playwright. Right: ?tool=cypress. Everything else on the card is unchanged. -->
+  <rect width="1440" height="820" fill="#ffffff"/>
+  <text x="64" y="56" font-size="22" font-weight="800" fill="#0f172a">Stage 4 · Cross-browser — card text per tool</text>
+  <text x="64" y="84" font-size="14" fill="#64748b">Card points, the "config" requirement and How-it-works step 1 switch with the Playwright | Cypress toggle.</text>
+
+  <!-- Playwright card -->
+  <g transform="translate(64,120)">
+    <rect width="636" height="420" rx="20" fill="#fff" stroke="#3b82f6" stroke-width="1.5"/>
+    <rect x="20" y="0" width="596" height="8" fill="#2563eb"/>
+    <rect x="28" y="36" width="96" height="24" rx="12" fill="#dbeafe"/>
+    <text x="76" y="53" font-size="12" font-weight="600" fill="#1d4ed8" text-anchor="middle">Assignment</text>
+    <text x="28" y="92" font-size="11" font-weight="700" fill="#64748b" letter-spacing="0.5">CHOOSE YOUR TOOL</text>
+    <rect x="28" y="102" width="232" height="38" rx="10" fill="#e2e8f0"/>
+    <rect x="31" y="105" width="113" height="32" rx="8" fill="#fff"/>
+    <text x="87" y="126" font-size="13" font-weight="700" fill="#0f172a" text-anchor="middle">Playwright</text>
+    <text x="202" y="126" font-size="13" font-weight="700" fill="#64748b" text-anchor="middle">Cypress</text>
+    <text x="28" y="186" font-size="26" font-weight="800" fill="#0f172a">One spec, three browsers</text>
+    <g font-size="14" font-weight="500" fill="#0f172a">
+      <circle cx="38" cy="226" r="9" fill="#dbeafe"/><text x="38" y="230" font-size="10" fill="#1d4ed8" text-anchor="middle">✓</text>
+      <text x="56" y="231">The same spec passes on Chromium, Firefox and WebKit</text>
+      <circle cx="38" cy="258" r="9" fill="#dbeafe"/><text x="38" y="262" font-size="10" fill="#1d4ed8" text-anchor="middle">✓</text>
+      <text x="56" y="263">playwright.config defines one project per browser</text>
+      <circle cx="38" cy="290" r="9" fill="#dbeafe"/><text x="38" y="294" font-size="10" fill="#1d4ed8" text-anchor="middle">✓</text>
+      <text x="56" y="295">GitHub Actions runs every project, all three browsers</text>
+    </g>
+    <line x1="28" y1="326" x2="608" y2="326" stroke="#e2e8f0"/>
+    <text x="28" y="352" font-size="11" font-weight="700" fill="#64748b" letter-spacing="0.5">REQUIREMENT (ASSIGNMENT PAGE)</text>
+    <text x="28" y="376" font-size="14" fill="#0f172a">playwright.config has chromium, firefox and webkit projects</text>
+    <text x="28" y="400" font-size="12" fill="#64748b">Step 1: Add chromium, firefox and webkit projects to playwright.config.</text>
+  </g>
+
+  <!-- Cypress card -->
+  <g transform="translate(740,120)">
+    <rect width="636" height="420" rx="20" fill="#fff" stroke="#3b82f6" stroke-width="1.5"/>
+    <rect x="20" y="0" width="596" height="8" fill="#2563eb"/>
+    <rect x="28" y="36" width="96" height="24" rx="12" fill="#dbeafe"/>
+    <text x="76" y="53" font-size="12" font-weight="600" fill="#1d4ed8" text-anchor="middle">Assignment</text>
+    <text x="28" y="92" font-size="11" font-weight="700" fill="#64748b" letter-spacing="0.5">CHOOSE YOUR TOOL</text>
+    <rect x="28" y="102" width="232" height="38" rx="10" fill="#e2e8f0"/>
+    <text x="87" y="126" font-size="13" font-weight="700" fill="#64748b" text-anchor="middle">Playwright</text>
+    <rect x="144" y="105" width="113" height="32" rx="8" fill="#fff"/>
+    <text x="202" y="126" font-size="13" font-weight="700" fill="#0f172a" text-anchor="middle">Cypress</text>
+    <text x="28" y="186" font-size="26" font-weight="800" fill="#0f172a">One spec, three browsers</text>
+    <g font-size="14" font-weight="500" fill="#0f172a">
+      <circle cx="38" cy="226" r="9" fill="#dbeafe"/><text x="38" y="230" font-size="10" fill="#1d4ed8" text-anchor="middle">✓</text>
+      <text x="56" y="231">The same spec passes on Chrome, Firefox and WebKit</text>
+      <circle cx="38" cy="258" r="9" fill="#dbeafe"/><text x="38" y="262" font-size="10" fill="#1d4ed8" text-anchor="middle">✓</text>
+      <text x="56" y="263">cypress.config enables WebKit; runs use --browser for each</text>
+      <circle cx="38" cy="290" r="9" fill="#dbeafe"/><text x="38" y="294" font-size="10" fill="#1d4ed8" text-anchor="middle">✓</text>
+      <text x="56" y="295">GitHub Actions runs a chrome, firefox, webkit matrix</text>
+    </g>
+    <line x1="28" y1="326" x2="608" y2="326" stroke="#e2e8f0"/>
+    <text x="28" y="352" font-size="11" font-weight="700" fill="#64748b" letter-spacing="0.5">REQUIREMENT (ASSIGNMENT PAGE)</text>
+    <text x="28" y="376" font-size="14" fill="#0f172a">cypress.config enables WebKit and runs cover all three browsers</text>
+    <text x="28" y="400" font-size="12" fill="#64748b">Step 1: Set experimentalWebKitSupport: true, add playwright-webkit, use --browser.</text>
+  </g>
+
+  <g font-size="12" fill="#92400e">
+    <rect x="64" y="580" width="1312" height="56" rx="10" fill="#fffbeb" stroke="#fcd34d"/>
+    <text x="84" y="604">Cypress runs Chromium as "chrome" (or electron), so its first point says Chrome. The engine check still counts it as the Chromium step.</text>
+    <text x="84" y="622">The browser-run requirement labels (Chromium / Firefox / WebKit) stay the same on both tracks.</text>
+  </g>
+</svg>
