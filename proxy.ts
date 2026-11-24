@@ -12,6 +12,7 @@ const isPublicRoute = createRouteMatcher([
   '/books/(.*)',
   '/search',
   '/testing(.*)',
+  '/dsa(.*)',
   '/api/assignments/event',
   '/api/assignments/framework-setup/login',
   '/api/assignments/page-objects/login',

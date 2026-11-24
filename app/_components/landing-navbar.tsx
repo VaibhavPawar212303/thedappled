@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useAuth } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { SignedIn, SignedOut, UserButton, SignInButton, SignUpButton } from "@clerk/nextjs";
-import { BookOpen, Newspaper, MonitorPlay, Terminal, FlaskConical } from "lucide-react";
+import { BookOpen, Newspaper, MonitorPlay, Terminal, FlaskConical, Binary } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { ModeToggle } from "@/components/mode-toggle";
 import { LandingMobileNav } from "./landing-mobile-nav";
@@ -14,6 +14,7 @@ import { AppLogoLink } from "./app-logo-link";
 export const LandingNavbar = () => {
   const pathname = usePathname();
   const onTesting = pathname?.startsWith("/testing");
+  const onDsa = pathname?.startsWith("/dsa");
   return (
     <nav className="p-4 bg-background flex items-center justify-between z-50 w-full border-b fixed top-0 transition-all">
 
@@ -57,6 +58,18 @@ export const LandingNavbar = () => {
                 <FlaskConical className={`w-4 h-4 group-hover:text-emerald-600 ${onTesting ? "text-emerald-600" : "text-slate-600 dark:text-slate-300"}`} />
             </div>
             Testing
+        </Link>
+
+        {/* DSA - Blue (active state when on /dsa). Design: Penpot "27 - DSA Learning Path". */}
+        <Link
+            href="/dsa"
+            aria-current={onDsa ? "page" : undefined}
+            className={`group flex items-center gap-x-2 font-medium transition hover:text-blue-600 ${onDsa ? "text-blue-700 dark:text-blue-400" : "text-slate-600 dark:text-slate-300"}`}
+        >
+            <div className={`p-1 rounded-md transition group-hover:bg-blue-100 dark:group-hover:bg-blue-950 ${onDsa ? "bg-blue-100 dark:bg-blue-950" : "bg-slate-100 dark:bg-slate-800"}`}>
+                <Binary className={`w-4 h-4 group-hover:text-blue-600 ${onDsa ? "text-blue-600" : "text-slate-600 dark:text-slate-300"}`} />
+            </div>
+            DSA
         </Link>
 
         {/* Compiler - Amber Hover (external app) */}
