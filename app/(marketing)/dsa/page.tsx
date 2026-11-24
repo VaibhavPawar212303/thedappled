@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Binary, Network } from "lucide-react";
+import { ArrowRight, Binary, Check, Network } from "lucide-react";
 import { SignedIn, SignedOut, SignUpButton } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 import { Button } from "@/components/ui/button";
+import { FOUNDATIONS_STEPS } from "@/lib/dsa-lessons";
+import { getDsaProgress } from "@/lib/dsa-progress";
+import { COMPILER_URL, DsaFooter } from "./_components/dsa-footer";
 
 export const metadata: Metadata = {
   title: "Learn Data Structures and Algorithms – DSA Learning Path",
@@ -10,8 +14,6 @@ export const metadata: Metadata = {
     "A free data structures and algorithms learning path: complexity, arrays, hashing, linked lists, trees, graphs and dynamic programming, step by step.",
   alternates: { canonical: "/dsa" },
 };
-
-const COMPILER_URL = "https://c-architech-compiler.vercel.app/?tab=compiler";
 
 type Tone = "blue" | "purple";
 
@@ -23,7 +25,7 @@ const NEW_CHIP = "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-
 
 // Design: Penpot "27 - DSA Learning Path", Roadmap page, board "DSA roadmap — desktop (new)".
 // Steps without an href have no page yet and show "Coming soon".
-type Step = { title: string; blurb: string; href?: string };
+type Step = { title: string; blurb: string; href?: string; id?: string };
 type Track = { id: string; title: string; level: string; tone: Tone; Icon: typeof Binary; isNew?: boolean; blurb: string; steps: Step[] };
 
 const TRACKS: Track[] = [
@@ -35,14 +37,7 @@ const TRACKS: Track[] = [
     Icon: Binary,
     isNew: true,
     blurb: "Learn how to measure code, then build the core data structures yourself: arrays, hash maps, linked lists, stacks and queues, and recursion.",
-    steps: [
-      { title: "Complexity & Big-O", blurb: "Time and space cost, and how to compare two solutions." },
-      { title: "Arrays & strings", blurb: "Indexing, in-place updates, prefix sums and string building." },
-      { title: "Hashing", blurb: "Hash maps and sets for counting, lookups and de-duplication." },
-      { title: "Linked lists", blurb: "Pointers, reversal, fast and slow runners, merging lists." },
-      { title: "Stacks & queues", blurb: "LIFO and FIFO, balanced brackets, monotonic stacks." },
-      { title: "Recursion", blurb: "Base cases, the call stack, and thinking in smaller problems." },
-    ],
+    steps: FOUNDATIONS_STEPS.map(({ id, title, blurb, href }) => ({ id, title, blurb, href })),
   },
   {
     id: "patterns",
@@ -88,7 +83,10 @@ function binarySearchSteps(nums: number[], target: number): SearchStep[] {
 const SEARCH = binarySearchSteps(NUMS, TARGET);
 const FOUND = SEARCH[SEARCH.length - 1];
 
-export default function DsaPage() {
+export default async function DsaPage() {
+  const { userId } = await auth();
+  const progress = await getDsaProgress(userId);
+  const done = new Set(progress?.done ?? []);
   return (
     <div className="bg-background text-foreground">
       {/* HERO */}
@@ -202,15 +200,26 @@ export default function DsaPage() {
                   <ol className="m-0 mt-6 grid list-none gap-3 p-0">
                     {track.steps.map((st, i) => {
                       const n = i + 1;
+                      const isDone = Boolean(st.id && done.has(st.id));
                       const body = (
                         <>
-                          <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-lg font-extrabold ${tone.chip}`}>{n}</span>
+                          {isDone ? (
+                            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white" aria-label="Done">
+                              <Check className="h-5 w-5" />
+                            </span>
+                          ) : (
+                            <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-lg font-extrabold ${tone.chip}`}>{n}</span>
+                          )}
                           <span className="min-w-0 flex-1">
                             <span className="block text-xs font-bold uppercase tracking-wide text-muted-foreground">Step {n}</span>
                             <span className="mt-0.5 block text-lg font-bold">{st.title}</span>
                             <span className="mt-1 block text-sm leading-relaxed text-muted-foreground">{st.blurb}</span>
                           </span>
-                          {st.href ? (
+                          {isDone ? (
+                            <span className="inline-flex shrink-0 items-center gap-1 self-end rounded-full bg-emerald-100 px-3 py-1 text-xs font-extrabold text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
+                              <Check className="h-3 w-3" /> Done
+                            </span>
+                          ) : st.href ? (
                             <span className="inline-flex shrink-0 items-center gap-1 self-end text-sm font-semibold text-blue-600 dark:text-blue-400">
                               Start step <ArrowRight className="h-4 w-4" />
                             </span>
@@ -221,9 +230,11 @@ export default function DsaPage() {
                           )}
                         </>
                       );
-                      const cls = "flex items-start gap-4 rounded-2xl border bg-slate-50 p-5 dark:bg-slate-900/40";
+                      const cls = isDone
+                        ? "flex items-start gap-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 dark:border-emerald-900 dark:bg-emerald-950/30"
+                        : "flex items-start gap-4 rounded-2xl border bg-slate-50 p-5 dark:bg-slate-900/40";
                       return (
-                        <li key={st.title} data-testid={`dsa-step-${track.id}-${n}`}>
+                        <li key={st.title} data-testid={`dsa-step-${track.id}-${n}`} data-state={progress ? (isDone ? "done" : "todo") : undefined}>
                           {st.href ? (
                             <Link href={st.href} className={`${cls} transition hover:shadow-md`}>{body}</Link>
                           ) : (
@@ -281,27 +292,7 @@ export default function DsaPage() {
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer className="bg-slate-900 text-slate-400">
-        <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 md:grid-cols-2 md:px-8">
-          <div>
-            <p className="text-xl font-bold text-white">Thedappled</p>
-            <p className="mt-3 max-w-xs text-sm">Learn modern tech with courses, books and AI-powered articles.</p>
-          </div>
-          <div>
-            <h4 className="mb-4 font-semibold text-white">Learn</h4>
-            <ul className="m-0 flex list-none flex-wrap gap-x-6 gap-y-2 p-0 text-sm">
-              <li><Link href="/search" className="transition hover:text-white">Courses</Link></li>
-              <li><Link href="/books" className="transition hover:text-white">Books</Link></li>
-              <li><Link href="/blogs" className="transition hover:text-white">Blogs</Link></li>
-              <li><Link href="/testing" className="transition hover:text-white">Testing</Link></li>
-              <li><Link href="/dsa" className="text-blue-300 transition hover:text-white">DSA</Link></li>
-              <li><a href={COMPILER_URL} target="_blank" rel="noopener noreferrer" className="transition hover:text-white">Compiler</a></li>
-            </ul>
-          </div>
-        </div>
-        <div className="border-t border-slate-800 px-4 py-6 text-center text-xs text-slate-500">© 2026 Thedappled Inc. All rights reserved.</div>
-      </footer>
+      <DsaFooter />
     </div>
   );
 }

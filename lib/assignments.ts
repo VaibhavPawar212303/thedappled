@@ -202,6 +202,7 @@ export async function recordEvent(token: string, step: StepId, verdict: Verdict,
   const a = await prisma.assignment.findUnique({ where: { token }, select: { id: true, slug: true } });
   if (!a) return null;
   if (a.slug === MANUAL_TESTING || MANUAL_STEP_IDS.has(step)) return null; // manual steps are only completed by passing a quiz
+  if (!Object.hasOwn(STEPS_BY_SLUG, a.slug)) return null; // not a Testing assignment (e.g. DSA progress)
   const list = stepsFor(a.slug);
   if (!list.some((s) => s.id === step)) return null; // step belongs to a different stage
 
