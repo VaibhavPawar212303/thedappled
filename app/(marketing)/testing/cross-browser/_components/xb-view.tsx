@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { CROSS_BROWSER_STEPS, type AssignmentStatus } from "@/lib/assignments";
 import { ENGINES, ENGINE_LABEL, engineStep } from "@/lib/browser-engine";
 import { REASON_TEXT } from "@/lib/verification";
+import { TOOL_LABEL, withTool, type Tool } from "@/lib/tools";
+import { TrackLine } from "../../_components/card-tool";
 
 // Design: Penpot "26 - Testing Learning Path", page "Stage 4 – Cross-browser", board C.
 
@@ -34,7 +36,7 @@ function CopyButton({ text, testid, className = "bg-slate-700 text-white hover:b
   );
 }
 
-const SNIPPET = `// playwright.config.ts
+const PLAYWRIGHT_SNIPPET = `// playwright.config.ts
 import { defineConfig, devices } from '@playwright/test';
 import 'dotenv/config';
 
@@ -75,6 +77,55 @@ jobs:
           SHOP_EMAIL: \${{ secrets.SHOP_EMAIL }}
           SHOP_PASSWORD: \${{ secrets.SHOP_PASSWORD }}`;
 
+const CYPRESS_SNIPPET = `// cypress.config.ts
+import { defineConfig } from 'cypress';
+import 'dotenv/config';
+
+export default defineConfig({
+  experimentalWebKitSupport: true,
+  e2e: {
+    baseUrl: process.env.BASE_URL,
+    env: {
+      ASSIGNMENT_TOKEN: process.env.ASSIGNMENT_TOKEN,
+      SHOP_EMAIL: process.env.SHOP_EMAIL,
+      SHOP_PASSWORD: process.env.SHOP_PASSWORD,
+    },
+  },
+});
+
+// cypress/pages/LoginPage.ts — point open() at your stage 4 shop
+cy.visit(\`/testing/cross-browser/shop?a=\${Cypress.env('ASSIGNMENT_TOKEN')}\`);
+
+# run all three locally (WebKit runs through playwright-webkit)
+npm i -D playwright-webkit
+npx cypress run --browser chrome
+npx cypress run --browser firefox
+npx cypress run --browser webkit
+
+# .github/workflows/tests.yml
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chrome, firefox, webkit]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm ci
+      - run: npx playwright install-deps webkit
+        if: matrix.browser == 'webkit'
+      - run: npx cypress run --browser \${{ matrix.browser }}
+        env:
+          BASE_URL: \${{ secrets.BASE_URL }}
+          ASSIGNMENT_TOKEN: \${{ secrets.ASSIGNMENT_TOKEN }}
+          SHOP_EMAIL: \${{ secrets.SHOP_EMAIL }}
+          SHOP_PASSWORD: \${{ secrets.SHOP_PASSWORD }}`;
+
+const SNIPPETS: Record<Tool, string> = { playwright: PLAYWRIGHT_SNIPPET, cypress: CYPRESS_SNIPPET };
+
 function ago(iso: string, now: number) {
   const m = Math.round((now - new Date(iso).getTime()) / 60000);
   if (m < 1) return "just now";
@@ -83,7 +134,7 @@ function ago(iso: string, now: number) {
   return h < 24 ? `${h} h ago` : `${Math.round(h / 24)} d ago`;
 }
 
-export function XbView({ initial, env, rank }: { initial: AssignmentStatus; env: Env; rank?: { rank: number; total: number } | null }) {
+export function XbView({ tool, initial, env, rank }: { tool: Tool; initial: AssignmentStatus; env: Env; rank?: { rank: number; total: number } | null }) {
   const [status, setStatus] = React.useState(initial);
   const [showPw, setShowPw] = React.useState(false);
   const [repoUrl, setRepoUrl] = React.useState("");
@@ -99,20 +150,20 @@ export function XbView({ initial, env, rank }: { initial: AssignmentStatus; env:
     const id = setInterval(async () => {
       setNow(Date.now());
       try {
-        const r = await fetch("/api/assignments/cross-browser", { cache: "no-store" });
+        const r = await fetch(`/api/assignments/cross-browser?tool=${tool}`, { cache: "no-store" });
         if (!r.ok) return;
         const { assignment } = await r.json();
         if (assignment) setStatus(assignment);
       } catch {}
     }, 3000);
     return () => clearInterval(id);
-  }, [completed]);
+  }, [completed, tool]);
 
   const check = async () => {
     setBusy(true);
     setError(null);
     try {
-      const r = await fetch("/api/assignments/cross-browser/repo", {
+      const r = await fetch(`/api/assignments/cross-browser/repo?tool=${tool}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ repoUrl }),
@@ -141,14 +192,14 @@ export function XbView({ initial, env, rank }: { initial: AssignmentStatus; env:
   const groups = ["Run on every browser", "Configure it on GitHub"] as const;
 
   const rankChip = (
-    <Link href="/testing/leaderboard?stage=cross-browser" data-testid="assignment-rank" className="inline-flex items-center gap-3 rounded-xl border bg-card px-4 py-2.5 text-sm shadow-sm hover:shadow-md">
+    <Link href={withTool("/testing/leaderboard?stage=cross-browser", tool)} data-testid="assignment-rank" className="inline-flex items-center gap-3 rounded-xl border bg-card px-4 py-2.5 text-sm shadow-sm hover:shadow-md">
       {rank && (
         <span>
           <span className="text-muted-foreground">Rank </span>
           <span className="font-extrabold">#{rank.rank} of {rank.total}</span>
         </span>
       )}
-      <span className="font-bold text-blue-600">View leaderboard →</span>
+      <span className="font-bold text-blue-600">View {TOOL_LABEL[tool]} leaderboard →</span>
     </Link>
   );
 
@@ -158,7 +209,7 @@ export function XbView({ initial, env, rank }: { initial: AssignmentStatus; env:
         <nav aria-label="Breadcrumb" className="mb-6 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
           <Link href="/testing" className="hover:text-foreground">Testing</Link>
           <span aria-hidden="true">/</span>
-          <Link href="/testing/cross-browser" className="hover:text-foreground">Cross-browser testing</Link>
+          <Link href={withTool("/testing/cross-browser", tool)} className="hover:text-foreground">Cross-browser testing</Link>
           <span aria-hidden="true">/</span>
           <span aria-current="page" className="font-semibold text-foreground">Assignment</span>
         </nav>
@@ -168,7 +219,7 @@ export function XbView({ initial, env, rank }: { initial: AssignmentStatus; env:
             <div className="flex items-center gap-5">
               <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-white/15 text-4xl">✓</span>
               <div>
-                <h1 className="text-3xl font-extrabold tracking-tight">Assignment complete!</h1>
+                <h1 className="text-3xl font-extrabold tracking-tight">{TOOL_LABEL[tool]} assignment complete!</h1>
                 <p className="mt-2 text-blue-100">Your suite passes on Chromium, Firefox and WebKit — locally and in CI.</p>
                 <p className="mt-2 text-sm text-blue-100/80">Took {minutes} minute{minutes === 1 ? "" : "s"}</p>
               </div>
@@ -182,6 +233,7 @@ export function XbView({ initial, env, rank }: { initial: AssignmentStatus; env:
             <div>
               <h1 className="text-3xl font-extrabold tracking-tight md:text-4xl">Assignment: cross-browser testing</h1>
               <div className="mt-3 flex flex-wrap items-center gap-3 text-sm">
+                <TrackLine slug="cross-browser" tool={tool} />
                 <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-950 dark:text-amber-300">● In progress</span>
                 <span className="text-muted-foreground">Browser runs update live · GitHub checks run when you submit your repo</span>
               </div>
@@ -314,12 +366,20 @@ export function XbView({ initial, env, rank }: { initial: AssignmentStatus; env:
             <section className="min-w-0 rounded-2xl border bg-card p-6 shadow-sm sm:p-8">
               <h2 className="text-lg font-extrabold">How it works</h2>
               <ol className="m-0 mt-4 list-none space-y-3 p-0 text-sm font-medium">
-                {[
-                  "Install the browsers: npx playwright install",
-                  "Add a project per browser in the config",
-                  "Point your checkout spec at the shop link above and run it on all three",
-                  "Add a browser matrix to the CI workflow, push, paste the repo URL",
-                ].map((t, i) => (
+                {(tool === "cypress"
+                  ? [
+                      "Install WebKit support: npm i -D playwright-webkit",
+                      "Set experimentalWebKitSupport: true in cypress.config",
+                      "Point your checkout spec at the shop link above and run it with --browser chrome, firefox and webkit",
+                      "Add a browser matrix to the CI workflow, push, paste the repo URL",
+                    ]
+                  : [
+                      "Install the browsers: npx playwright install",
+                      "Add a project per browser in the config",
+                      "Point your checkout spec at the shop link above and run it on all three",
+                      "Add a browser matrix to the CI workflow, push, paste the repo URL",
+                    ]
+                ).map((t, i) => (
                   <li key={t} className="flex items-start gap-3">
                     <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-900 text-xs font-bold text-white dark:bg-slate-100 dark:text-slate-900">{i + 1}</span>
                     {t}
@@ -327,11 +387,8 @@ export function XbView({ initial, env, rank }: { initial: AssignmentStatus; env:
                 ))}
               </ol>
               <details className="mt-5">
-                <summary className="cursor-pointer text-sm font-bold text-blue-700 dark:text-blue-400">Show a Playwright example</summary>
-                <pre className="mt-3 overflow-x-auto rounded-xl bg-slate-900 p-4 font-mono text-xs leading-5 text-slate-100">{SNIPPET}</pre>
-                <p className="mt-3 text-[13px] text-muted-foreground">
-                  Cypress: set <code>experimentalWebKitSupport: true</code>, install <code>playwright-webkit</code>, and run <code>cypress run --browser chrome</code>, <code>firefox</code> and <code>webkit</code>.
-                </p>
+                <summary className="cursor-pointer text-sm font-bold text-blue-700 dark:text-blue-400">Show a {TOOL_LABEL[tool]} example</summary>
+                <pre data-testid="tool-snippet" className="mt-3 overflow-x-auto rounded-xl bg-slate-900 p-4 font-mono text-xs leading-5 text-slate-100">{SNIPPETS[tool]}</pre>
               </details>
             </section>
           </div>

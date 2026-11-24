@@ -3,9 +3,21 @@ import { ArrowRight, Check } from "lucide-react";
 import { SignedOut, SignUpButton, SignInButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import type { AssignmentStatus } from "@/lib/assignments";
+import { TOOL_LABEL, withTool, type Tool } from "@/lib/tools";
+import { CardToolPicker, completedTools, OtherToolStatus, ToolBadge } from "../../_components/card-tool";
 import { StartAssignmentButton } from "../../ui-automation/_components/start-assignment-button";
 
-export function FrameworkCard({ signedIn, assignment }: { signedIn: boolean; assignment: AssignmentStatus | null }) {
+export function FrameworkCard({
+  signedIn,
+  assignment,
+  tool,
+  other,
+}: {
+  signedIn: boolean;
+  assignment: AssignmentStatus | null;
+  tool: Tool;
+  other: AssignmentStatus | null; // the same stage on the other tool
+}) {
   const done = assignment?.done ?? 0;
   const total = assignment?.total ?? 5;
   const completed = Boolean(assignment?.completedAt);
@@ -17,6 +29,7 @@ export function FrameworkCard({ signedIn, assignment }: { signedIn: boolean; ass
       <div className="grid gap-8 p-8 lg:grid-cols-[1.3fr_1fr]">
         <div>
           <span className="inline-flex rounded-full bg-purple-100 px-3 py-1 text-xs font-semibold text-purple-700 dark:bg-purple-950 dark:text-purple-300">Assignment</span>
+          <CardToolPicker path="/testing/framework-setup" tool={tool} completed={completedTools(tool, assignment, other)} />
           <h2 className="mt-4 text-3xl font-extrabold tracking-tight">Build the framework, keep secrets out of git</h2>
           <p className="mt-3 text-muted-foreground">
             Put your base URL and demo login in <code>.env</code>, read them in your tests, then push the project to GitHub
@@ -35,7 +48,8 @@ export function FrameworkCard({ signedIn, assignment }: { signedIn: boolean; ass
         </div>
 
         <div className="rounded-2xl border bg-slate-50 p-6 dark:bg-slate-900/40">
-          <p className="text-3xl font-extrabold">{total} checks</p>
+          <ToolBadge tool={tool} />
+          <p className="mt-3 text-3xl font-extrabold">{total} checks</p>
           <p className="text-sm text-muted-foreground">2 test runs · 3 GitHub checks</p>
           <div className="mt-5 h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700" aria-hidden="true">
             <div className="h-full rounded-full bg-purple-600 transition-all" style={{ width: `${pct}%` }} />
@@ -58,7 +72,7 @@ export function FrameworkCard({ signedIn, assignment }: { signedIn: boolean; ass
           {signedIn && !assignment && (
             <>
               <p className="mt-4 text-sm font-medium text-muted-foreground">Not started — 0 of {total} done</p>
-              <div className="mt-4"><StartAssignmentButton slug="framework-setup" className="bg-purple-600 hover:bg-purple-700" /></div>
+              <div className="mt-4"><StartAssignmentButton slug="framework-setup" tool={tool} className="bg-purple-600 hover:bg-purple-700" /></div>
               <p className="mt-3 text-center text-[13px] text-muted-foreground">Takes about 45–60 minutes</p>
             </>
           )}
@@ -69,16 +83,17 @@ export function FrameworkCard({ signedIn, assignment }: { signedIn: boolean; ass
                 {completed ? "Completed ✓" : `In progress — ${done} of ${total} done`}
               </p>
               <Button asChild size="lg" className="mt-4 h-12 w-full bg-purple-600 text-white hover:bg-purple-700">
-                <Link href="/testing/framework-setup/assignment" data-testid="assignment-continue">
-                  {completed ? "View results" : "Continue assignment"} <ArrowRight className="ml-2 h-4 w-4" />
+                <Link href={withTool("/testing/framework-setup/assignment", tool)} data-testid="assignment-continue">
+                  {completed ? "View results" : `Continue ${TOOL_LABEL[tool]} assignment`} <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
             </>
           )}
 
-          <Link href="/testing/leaderboard?stage=framework-setup" data-testid="card-leaderboard" className="mt-4 block text-center text-[13px] font-bold text-blue-600 hover:underline">
-            View leaderboard →
+          <Link href={withTool("/testing/leaderboard?stage=framework-setup", tool)} data-testid="card-leaderboard" className="mt-4 block text-center text-[13px] font-bold text-blue-600 hover:underline">
+            View {TOOL_LABEL[tool]} leaderboard →
           </Link>
+          {signedIn && <OtherToolStatus tool={tool} other={other} />}
         </div>
       </div>
     </section>

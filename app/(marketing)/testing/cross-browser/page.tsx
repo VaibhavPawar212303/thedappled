@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { CROSS_BROWSER, getAssignmentForUser } from "@/lib/assignments";
+import { chosenTool } from "@/lib/tool-choice";
+import { otherTool } from "@/lib/tools";
 import { XbCard } from "./_components/xb-card";
 
 export const metadata: Metadata = {
@@ -27,9 +29,15 @@ const BROWSERS = [
   { name: "WebKit", dot: "bg-slate-500" },
 ];
 
-export default async function CrossBrowserPage() {
+export default async function CrossBrowserPage({ searchParams }: { searchParams: Promise<{ tool?: string }> }) {
+  const tool = await chosenTool((await searchParams).tool);
   const { userId } = await auth();
-  const assignment = userId ? await getAssignmentForUser(userId, CROSS_BROWSER).catch(() => null) : null;
+  const [assignment, other] = userId
+    ? await Promise.all([
+        getAssignmentForUser(userId, CROSS_BROWSER, tool).catch(() => null),
+        getAssignmentForUser(userId, CROSS_BROWSER, otherTool(tool)).catch(() => null),
+      ])
+    : [null, null];
 
   return (
     <div className="bg-background text-foreground">
@@ -62,7 +70,7 @@ export default async function CrossBrowserPage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-4 pt-12 md:px-8">
-        <XbCard signedIn={Boolean(userId)} assignment={assignment} />
+        <XbCard signedIn={Boolean(userId)} assignment={assignment} tool={tool} other={other} />
       </section>
 
       <section className="mx-auto max-w-6xl px-4 py-12 md:px-8">

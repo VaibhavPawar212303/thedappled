@@ -3,6 +3,7 @@
 
 import { SKIP_RE, type RepoCheck, type RepoSnapshot } from "@/lib/repo-scan";
 import { ENGINES, ENGINE_LABEL, type Engine } from "@/lib/browser-engine";
+import { DEFAULT_TOOL, type Tool } from "@/lib/tools";
 
 export type CrossBrowserRepoResult = {
   "repo-browsers": RepoCheck;
@@ -44,10 +45,11 @@ async function readAll(snap: RepoSnapshot, paths: string[]) {
   return out;
 }
 
-export async function evaluateCrossBrowserRepo(snap: RepoSnapshot): Promise<CrossBrowserRepoResult> {
+// Each track only looks at its own tool's config files and CI runs.
+export async function evaluateCrossBrowserRepo(snap: RepoSnapshot, tool: Tool = DEFAULT_TOOL): Promise<CrossBrowserRepoResult> {
   const paths = snap.paths.filter((p) => !SKIP_RE.test(p));
-  const pwConfigs = paths.filter((p) => PW_CONFIG_RE.test(p));
-  const cyConfigs = paths.filter((p) => CY_CONFIG_RE.test(p));
+  const pwConfigs = tool === "playwright" ? paths.filter((p) => PW_CONFIG_RE.test(p)) : [];
+  const cyConfigs = tool === "cypress" ? paths.filter((p) => CY_CONFIG_RE.test(p)) : [];
   const workflows = paths.filter((p) => WORKFLOW_RE.test(p)).slice(0, 20);
   const packages = paths.filter((p) => PACKAGE_RE.test(p)).slice(0, 5);
   const texts = await readAll(snap, [...pwConfigs, ...cyConfigs, ...workflows, ...packages]);
@@ -82,7 +84,7 @@ export async function evaluateCrossBrowserRepo(snap: RepoSnapshot): Promise<Cros
     } else {
       browsers = {
         ok: false,
-        message: pwNotes[0] ?? "No playwright.config or cypress.config file found in the repository.",
+        message: pwNotes[0] ?? `No ${tool}.config file found in the repository (this is the ${tool === "cypress" ? "Cypress" : "Playwright"} track).`,
         found: pwConfigs,
       };
     }
@@ -93,8 +95,8 @@ export async function evaluateCrossBrowserRepo(snap: RepoSnapshot): Promise<Cros
   let ciNote = "";
   for (const w of workflows) {
     const t = stripYamlComments(text(w));
-    const pw = /playwright\s+test|npm\s+(run\s+)?test|npx\s+playwright/i.test(t);
-    const cy = /cypress(\s+run|-io\/github-action)/i.test(t);
+    const pw = tool === "playwright" && /playwright\s+test|npm\s+(run\s+)?test|npx\s+playwright/i.test(t);
+    const cy = tool === "cypress" && /cypress(\s+run|-io\/github-action)/i.test(t);
     if (!pw && !cy) { ciNote = ciNote || `${w} does not run your tests.`; continue; }
 
     if (pw) {

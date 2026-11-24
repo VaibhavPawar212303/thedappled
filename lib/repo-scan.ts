@@ -1,6 +1,8 @@
 // Checks a learner's public GitHub repository for the framework-setup assignment.
 // `evaluateRepo` is pure (a file listing plus a reader), so it can be tested without the network.
 
+import { DEFAULT_TOOL, TOOL_LABEL, type Tool } from "@/lib/tools";
+
 export type RepoCheck = { ok: boolean; message: string; found: string[] };
 export type RepoResult = {
   "repo-config": RepoCheck;
@@ -15,8 +17,20 @@ export type RepoSnapshot = {
 
 export const REQUIRED_KEYS = ["BASE_URL", "DEMO_EMAIL", "DEMO_PASSWORD"] as const;
 
-const CONFIG_RE = /(^|\/)(playwright|cypress)\.config\.(ts|js|mjs|cjs|mts|cts)$/;
-const ENV_USE_RE = /process\.env|dotenv|Cypress\.env|loadEnv|\benv\s*:/;
+// Each track only accepts its own tool's config file and test runs.
+export const CONFIG_FILE_RE: Record<Tool, RegExp> = {
+  playwright: /(^|\/)playwright\.config\.(ts|js|mjs|cjs|mts|cts)$/,
+  cypress: /(^|\/)cypress\.config\.(ts|js|mjs|cjs|mts|cts)$/,
+};
+const ENV_USE_RE: Record<Tool, RegExp> = {
+  playwright: /process\.env|dotenv|loadEnv/,
+  cypress: /process\.env|dotenv|Cypress\.env|\benv\s*:/,
+};
+const RUNS_TESTS_RE: Record<Tool, RegExp> = {
+  playwright: /playwright\s+test|npx\s+playwright|npm\s+(run\s+)?test/i,
+  cypress: /cypress(\s+run|-io\/github-action)|npm\s+(run\s+)?test/i,
+};
+const ENV_HINT: Record<Tool, string> = { playwright: "Use process.env (with dotenv).", cypress: "Use Cypress.env (or process.env in cypress.config)." };
 const WORKFLOW_RE = /^\.github\/workflows\/[^/]+\.ya?ml$/;
 const EXAMPLE_RE = /(^|\/)(\.env\.(example|sample|template|dist)|env\.example|example\.env)$/;
 const GITIGNORE_RE = /(^|\/)\.gitignore$/;
@@ -57,7 +71,7 @@ const keysOf = (text: string) =>
       .filter((k): k is string => Boolean(k)),
   );
 
-export async function evaluateRepo(snap: RepoSnapshot, demoPassword: string): Promise<RepoResult> {
+export async function evaluateRepo(snap: RepoSnapshot, demoPassword: string, tool: Tool = DEFAULT_TOOL): Promise<RepoResult> {
   const paths = snap.paths.filter((p) => !SKIP_RE.test(p));
 
   // Anywhere the demo password appears in a text file means it was hard-coded.
@@ -74,16 +88,16 @@ export async function evaluateRepo(snap: RepoSnapshot, demoPassword: string): Pr
   const get = async (p: string) => texts.get(p) ?? (await snap.read(p));
 
   // 1) config reads values from the environment
-  const configs = paths.filter((p) => CONFIG_RE.test(p));
+  const configs = paths.filter((p) => CONFIG_FILE_RE[tool].test(p));
   let configOk: string | null = null;
-  for (const c of configs) if (ENV_USE_RE.test((await get(c)) ?? "")) { configOk = c; break; }
+  for (const c of configs) if (ENV_USE_RE[tool].test((await get(c)) ?? "")) { configOk = c; break; }
   const config: RepoCheck = configOk
     ? { ok: true, message: `${configOk} reads values from the environment.`, found: [configOk] }
     : {
         ok: false,
         message: configs.length
-          ? `${configs[0]} does not read from the environment. Use process.env (with dotenv) or Cypress.env.`
-          : "No playwright.config or cypress.config file found in the repository.",
+          ? `${configs[0]} does not read from the environment. ${ENV_HINT[tool]}`
+          : `No ${tool}.config file found in the repository (this is the ${TOOL_LABEL[tool]} track).`,
         found: configs,
       };
 
@@ -131,9 +145,9 @@ export async function evaluateRepo(snap: RepoSnapshot, demoPassword: string): Pr
   for (const w of workflows) {
     const t = (await get(w)) ?? "";
     const secretRefs = new Set([...t.matchAll(/secrets\.([A-Za-z_][A-Za-z0-9_]*)/g)].map((m) => m[1]));
-    const runsTests = /playwright|cypress|npm (run )?test|npx /i.test(t);
+    const runsTests = RUNS_TESTS_RE[tool].test(t);
     if (demoPassword && t.includes(demoPassword)) { ciNote = `${w} contains the demo password in plain text.`; continue; }
-    if (!runsTests) { ciNote = ciNote || `${w} does not run your tests.`; continue; }
+    if (!runsTests) { ciNote = ciNote || `${w} does not run your ${TOOL_LABEL[tool]} tests.`; continue; }
     if (secretRefs.size < 2) { ciNote = `${w} runs the tests but uses fewer than 2 values from secrets.* (add BASE_URL / DEMO_PASSWORD as repository secrets).`; continue; }
     ciOk = w;
     break;

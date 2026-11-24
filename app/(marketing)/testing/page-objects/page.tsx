@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { getAssignmentForUser, PAGE_OBJECTS } from "@/lib/assignments";
+import { chosenTool } from "@/lib/tool-choice";
+import { otherTool } from "@/lib/tools";
 import { PomCard } from "./_components/pom-card";
 
 export const metadata: Metadata = {
@@ -19,9 +21,15 @@ const STEPS = [
   { h: "3. Run it and push", d: "Run the checkout spec against the demo shop, push the project to GitHub and paste the repo URL so we can check the structure." },
 ];
 
-export default async function PageObjectsPage() {
+export default async function PageObjectsPage({ searchParams }: { searchParams: Promise<{ tool?: string }> }) {
+  const tool = await chosenTool((await searchParams).tool);
   const { userId } = await auth();
-  const assignment = userId ? await getAssignmentForUser(userId, PAGE_OBJECTS).catch(() => null) : null;
+  const [assignment, other] = userId
+    ? await Promise.all([
+        getAssignmentForUser(userId, PAGE_OBJECTS, tool).catch(() => null),
+        getAssignmentForUser(userId, PAGE_OBJECTS, otherTool(tool)).catch(() => null),
+      ])
+    : [null, null];
 
   return (
     <div className="bg-background text-foreground">
@@ -43,7 +51,7 @@ export default async function PageObjectsPage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-4 pt-12 md:px-8">
-        <PomCard signedIn={Boolean(userId)} assignment={assignment} />
+        <PomCard signedIn={Boolean(userId)} assignment={assignment} tool={tool} other={other} />
       </section>
 
       <section className="mx-auto max-w-6xl px-4 py-12 md:px-8">

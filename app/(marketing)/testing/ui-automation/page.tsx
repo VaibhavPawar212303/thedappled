@@ -3,7 +3,9 @@ import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { ArrowRight, Check, LogIn, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { getAssignmentForUser } from "@/lib/assignments";
+import { getAssignmentForUser, UI_AUTOMATION } from "@/lib/assignments";
+import { chosenTool } from "@/lib/tool-choice";
+import { otherTool } from "@/lib/tools";
 import { AssignmentCard } from "./_components/assignment-card";
 
 export const metadata: Metadata = {
@@ -48,9 +50,15 @@ const TIPS = [
 
 export const dynamic = "force-dynamic";
 
-export default async function UiAutomationPage() {
+export default async function UiAutomationPage({ searchParams }: { searchParams: Promise<{ tool?: string }> }) {
+  const tool = await chosenTool((await searchParams).tool);
   const { userId } = await auth();
-  const assignment = userId ? await getAssignmentForUser(userId).catch(() => null) : null;
+  const [assignment, other] = userId
+    ? await Promise.all([
+        getAssignmentForUser(userId, UI_AUTOMATION, tool).catch(() => null),
+        getAssignmentForUser(userId, UI_AUTOMATION, otherTool(tool)).catch(() => null),
+      ])
+    : [null, null];
 
   return (
     <div className="bg-background text-foreground">
@@ -76,7 +84,7 @@ export default async function UiAutomationPage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-4 pt-12 md:px-8">
-        <AssignmentCard signedIn={Boolean(userId)} assignment={assignment} />
+        <AssignmentCard signedIn={Boolean(userId)} assignment={assignment} tool={tool} other={other} />
       </section>
 
       <section className="mx-auto max-w-6xl px-4 py-12 md:px-8">

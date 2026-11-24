@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { FRAMEWORK_SETUP, getAssignmentForUser } from "@/lib/assignments";
+import { chosenTool } from "@/lib/tool-choice";
+import { otherTool } from "@/lib/tools";
 import { FrameworkCard } from "./_components/framework-card";
 
 export const metadata: Metadata = {
@@ -19,9 +21,15 @@ const STEPS = [
   { h: "3. Save on GitHub", d: "Ignore .env, commit .env.example, and store the values as GitHub Actions secrets used by your workflow." },
 ];
 
-export default async function FrameworkSetupPage() {
+export default async function FrameworkSetupPage({ searchParams }: { searchParams: Promise<{ tool?: string }> }) {
+  const tool = await chosenTool((await searchParams).tool);
   const { userId } = await auth();
-  const assignment = userId ? await getAssignmentForUser(userId, FRAMEWORK_SETUP).catch(() => null) : null;
+  const [assignment, other] = userId
+    ? await Promise.all([
+        getAssignmentForUser(userId, FRAMEWORK_SETUP, tool).catch(() => null),
+        getAssignmentForUser(userId, FRAMEWORK_SETUP, otherTool(tool)).catch(() => null),
+      ])
+    : [null, null];
 
   return (
     <div className="bg-background text-foreground">
@@ -43,7 +51,7 @@ export default async function FrameworkSetupPage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-4 pt-12 md:px-8">
-        <FrameworkCard signedIn={Boolean(userId)} assignment={assignment} />
+        <FrameworkCard signedIn={Boolean(userId)} assignment={assignment} tool={tool} other={other} />
       </section>
 
       <section className="mx-auto max-w-6xl px-4 py-12 md:px-8">

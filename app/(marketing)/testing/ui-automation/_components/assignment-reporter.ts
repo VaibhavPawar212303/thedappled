@@ -4,13 +4,16 @@ import * as React from "react";
 import { useSearchParams } from "next/navigation";
 import type { StepId } from "@/lib/assignments";
 import type { Reason, Signals } from "@/lib/verification";
+import type { ToolKey } from "@/lib/tools";
 
 export const PROGRESS_EVENT = "assignment:progress";
+export const REFUSED_EVENT = "assignment:refused"; // detail: message for the learner
 
 export type Progress = {
   done: number;
   total: number;
   completed: boolean;
+  tool?: ToolKey; // the track this assignment link belongs to
   verified?: boolean;
   reason?: Reason | null;
   seen?: string; // plain-English summary of the signals, only sent when a step did not count
@@ -169,7 +172,13 @@ export function useAssignmentReporter() {
         body: JSON.stringify({ token, event: step, signals, ...extra }),
         keepalive: true,
       })
-        .then((r) => (r.ok ? r.json() : null))
+        .then(async (r) => {
+          if (r.ok) return (await r.json()) as Progress;
+          // A run by the other tool on this track's link is refused with a message for the learner.
+          const d = r.status === 409 ? await r.json().catch(() => null) : null;
+          if (typeof d?.message === "string") window.dispatchEvent(new CustomEvent(REFUSED_EVENT, { detail: d.message }));
+          return null;
+        })
         .then((p: Progress | null) => {
           if (p) window.dispatchEvent(new CustomEvent(PROGRESS_EVENT, { detail: p }));
         })

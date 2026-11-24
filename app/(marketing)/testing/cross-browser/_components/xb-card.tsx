@@ -3,6 +3,8 @@ import { ArrowRight, Check } from "lucide-react";
 import { SignedOut, SignUpButton, SignInButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import type { AssignmentStatus } from "@/lib/assignments";
+import { TOOL_LABEL, withTool, type Tool } from "@/lib/tools";
+import { CardToolPicker, completedTools, OtherToolStatus, ToolBadge } from "../../_components/card-tool";
 import { StartAssignmentButton } from "../../ui-automation/_components/start-assignment-button";
 
 const POINTS = [
@@ -11,7 +13,17 @@ const POINTS = [
   "GitHub Actions runs the suite on all three browsers",
 ];
 
-export function XbCard({ signedIn, assignment }: { signedIn: boolean; assignment: AssignmentStatus | null }) {
+export function XbCard({
+  signedIn,
+  assignment,
+  tool,
+  other,
+}: {
+  signedIn: boolean;
+  assignment: AssignmentStatus | null;
+  tool: Tool;
+  other: AssignmentStatus | null; // the same stage on the other tool
+}) {
   const done = assignment?.done ?? 0;
   const total = assignment?.total ?? 5;
   const completed = Boolean(assignment?.completedAt);
@@ -23,6 +35,7 @@ export function XbCard({ signedIn, assignment }: { signedIn: boolean; assignment
       <div className="grid gap-8 p-8 lg:grid-cols-[1.3fr_1fr]">
         <div>
           <span className="inline-flex rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700 dark:bg-blue-950 dark:text-blue-300">Assignment</span>
+          <CardToolPicker path="/testing/cross-browser" tool={tool} completed={completedTools(tool, assignment, other)} />
           <h2 className="mt-4 text-3xl font-extrabold tracking-tight">One spec, three browsers</h2>
           <p className="mt-3 text-muted-foreground">
             Run your stage 3 checkout spec against the demo shop on Chromium, Firefox and WebKit. Each engine is detected and
@@ -41,7 +54,8 @@ export function XbCard({ signedIn, assignment }: { signedIn: boolean; assignment
         </div>
 
         <div className="rounded-2xl border bg-slate-50 p-6 dark:bg-slate-900/40">
-          <p className="text-3xl font-extrabold">{total} checks</p>
+          <ToolBadge tool={tool} />
+          <p className="mt-3 text-3xl font-extrabold">{total} checks</p>
           <p className="text-sm text-muted-foreground">3 browser runs · 2 GitHub checks</p>
           <div className="mt-5 h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700" aria-hidden="true">
             <div className="h-full rounded-full bg-blue-600 transition-all" style={{ width: `${pct}%` }} />
@@ -64,7 +78,7 @@ export function XbCard({ signedIn, assignment }: { signedIn: boolean; assignment
           {signedIn && !assignment && (
             <>
               <p className="mt-4 text-sm font-medium text-muted-foreground">Not started — 0 of {total} done</p>
-              <div className="mt-4"><StartAssignmentButton slug="cross-browser" className="bg-blue-600 hover:bg-blue-700" /></div>
+              <div className="mt-4"><StartAssignmentButton slug="cross-browser" tool={tool} className="bg-blue-600 hover:bg-blue-700" /></div>
               <p className="mt-3 text-center text-[13px] text-muted-foreground">Takes about 45–60 minutes</p>
             </>
           )}
@@ -75,16 +89,17 @@ export function XbCard({ signedIn, assignment }: { signedIn: boolean; assignment
                 {completed ? "Completed ✓" : `In progress — ${done} of ${total} done`}
               </p>
               <Button asChild size="lg" className="mt-4 h-12 w-full bg-blue-600 text-white hover:bg-blue-700">
-                <Link href="/testing/cross-browser/assignment" data-testid="assignment-continue">
-                  {completed ? "View results" : "Continue assignment"} <ArrowRight className="ml-2 h-4 w-4" />
+                <Link href={withTool("/testing/cross-browser/assignment", tool)} data-testid="assignment-continue">
+                  {completed ? "View results" : `Continue ${TOOL_LABEL[tool]} assignment`} <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
             </>
           )}
 
-          <Link href="/testing/leaderboard?stage=cross-browser" data-testid="card-leaderboard" className="mt-4 block text-center text-[13px] font-bold text-blue-600 hover:underline">
-            View leaderboard →
+          <Link href={withTool("/testing/leaderboard?stage=cross-browser", tool)} data-testid="card-leaderboard" className="mt-4 block text-center text-[13px] font-bold text-blue-600 hover:underline">
+            View {TOOL_LABEL[tool]} leaderboard →
           </Link>
+          {signedIn && <OtherToolStatus tool={tool} other={other} />}
         </div>
       </div>
     </section>

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { ArrowRight, Check, Star, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { AllTracksBoard, AllTracksRow } from "@/lib/leaderboard";
+import { TOOL_LABEL, withTool, type Tool } from "@/lib/tools";
 import { BoardTabs } from "./board-tabs";
 
 // Design: Penpot "26 - Testing Learning Path", Leaderboard page, board "Leaderboard - All tracks (new)".
@@ -79,7 +80,7 @@ function CurrentStage({ r }: { r: AllTracksRow }) {
   );
 }
 
-export function AllTracksView({ board, signedIn }: { board: AllTracksBoard; signedIn: boolean }) {
+export function AllTracksView({ board, signedIn, tool }: { board: AllTracksBoard; signedIn: boolean; tool: Tool }) {
   const router = useRouter();
   const [shown, setShown] = React.useState(PAGE);
 
@@ -112,10 +113,12 @@ export function AllTracksView({ board, signedIn }: { board: AllTracksBoard; sign
             <span aria-hidden="true">/</span>
             <span aria-current="page" className="font-semibold text-foreground">Leaderboard</span>
           </nav>
-          <h1 className="mt-5 text-4xl font-extrabold tracking-tight md:text-5xl">Leaderboard</h1>
-          <p className="mt-3 text-lg text-muted-foreground">See how learners are doing across every track — manual and automation.</p>
+          <h1 className="mt-5 text-4xl font-extrabold tracking-tight md:text-5xl">
+            Leaderboard<span data-testid="board-tool" className="text-muted-foreground"> · {TOOL_LABEL[tool]}</span>
+          </h1>
+          <p className="mt-3 text-lg text-muted-foreground">See how {TOOL_LABEL[tool]} learners are doing across every track — Manual testing plus the {TOOL_LABEL[tool]} stages.</p>
           <p className="mt-4 text-[13px] font-semibold text-indigo-700 dark:text-indigo-300">● Live · updates as learners complete checks</p>
-          <BoardTabs current="all" />
+          <BoardTabs current="all" tool={tool} />
         </div>
       </section>
 
@@ -144,7 +147,11 @@ export function AllTracksView({ board, signedIn }: { board: AllTracksBoard; sign
                   </p>
                 </div>
                 <Button asChild className="bg-white text-indigo-700 hover:bg-indigo-50">
-                  <Link href={you.current ? CONTINUE[you.current.slug] : "/testing#roadmap"}>
+                  <Link
+                    href={
+                      !you.current ? "/testing#roadmap" : you.current.slug === "manual-testing" ? CONTINUE[you.current.slug] : withTool(CONTINUE[you.current.slug], tool)
+                    }
+                  >
                     {you.allDone ? "Back to the roadmap" : "Continue"} <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>

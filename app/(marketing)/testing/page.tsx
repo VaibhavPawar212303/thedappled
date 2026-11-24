@@ -5,6 +5,7 @@ import { SignedIn, SignedOut, SignUpButton } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 import { Button } from "@/components/ui/button";
 import { AUTOMATION_SLUGS, getAssignmentForUser } from "@/lib/assignments";
+import { chosenTool } from "@/lib/tool-choice";
 import { getManualProgress } from "@/lib/manual-progress";
 
 export const metadata: Metadata = {
@@ -85,7 +86,9 @@ type StepState = { state: "done" | "active" | "todo"; done: number; total: numbe
 async function loadRoadmapProgress(userId: string | null): Promise<Map<string, StepState> | null> {
   if (!userId) return null;
   try {
-    const [manual, ...autos] = await Promise.all([getManualProgress(userId), ...AUTOMATION_SLUGS.map((s) => getAssignmentForUser(userId, s))]);
+    // Automation progress is per tool: show the learner's remembered tool (Playwright by default).
+    const tool = await chosenTool(undefined);
+    const [manual, ...autos] = await Promise.all([getManualProgress(userId), ...AUTOMATION_SLUGS.map((s) => getAssignmentForUser(userId, s, tool))]);
     const map = new Map<string, StepState>();
     const manualDone = new Set<string>(manual?.done ?? []);
     let upNextSet = false;

@@ -186,16 +186,19 @@ enum crdb_internal_region {
 
 // Hands-on assignments (e.g. "ui-automation"). A learner's script is verified by the
 // events the demo pages report against their personal token.
+// tool: "playwright" or "cypress" for automation stages (one assignment per stage per tool), "none"
+// for Manual testing. See lib/tools.ts.
 model Assignment {
   id          String            @id @default(uuid())
   userId      String
   slug        String
+  tool        String            @default("playwright")
   token       String            @unique
   startedAt   DateTime          @default(now())
   completedAt DateTime?
   events      AssignmentEvent[]
 
-  @@unique([userId, slug])
+  @@unique([userId, slug, tool])
 }
 
 model AssignmentEvent {

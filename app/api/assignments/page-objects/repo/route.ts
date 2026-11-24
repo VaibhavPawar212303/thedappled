@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { getAssignmentForUser, PAGE_OBJECTS } from "@/lib/assignments";
+import { parseTool } from "@/lib/tools";
 import { checkPomRepoForAssignment } from "@/lib/framework-repo-check";
 import { RepoError } from "@/lib/repo-scan";
 
@@ -14,7 +15,7 @@ export async function POST(req: NextRequest) {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const a = await getAssignmentForUser(userId, PAGE_OBJECTS);
+  const a = await getAssignmentForUser(userId, PAGE_OBJECTS, parseTool(req.nextUrl.searchParams.get("tool")));
   if (!a) return NextResponse.json({ error: "Start the assignment first." }, { status: 400 });
 
   const body = await req.json().catch(() => null);

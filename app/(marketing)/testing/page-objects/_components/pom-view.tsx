@@ -6,6 +6,8 @@ import { Check, Copy, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { POM_STEPS, type AssignmentStatus } from "@/lib/assignments";
 import { REASON_TEXT } from "@/lib/verification";
+import { TOOL_LABEL, withTool, type Tool } from "@/lib/tools";
+import { TrackLine } from "../../_components/card-tool";
 
 type Env = { BASE_URL: string; ASSIGNMENT_TOKEN: string; SHOP_EMAIL: string; SHOP_PASSWORD: string };
 type RepoCheck = { ok: boolean; message: string };
@@ -31,7 +33,7 @@ function CopyButton({ text, testid, className = "bg-slate-700 text-white hover:b
   );
 }
 
-const SNIPPET = `// pages/LoginPage.ts
+const PLAYWRIGHT_SNIPPET = `// pages/LoginPage.ts
 import type { Page } from '@playwright/test';
 
 export class LoginPage {
@@ -72,7 +74,46 @@ test('checks out two products', async ({ loginPage, productsPage, cartPage }) =>
   await expect(cartPage.confirmation).toBeVisible();
 });`;
 
-export function PomView({ initial, env, rank }: { initial: AssignmentStatus; env: Env; rank?: { rank: number; total: number } | null }) {
+const CYPRESS_SNIPPET = `// cypress/pages/LoginPage.ts
+export class LoginPage {
+  open() {
+    cy.visit(\`/testing/page-objects/shop?a=\${Cypress.env('ASSIGNMENT_TOKEN')}\`);
+  }
+  signIn(email: string, password: string) {
+    cy.get('[data-testid="shop-email"]').type(email);
+    cy.get('[data-testid="shop-password"]').type(password, { log: false });
+    cy.get('[data-testid="shop-signin"]').click();
+  }
+}
+
+// cypress/support/commands.ts
+import { LoginPage } from '../pages/LoginPage';
+
+Cypress.Commands.add('signIn', () => {
+  const loginPage = new LoginPage();
+  loginPage.open();
+  loginPage.signIn(Cypress.env('SHOP_EMAIL'), Cypress.env('SHOP_PASSWORD'));
+});
+
+// cypress/e2e/checkout.cy.ts
+import { ProductsPage } from '../pages/ProductsPage';
+import { CartPage } from '../pages/CartPage';
+
+const productsPage = new ProductsPage();
+const cartPage = new CartPage();
+
+it('checks out two products', () => {
+  cy.signIn();
+  productsPage.add('mug');
+  productsPage.add('stickers');
+  productsPage.openCart();
+  cartPage.placeOrder();
+  cartPage.confirmation().should('be.visible');
+});`;
+
+const SNIPPETS: Record<Tool, string> = { playwright: PLAYWRIGHT_SNIPPET, cypress: CYPRESS_SNIPPET };
+
+export function PomView({ tool, initial, env, rank }: { tool: Tool; initial: AssignmentStatus; env: Env; rank?: { rank: number; total: number } | null }) {
   const [status, setStatus] = React.useState(initial);
   const [showPw, setShowPw] = React.useState(false);
   const [repoUrl, setRepoUrl] = React.useState("");
@@ -86,20 +127,20 @@ export function PomView({ initial, env, rank }: { initial: AssignmentStatus; env
     if (completed) return;
     const id = setInterval(async () => {
       try {
-        const r = await fetch("/api/assignments/page-objects", { cache: "no-store" });
+        const r = await fetch(`/api/assignments/page-objects?tool=${tool}`, { cache: "no-store" });
         if (!r.ok) return;
         const { assignment } = await r.json();
         if (assignment) setStatus(assignment);
       } catch {}
     }, 3000);
     return () => clearInterval(id);
-  }, [completed]);
+  }, [completed, tool]);
 
   const check = async () => {
     setBusy(true);
     setError(null);
     try {
-      const r = await fetch("/api/assignments/page-objects/repo", {
+      const r = await fetch(`/api/assignments/page-objects/repo?tool=${tool}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ repoUrl }),
@@ -128,14 +169,14 @@ export function PomView({ initial, env, rank }: { initial: AssignmentStatus; env
   const groups = ["Run your tests", "Structure on GitHub"] as const;
 
   const rankChip = (
-    <Link href="/testing/leaderboard?stage=page-objects" data-testid="assignment-rank" className="inline-flex items-center gap-3 rounded-xl border bg-card px-4 py-2.5 text-sm shadow-sm hover:shadow-md">
+    <Link href={withTool("/testing/leaderboard?stage=page-objects", tool)} data-testid="assignment-rank" className="inline-flex items-center gap-3 rounded-xl border bg-card px-4 py-2.5 text-sm shadow-sm hover:shadow-md">
       {rank && (
         <span>
           <span className="text-muted-foreground">Rank </span>
           <span className="font-extrabold">#{rank.rank} of {rank.total}</span>
         </span>
       )}
-      <span className="font-bold text-blue-600">View leaderboard →</span>
+      <span className="font-bold text-blue-600">View {TOOL_LABEL[tool]} leaderboard →</span>
     </Link>
   );
 
@@ -145,7 +186,7 @@ export function PomView({ initial, env, rank }: { initial: AssignmentStatus; env
         <nav aria-label="Breadcrumb" className="mb-6 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
           <Link href="/testing" className="hover:text-foreground">Testing</Link>
           <span aria-hidden="true">/</span>
-          <Link href="/testing/page-objects" className="hover:text-foreground">Page objects &amp; fixtures</Link>
+          <Link href={withTool("/testing/page-objects", tool)} className="hover:text-foreground">Page objects &amp; fixtures</Link>
           <span aria-hidden="true">/</span>
           <span aria-current="page" className="font-semibold text-foreground">Assignment</span>
         </nav>
@@ -155,7 +196,7 @@ export function PomView({ initial, env, rank }: { initial: AssignmentStatus; env
             <div className="flex items-center gap-5">
               <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-white/15 text-4xl">✓</span>
               <div>
-                <h1 className="text-3xl font-extrabold tracking-tight">Assignment complete!</h1>
+                <h1 className="text-3xl font-extrabold tracking-tight">{TOOL_LABEL[tool]} assignment complete!</h1>
                 <p className="mt-2 text-emerald-100">Your tests run through page objects and fixtures — specs read like plain steps.</p>
                 <p className="mt-2 text-sm text-emerald-100/80">Took {minutes} minute{minutes === 1 ? "" : "s"}</p>
               </div>
@@ -169,6 +210,7 @@ export function PomView({ initial, env, rank }: { initial: AssignmentStatus; env
             <div>
               <h1 className="text-3xl font-extrabold tracking-tight md:text-4xl">Assignment: page objects &amp; fixtures</h1>
               <div className="mt-3 flex flex-wrap items-center gap-3 text-sm">
+                <TrackLine slug="page-objects" tool={tool} />
                 <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-950 dark:text-amber-300">● In progress</span>
                 <span className="text-muted-foreground">Test runs update live · GitHub checks run when you submit your repo</span>
               </div>
@@ -283,9 +325,9 @@ export function PomView({ initial, env, rank }: { initial: AssignmentStatus; env
               <ol className="m-0 mt-4 list-none space-y-3 p-0 text-sm font-medium">
                 {[
                   "Open the shop link and explore the 3 screens",
-                  "Write a class per screen in pages/",
-                  "Add a fixture that creates them for each test",
-                  "Write checkout.spec using only page objects",
+                  tool === "cypress" ? "Write a class per screen in cypress/pages/" : "Write a class per screen in pages/",
+                  tool === "cypress" ? "Add a custom command (Cypress.Commands.add) that uses them" : "Add a fixture (test.extend) that creates them for each test",
+                  tool === "cypress" ? "Write checkout.cy using only page objects" : "Write checkout.spec using only page objects",
                   "Run it, push to GitHub, paste the repo URL",
                 ].map((t, i) => (
                   <li key={t} className="flex items-start gap-3">
@@ -295,8 +337,8 @@ export function PomView({ initial, env, rank }: { initial: AssignmentStatus; env
                 ))}
               </ol>
               <details className="mt-5">
-                <summary className="cursor-pointer text-sm font-bold text-emerald-700 dark:text-emerald-400">Show a Playwright example</summary>
-                <pre className="mt-3 overflow-x-auto rounded-xl bg-slate-900 p-4 font-mono text-xs leading-5 text-slate-100">{SNIPPET}</pre>
+                <summary className="cursor-pointer text-sm font-bold text-emerald-700 dark:text-emerald-400">Show a {TOOL_LABEL[tool]} example</summary>
+                <pre data-testid="tool-snippet" className="mt-3 overflow-x-auto rounded-xl bg-slate-900 p-4 font-mono text-xs leading-5 text-slate-100">{SNIPPETS[tool]}</pre>
               </details>
             </section>
           </div>

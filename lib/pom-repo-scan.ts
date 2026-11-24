@@ -2,6 +2,7 @@
 // `evaluatePomRepo` is pure (a file listing plus a reader), so it can be tested without the network.
 
 import { SKIP_RE, type RepoCheck, type RepoSnapshot } from "@/lib/repo-scan";
+import { DEFAULT_TOOL, type Tool } from "@/lib/tools";
 
 export type PomRepoResult = {
   "repo-pages": RepoCheck;
@@ -22,7 +23,15 @@ const REQUIRED_PAGES = [
   { name: "CartPage", re: /cart|basket|checkout/i },
 ] as const;
 
-const FIXTURE_RE = /\b(test|base)\.extend\s*(<|\()|\bCypress\.Commands\.add\s*\(/;
+// Each track only accepts its own tool's way of sharing page objects with tests.
+const FIXTURE_RE: Record<Tool, RegExp> = {
+  playwright: /\b(test|base)\.extend\s*(<|\()/,
+  cypress: /\bCypress\.Commands\.add\s*\(/,
+};
+const FIXTURE_HINT: Record<Tool, string> = {
+  playwright: "No test.extend() fixture found under tests/.",
+  cypress: "No Cypress.Commands.add() found under cypress/support/.",
+};
 const PAGE_USE_RE = /\bnew\s+[A-Z]\w*Page\s*\(|from\s+['"][^'"]*(pages|page-objects|pom)\//;
 
 // Raw locators that belong inside a page class, not in a spec.
@@ -60,7 +69,7 @@ export function findRawLocator(path: string, text: string): string | null {
   return null;
 }
 
-export async function evaluatePomRepo(snap: RepoSnapshot): Promise<PomRepoResult> {
+export async function evaluatePomRepo(snap: RepoSnapshot, tool: Tool = DEFAULT_TOOL): Promise<PomRepoResult> {
   const code = snap.paths.filter((p) => !SKIP_RE.test(p) && CODE_RE.test(p));
   const specs = code.filter((p) => SPEC_RE.test(p)).slice(0, MAX_FILES);
   const pageFiles = code.filter((p) => PAGES_DIR_RE.test(p) && !SPEC_RE.test(p)).slice(0, MAX_FILES);
@@ -90,7 +99,7 @@ export async function evaluatePomRepo(snap: RepoSnapshot): Promise<PomRepoResult
   let fixtureNoPages: string | null = null;
   for (const f of fixtureFiles) {
     const t = texts.get(f) ?? "";
-    if (!FIXTURE_RE.test(t)) continue;
+    if (!FIXTURE_RE[tool].test(t)) continue;
     if (PAGE_USE_RE.test(t) || pageNames.some((n) => new RegExp(`\\b${n}\\b`).test(t))) { fixtureOk = f; break; }
     fixtureNoPages = fixtureNoPages ?? f;
   }
@@ -99,8 +108,10 @@ export async function evaluatePomRepo(snap: RepoSnapshot): Promise<PomRepoResult
     : {
         ok: false,
         message: fixtureNoPages
-          ? `${fixtureNoPages} defines a fixture but doesn't create your page objects (e.g. loginPage: async ({ page }, use) => use(new LoginPage(page))).`
-          : "No test.extend() or Cypress.Commands.add() found under tests/ or cypress/.",
+          ? tool === "cypress"
+            ? `${fixtureNoPages} adds a command but doesn't use your page objects (e.g. Cypress.Commands.add('signIn', () => new LoginPage().signIn())).`
+            : `${fixtureNoPages} defines a fixture but doesn't create your page objects (e.g. loginPage: async ({ page }, use) => use(new LoginPage(page))).`
+          : FIXTURE_HINT[tool],
         found: fixtureNoPages ? [fixtureNoPages] : [],
       };
 

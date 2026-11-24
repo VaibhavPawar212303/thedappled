@@ -3,9 +3,21 @@ import { ArrowRight, Check } from "lucide-react";
 import { SignedOut, SignUpButton, SignInButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import type { AssignmentStatus } from "@/lib/assignments";
+import { TOOL_LABEL, withTool, type Tool } from "@/lib/tools";
+import { CardToolPicker, completedTools, OtherToolStatus, ToolBadge } from "../../_components/card-tool";
 import { StartAssignmentButton } from "./start-assignment-button";
 
-export function AssignmentCard({ signedIn, assignment }: { signedIn: boolean; assignment: AssignmentStatus | null }) {
+export function AssignmentCard({
+  signedIn,
+  assignment,
+  tool,
+  other,
+}: {
+  signedIn: boolean;
+  assignment: AssignmentStatus | null;
+  tool: Tool;
+  other: AssignmentStatus | null; // the same stage on the other tool
+}) {
   const done = assignment?.done ?? 0;
   const total = assignment?.total ?? 6;
   const completed = Boolean(assignment?.completedAt);
@@ -22,9 +34,10 @@ export function AssignmentCard({ signedIn, assignment }: { signedIn: boolean; as
           <span className="inline-flex rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
             Assignment
           </span>
+          <CardToolPicker path="/testing/ui-automation" tool={tool} completed={completedTools(tool, assignment, other)} />
           <h2 className="mt-4 text-3xl font-extrabold tracking-tight">Automate sign in and sign up</h2>
           <p className="mt-3 text-muted-foreground">
-            Write a Playwright or Cypress script that passes 6 checks on the demo pages. Your progress is recorded
+            Write a {TOOL_LABEL[tool]} script that passes 6 checks on the demo pages. Your progress is recorded
             automatically while your script runs.
           </p>
           <ul className="m-0 mt-6 list-none space-y-2.5 p-0 text-[15px] font-medium">
@@ -40,7 +53,8 @@ export function AssignmentCard({ signedIn, assignment }: { signedIn: boolean; as
         </div>
 
         <div className="rounded-2xl border bg-slate-50 p-6 dark:bg-slate-900/40">
-          <p className="text-3xl font-extrabold">{total} checks</p>
+          <ToolBadge tool={tool} />
+          <p className="mt-3 text-3xl font-extrabold">{total} checks</p>
           <p className="text-sm text-muted-foreground">to complete the assignment</p>
           <div className="mt-5 h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700" aria-hidden="true">
             <div className="h-full rounded-full bg-emerald-500 transition-all" style={{ width: `${pct}%` }} />
@@ -68,7 +82,7 @@ export function AssignmentCard({ signedIn, assignment }: { signedIn: boolean; as
             <>
               <p className="mt-4 text-sm font-medium text-muted-foreground">Not started — 0 of {total} done</p>
               <div className="mt-4">
-                <StartAssignmentButton />
+                <StartAssignmentButton tool={tool} />
               </div>
               <p className="mt-3 text-center text-[13px] text-muted-foreground">Takes about 30–45 minutes</p>
             </>
@@ -80,16 +94,17 @@ export function AssignmentCard({ signedIn, assignment }: { signedIn: boolean; as
                 {completed ? "Completed ✓" : `In progress — ${done} of ${total} done`}
               </p>
               <Button asChild size="lg" className="mt-4 h-12 w-full bg-emerald-600 text-white hover:bg-emerald-700">
-                <Link href="/testing/ui-automation/assignment" data-testid="assignment-continue">
-                  {completed ? "View results" : "Continue assignment"} <ArrowRight className="ml-2 h-4 w-4" />
+                <Link href={withTool("/testing/ui-automation/assignment", tool)} data-testid="assignment-continue">
+                  {completed ? "View results" : `Continue ${TOOL_LABEL[tool]} assignment`} <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
             </>
           )}
 
-          <Link href="/testing/leaderboard?stage=ui-automation" data-testid="card-leaderboard" className="mt-4 block text-center text-[13px] font-bold text-blue-600 hover:underline">
-            View leaderboard →
+          <Link href={withTool("/testing/leaderboard?stage=ui-automation", tool)} data-testid="card-leaderboard" className="mt-4 block text-center text-[13px] font-bold text-blue-600 hover:underline">
+            View {TOOL_LABEL[tool]} leaderboard →
           </Link>
+          {signedIn && <OtherToolStatus tool={tool} other={other} />}
         </div>
       </div>
     </section>

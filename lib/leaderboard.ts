@@ -2,8 +2,9 @@ import { createHash } from "crypto";
 import { unstable_cache } from "next/cache";
 import { clerkClient } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db";
-import { ASSIGNMENT_SLUGS, AUTOMATION_SLUGS, countsOnBoard, MANUAL_TESTING, stepsFor, UI_AUTOMATION, type AssignmentSlug } from "@/lib/assignments";
+import { ASSIGNMENT_SLUGS, AUTOMATION_SLUGS, countsOnBoard, MANUAL_TESTING, stepsFor, toolKeyFor, UI_AUTOMATION, type AssignmentSlug } from "@/lib/assignments";
 import { minutesBetween } from "@/lib/leaderboard-utils";
+import { DEFAULT_TOOL, NO_TOOL, type Tool } from "@/lib/tools";
 
 export { formatMinutes, minutesBetween } from "@/lib/leaderboard-utils";
 
@@ -179,9 +180,10 @@ type CachedBoard = {
   rows: { key: string; name: string; done: number; total: number; completed: boolean; minutes: number | null }[];
 };
 
-async function buildBoard(slug: AssignmentSlug, strict: boolean): Promise<CachedBoard> {
+// A stage board ranks only the learners on one tool (Manual testing has a single board).
+async function buildBoard(slug: AssignmentSlug, tool: Tool, strict: boolean): Promise<CachedBoard> {
   const raw = await prisma.assignment.findMany({
-    where: { slug },
+    where: { slug, tool: toolKeyFor(slug, tool) },
     select: { userId: true, startedAt: true, completedAt: true, events: { select: { name: true, createdAt: true, verified: true, signals: true } } },
     take: 2000,
   });
@@ -203,23 +205,24 @@ async function buildBoard(slug: AssignmentSlug, strict: boolean): Promise<Cached
 // Cached for 30s. If the name lookup fails this throws, so nothing is cached and an older cached
 // board (with real names) keeps being served until a lookup succeeds again.
 const loaders = new Map<string, () => Promise<CachedBoard>>();
-function loadBoard(slug: AssignmentSlug) {
-  let load = loaders.get(slug);
+function loadBoard(slug: AssignmentSlug, tool: Tool) {
+  const key = `${slug}:${toolKeyFor(slug, tool)}`;
+  let load = loaders.get(key);
   if (!load) {
-    load = unstable_cache(() => buildBoard(slug, true), [`testing-leaderboard-${slug}`], { revalidate: 30, tags: [LEADERBOARD_TAG] });
-    loaders.set(slug, load);
+    load = unstable_cache(() => buildBoard(slug, tool, true), [`testing-leaderboard-${key}`], { revalidate: 30, tags: [LEADERBOARD_TAG] });
+    loaders.set(key, load);
   }
   return load();
 }
 
-export async function getBoard(currentUserId: string | null, slug: AssignmentSlug = UI_AUTOMATION): Promise<Board> {
+export async function getBoard(currentUserId: string | null, slug: AssignmentSlug = UI_AUTOMATION, tool: Tool = DEFAULT_TOOL): Promise<Board> {
   let rows: CachedBoard["rows"];
   try {
-    ({ rows } = await loadBoard(slug));
+    ({ rows } = await loadBoard(slug, tool));
   } catch {
     // Name lookup failed and there is no cached board yet: show the ranking with whatever names we
     // know, without caching it, so the next request tries Clerk again.
-    ({ rows } = await buildBoard(slug, false));
+    ({ rows } = await buildBoard(slug, tool, false));
   }
   const myKey = currentUserId ? learnerKey(currentUserId) : null;
   const completed = rows.filter((r) => r.completed);
@@ -241,8 +244,8 @@ export async function getBoard(currentUserId: string | null, slug: AssignmentSlu
 }
 
 // ---- All tracks board ------------------------------------------------------------------------
-// One row per learner across every board: Manual testing (4 steps) + the Automation stages.
-// Ranked by total verified checks, then by who reached that total first.
+// One board per tool. A row per learner who has started that tool: Manual testing (4 steps) + the
+// four Automation stages on that tool. Ranked by total verified checks, then by who got there first.
 
 export const STAGE_LABEL: Record<AssignmentSlug, string> = {
   [MANUAL_TESTING]: "Manual testing",
@@ -316,12 +319,15 @@ export function rankAllTracks(raw: RawAssignment[]): Acc[] {
   });
 }
 
-async function buildAllTracks(strict: boolean): Promise<{ rows: CachedAllRow[] }> {
-  const raw = await prisma.assignment.findMany({
-    where: { slug: { in: ASSIGNMENT_SLUGS } },
-    select: { userId: true, slug: true, startedAt: true, completedAt: true, events: { select: { name: true, createdAt: true, verified: true, signals: true } } },
+async function buildAllTracks(tool: Tool, strict: boolean): Promise<{ rows: CachedAllRow[] }> {
+  const all = await prisma.assignment.findMany({
+    where: { OR: [{ slug: MANUAL_TESTING, tool: NO_TOOL }, { slug: { in: [...AUTOMATION_SLUGS] }, tool }] },
+    select: { userId: true, slug: true, tool: true, startedAt: true, completedAt: true, events: { select: { name: true, createdAt: true, verified: true, signals: true } } },
     take: 8000,
   });
+  // Only learners who have started this tool are compared on its board.
+  const onTool = new Set(all.filter((a) => a.tool === tool).map((a) => a.userId));
+  const raw = all.filter((a) => onTool.has(a.userId));
   const ranked = rankAllTracks(raw);
   const names = await resolveNames(ranked.map((r) => r.userId), strict);
 
@@ -343,14 +349,22 @@ async function buildAllTracks(strict: boolean): Promise<{ rows: CachedAllRow[] }
   };
 }
 
-const loadAllTracks = unstable_cache(() => buildAllTracks(true), ["testing-leaderboard-all-tracks"], { revalidate: 30, tags: [LEADERBOARD_TAG] });
+const allTracksLoaders = new Map<Tool, () => Promise<{ rows: CachedAllRow[] }>>();
+function loadAllTracks(tool: Tool) {
+  let load = allTracksLoaders.get(tool);
+  if (!load) {
+    load = unstable_cache(() => buildAllTracks(tool, true), [`testing-leaderboard-all-tracks-${tool}`], { revalidate: 30, tags: [LEADERBOARD_TAG] });
+    allTracksLoaders.set(tool, load);
+  }
+  return load();
+}
 
-export async function getAllTracksBoard(currentUserId: string | null): Promise<AllTracksBoard> {
+export async function getAllTracksBoard(currentUserId: string | null, tool: Tool = DEFAULT_TOOL): Promise<AllTracksBoard> {
   let rows: CachedAllRow[];
   try {
-    ({ rows } = await loadAllTracks());
+    ({ rows } = await loadAllTracks(tool));
   } catch {
-    ({ rows } = await buildAllTracks(false));
+    ({ rows } = await buildAllTracks(tool, false));
   }
   const myKey = currentUserId ? learnerKey(currentUserId) : null;
   return {
@@ -363,8 +377,8 @@ export async function getAllTracksBoard(currentUserId: string | null): Promise<A
   };
 }
 
-export async function getRankFor(userId: string, slug: AssignmentSlug = UI_AUTOMATION): Promise<{ rank: number; total: number } | null> {
-  const board = await getBoard(userId, slug);
+export async function getRankFor(userId: string, slug: AssignmentSlug = UI_AUTOMATION, tool: Tool = DEFAULT_TOOL): Promise<{ rank: number; total: number } | null> {
+  const board = await getBoard(userId, slug, tool);
   const me = board.rows.find((r) => r.isYou);
   return me ? { rank: me.rank, total: board.learners } : null;
 }

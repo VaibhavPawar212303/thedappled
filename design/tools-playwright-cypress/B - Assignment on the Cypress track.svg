@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1000" viewBox="0 0 1440 1000" font-family="Inter, sans-serif">
+  <!-- /testing/ui-automation/assignment?tool=cypress — the assignment page belongs to one tool.
+       Header shows the track and a link to the other one; the starter script is that tool only (no tabs);
+       links carry this track's token, so a Playwright run on them is refused with a clear message. -->
+  <rect width="1440" height="1000" fill="#f8fafc"/>
+  <rect width="1440" height="72" fill="#ffffff"/>
+  <line x1="0" y1="72" x2="1440" y2="72" stroke="#e2e8f0"/>
+  <g transform="translate(64,22)">
+    <rect x="0" y="0" width="6" height="28" rx="2" fill="#0f172a"/>
+    <rect x="0" y="0" width="20" height="6" rx="2" fill="#0f172a"/>
+    <rect x="0" y="22" width="20" height="6" rx="2" fill="#0f172a"/>
+    <rect x="10" y="9" width="8" height="5" rx="2" fill="#3987e5"/>
+    <rect x="10" y="15" width="8" height="5" rx="2" fill="#3987e5"/>
+    <text x="30" y="21" font-size="20" font-weight="700" fill="#0f172a">Thedappled</text>
+  </g>
+  <g font-size="15" font-weight="500" fill="#64748b">
+    <text x="560" y="42">Courses</text><text x="650" y="42">Books</text><text x="725" y="42">Blogs</text>
+    <text x="800" y="42" fill="#047857" font-weight="700">Testing</text><text x="885" y="42">Compiler</text>
+  </g>
+
+  <text x="184" y="122" font-size="14" fill="#64748b">Testing   /   UI automation   /   <tspan font-weight="600" fill="#0f172a">Assignment</tspan></text>
+  <text x="184" y="182" font-size="36" font-weight="800" fill="#0f172a" letter-spacing="-0.5">Assignment: automate sign in and sign up</text>
+  <!-- NEW: track badge + switch link -->
+  <rect x="184" y="202" width="112" height="26" rx="13" fill="#0f172a"/>
+  <text x="240" y="220" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">Cypress track</text>
+  <rect x="306" y="202" width="104" height="26" rx="13" fill="#fef3c7"/>
+  <text x="358" y="220" font-size="12" font-weight="600" fill="#b45309" text-anchor="middle">● In progress</text>
+  <text x="424" y="220" font-size="14" fill="#64748b">Only steps run by Cypress count here</text>
+  <text x="680" y="220" font-size="14" font-weight="700" fill="#2563eb">Switch to Playwright →</text>
+  <rect x="1046" y="160" width="210" height="58" rx="12" fill="#fff" stroke="#e2e8f0"/>
+  <text x="1066" y="184" font-size="13" fill="#64748b">Cypress rank <tspan font-weight="800" fill="#0f172a">#4 of 31</tspan></text>
+  <text x="1066" y="206" font-size="14" font-weight="700" fill="#2563eb">View leaderboard →</text>
+
+  <!-- Requirements (unchanged) -->
+  <rect x="184" y="260" width="580" height="560" rx="16" fill="#fff" stroke="#e2e8f0"/>
+  <text x="216" y="304" font-size="20" font-weight="800" fill="#0f172a">Requirements</text>
+  <text x="732" y="304" font-size="16" font-weight="800" fill="#047857" text-anchor="end">2 of 6 verified</text>
+  <rect x="216" y="322" width="516" height="8" rx="4" fill="#e2e8f0"/>
+  <rect x="216" y="322" width="172" height="8" rx="4" fill="#10b981"/>
+  <text x="216" y="370" font-size="12" font-weight="700" fill="#64748b" letter-spacing="0.5">SIGN IN</text>
+  <g font-size="15">
+    <circle cx="228" cy="398" r="12" fill="#10b981"/><text x="228" y="403" font-size="12" fill="#fff" text-anchor="middle">✓</text>
+    <text x="252" y="403" font-weight="500" fill="#0f172a">Empty form shows both errors</text>
+    <rect x="640" y="387" width="92" height="22" rx="11" fill="#d1fae5"/><text x="686" y="402" font-size="12" font-weight="600" fill="#047857" text-anchor="middle">Automated</text>
+    <circle cx="228" cy="438" r="12" fill="#10b981"/><text x="228" y="443" font-size="12" fill="#fff" text-anchor="middle">✓</text>
+    <text x="252" y="443" font-weight="500" fill="#0f172a">Wrong password shows the error banner</text>
+    <rect x="640" y="427" width="92" height="22" rx="11" fill="#d1fae5"/><text x="686" y="442" font-size="12" font-weight="600" fill="#047857" text-anchor="middle">Automated</text>
+    <rect x="208" y="460" width="532" height="96" rx="12" fill="#ecfdf5" stroke="#a7f3d0"/>
+    <circle cx="228" cy="484" r="12" fill="#fff" stroke="#10b981" stroke-width="2"/>
+    <text x="252" y="489" font-weight="600" fill="#0f172a">Valid login shows the welcome message</text>
+    <rect x="560" y="476" width="44" height="18" rx="9" fill="#10b981"/><text x="582" y="489" font-size="10" font-weight="700" fill="#fff" text-anchor="middle">NEXT</text>
+    <text x="252" y="514" font-size="13" fill="#064e3b">Sign in with demo@thedappled.com / Test@1234, then expect the welcome message.</text>
+    <text x="252" y="540" font-size="11" fill="#047857">login-email   login-password   login-submit   login-success</text>
+  </g>
+  <text x="216" y="600" font-size="12" font-weight="700" fill="#64748b" letter-spacing="0.5">SIGN UP</text>
+  <g font-size="15" fill="#64748b" font-weight="500">
+    <circle cx="228" cy="628" r="12" fill="#fff" stroke="#cbd5e1" stroke-width="2"/><text x="252" y="633">Empty form shows all five errors</text>
+    <circle cx="228" cy="668" r="12" fill="#fff" stroke="#cbd5e1" stroke-width="2"/><text x="252" y="673">Password mismatch shows the confirm error</text>
+    <circle cx="228" cy="708" r="12" fill="#fff" stroke="#cbd5e1" stroke-width="2"/><text x="252" y="713">Valid sign up shows the success message</text>
+  </g>
+  <text x="216" y="780" font-size="14" fill="#64748b">Waiting for your script… run it against your links. This page updates by itself.</text>
+
+  <!-- Right column -->
+  <rect x="796" y="260" width="460" height="176" rx="16" fill="#fff" stroke="#e2e8f0"/>
+  <text x="828" y="302" font-size="20" font-weight="800" fill="#0f172a">Your Cypress links</text>
+  <text x="828" y="324" font-size="13" fill="#64748b">Open these in your Cypress spec. They only count Cypress runs.</text>
+  <rect x="828" y="342" width="396" height="36" rx="10" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="840" y="365" font-size="12" fill="#0f172a">…/testing/ui-automation/login?a=Qm9x…</text>
+  <rect x="1158" y="346" width="60" height="28" rx="8" fill="#0f172a"/><text x="1188" y="365" font-size="12" font-weight="600" fill="#fff" text-anchor="middle">Copy</text>
+  <rect x="828" y="388" width="396" height="36" rx="10" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="840" y="411" font-size="12" fill="#0f172a">…/testing/ui-automation/signup?a=Qm9x…</text>
+  <rect x="1158" y="392" width="60" height="28" rx="8" fill="#0f172a"/><text x="1188" y="411" font-size="12" font-weight="600" fill="#fff" text-anchor="middle">Copy</text>
+
+  <rect x="796" y="456" width="460" height="250" rx="16" fill="#fff" stroke="#e2e8f0"/>
+  <text x="828" y="498" font-size="20" font-weight="800" fill="#0f172a">Starter script</text>
+  <rect x="1124" y="480" width="100" height="24" rx="12" fill="#0f172a"/><text x="1174" y="497" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">Cypress</text>
+  <rect x="828" y="516" width="396" height="130" rx="10" fill="#0f172a"/>
+  <g font-family="ui-monospace, monospace" font-size="11" fill="#e2e8f0">
+    <text x="842" y="538">const LOGIN = "…/login?a=Qm9x…";</text>
+    <text x="842" y="562">describe("sign in", () =&gt; {</text>
+    <text x="842" y="578">  it("empty form shows both errors", () =&gt; {</text>
+    <text x="842" y="594">    cy.visit(LOGIN);</text>
+    <text x="842" y="610">    cy.get('[data-testid="login-submit"]').click();</text>
+    <text x="842" y="626">    …</text>
+  </g>
+  <rect x="828" y="656" width="396" height="36" rx="8" fill="#0f172a"/><text x="1026" y="679" font-size="13" font-weight="600" fill="#fff" text-anchor="middle">Copy script</text>
+
+  <rect x="796" y="726" width="460" height="164" rx="16" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="828" y="766" font-size="18" font-weight="800" fill="#1e3a8a">How verification works</text>
+  <g font-size="13">
+    <text x="828" y="796" font-weight="700" fill="#1e3a8a">Cypress runs only on this track</text>
+    <text x="828" y="814" fill="#1e40af">A Playwright run on these links is refused — use your Playwright links.</text>
+    <text x="828" y="842" font-weight="700" fill="#1e3a8a">Hand-driven steps don’t count</text>
+    <text x="828" y="860" fill="#1e40af">We record them and tell you why, so you can re-run with your script.</text>
+  </g>
+
+  <g font-size="12" fill="#92400e">
+    <rect x="184" y="912" width="1072" height="56" rx="10" fill="#fffbeb" stroke="#fcd34d"/>
+    <text x="204" y="936">Same header + track badge on stages 2-4 (framework setup, page objects, cross-browser). Their repo check runs against the track's assignment;</text>
+    <text x="204" y="954">the repo must use this tool (playwright.config / cypress.config). Completed state: "Cypress assignment complete!" and next stage keeps ?tool=cypress.</text>
+  </g>
+</svg>

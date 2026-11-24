@@ -6,6 +6,8 @@ import { ArrowRight, Check, Copy, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { STEPS, type AssignmentStatus, type StepId } from "@/lib/assignments";
 import { REASON_TEXT } from "@/lib/verification";
+import { otherTool, TOOL_LABEL, withTool, type Tool } from "@/lib/tools";
+import { TrackLine } from "../../_components/card-tool";
 
 // What each check expects, shown on the step the learner should do next.
 const HINTS: Partial<Record<StepId, { hint: string; ids: string[] }>> = {
@@ -17,7 +19,7 @@ const HINTS: Partial<Record<StepId, { hint: string; ids: string[] }>> = {
   "signup-success": { hint: "Fill every field with valid values (8+ chars, a number and a symbol), tick the terms and submit.", ids: ["signup-name", "signup-email", "signup-password", "signup-confirm", "signup-terms", "signup-success"] },
 };
 
-function starterScript(tool: "playwright" | "cypress", loginUrl: string) {
+function starterScript(tool: Tool, loginUrl: string) {
   if (tool === "cypress") {
     return `const LOGIN = "${loginUrl}";
 
@@ -95,11 +97,10 @@ function LiveIndicator({ at, paused }: { at: number | null; paused: boolean }) {
   );
 }
 
-export function AssignmentView({ initial, siteUrl, rank }: { initial: AssignmentStatus; siteUrl: string; rank?: { rank: number; total: number } | null }) {
+export function AssignmentView({ tool, initial, siteUrl, rank }: { tool: Tool; initial: AssignmentStatus; siteUrl: string; rank?: { rank: number; total: number } | null }) {
   const [status, setStatus] = React.useState(initial);
   const [updatedAt, setUpdatedAt] = React.useState<number | null>(null);
   const [hidden, setHidden] = React.useState(false);
-  const [tool, setTool] = React.useState<"playwright" | "cypress">("playwright");
   const completed = Boolean(status.completedAt);
 
   // Live progress: poll while the assignment is open and the tab is visible; refresh at once when it comes back.
@@ -108,7 +109,7 @@ export function AssignmentView({ initial, siteUrl, rank }: { initial: Assignment
     let alive = true;
     const poll = async () => {
       try {
-        const r = await fetch("/api/assignments/ui-automation", { cache: "no-store" });
+        const r = await fetch(`/api/assignments/ui-automation?tool=${tool}`, { cache: "no-store" });
         if (!r.ok) return;
         const { assignment } = await r.json();
         if (alive && assignment) {
@@ -143,7 +144,7 @@ export function AssignmentView({ initial, siteUrl, rank }: { initial: Assignment
       stopTimer();
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, [completed]);
+  }, [completed, tool]);
 
   const loginUrl = `${siteUrl}/testing/ui-automation/login?a=${status.token}`;
   const signupUrl = `${siteUrl}/testing/ui-automation/signup?a=${status.token}`;
@@ -161,7 +162,7 @@ export function AssignmentView({ initial, siteUrl, rank }: { initial: Assignment
 
   const rankChip = (
     <Link
-      href="/testing/leaderboard?stage=ui-automation"
+      href={withTool("/testing/leaderboard?stage=ui-automation", tool)}
       data-testid="assignment-rank"
       className="inline-flex items-center gap-3 rounded-xl border bg-card px-4 py-2.5 text-sm shadow-sm hover:shadow-md"
     >
@@ -171,7 +172,7 @@ export function AssignmentView({ initial, siteUrl, rank }: { initial: Assignment
           <span className="font-extrabold">#{rank.rank} of {rank.total}</span>
         </span>
       )}
-      <span className="font-bold text-blue-600">View leaderboard →</span>
+      <span className="font-bold text-blue-600">View {TOOL_LABEL[tool]} leaderboard →</span>
     </Link>
   );
 
@@ -181,7 +182,7 @@ export function AssignmentView({ initial, siteUrl, rank }: { initial: Assignment
         <nav aria-label="Breadcrumb" className="mb-6 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
           <Link href="/testing" className="hover:text-foreground">Testing</Link>
           <span aria-hidden="true">/</span>
-          <Link href="/testing/ui-automation" className="hover:text-foreground">UI automation</Link>
+          <Link href={withTool("/testing/ui-automation", tool)} className="hover:text-foreground">UI automation</Link>
           <span aria-hidden="true">/</span>
           <span aria-current="page" className="font-semibold text-foreground">Assignment</span>
         </nav>
@@ -191,7 +192,7 @@ export function AssignmentView({ initial, siteUrl, rank }: { initial: Assignment
             <div className="flex items-center gap-5">
               <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-white/15 text-4xl">✓</span>
               <div>
-                <h1 className="text-3xl font-extrabold tracking-tight">Assignment complete!</h1>
+                <h1 className="text-3xl font-extrabold tracking-tight">{TOOL_LABEL[tool]} assignment complete!</h1>
                 <span data-testid="assignment-verified" className="mt-2 inline-flex rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-800">✓ Verified as automated</span>
                 <p className="mt-2 text-emerald-100">All {status.total} checks passed through an automation tool.</p>
                 <p className="mt-2 text-sm text-emerald-100/80">
@@ -208,8 +209,9 @@ export function AssignmentView({ initial, siteUrl, rank }: { initial: Assignment
             <div>
               <h1 className="text-3xl font-extrabold tracking-tight md:text-4xl">Assignment: automate sign in and sign up</h1>
               <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+                <TrackLine slug="ui-automation" tool={tool} />
                 <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-950 dark:text-amber-300">● In progress</span>
-                <span className="text-muted-foreground">Only steps run by an automation tool count</span>
+                <span className="text-muted-foreground">Only steps run by {TOOL_LABEL[tool]} count here</span>
                 <LiveIndicator at={updatedAt} paused={hidden} />
               </div>
             </div>
@@ -319,7 +321,7 @@ export function AssignmentView({ initial, siteUrl, rank }: { initial: Assignment
                   Keep config and credentials in .env, call them from your tests, and save the project on GitHub with secrets.
                 </p>
                 <Button asChild size="lg" className="mt-5 w-full bg-purple-600 text-white hover:bg-purple-700">
-                  <Link href="/testing/framework-setup" data-testid="start-next-stage">
+                  <Link href={withTool("/testing/framework-setup", tool)} data-testid="start-next-stage">
                     Start stage 2 <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
@@ -328,8 +330,8 @@ export function AssignmentView({ initial, siteUrl, rank }: { initial: Assignment
           ) : (
             <div className="min-w-0 space-y-6">
               <section className="min-w-0 rounded-2xl border bg-card p-6 shadow-sm sm:p-8">
-                <h2 className="text-xl font-extrabold">Your assignment links</h2>
-                <p className="mt-1 text-[13px] text-muted-foreground">Open these in your script. They are unique to you.</p>
+                <h2 className="text-xl font-extrabold">Your {TOOL_LABEL[tool]} links</h2>
+                <p className="mt-1 text-[13px] text-muted-foreground">Open these in your {TOOL_LABEL[tool]} script. They are unique to you and only count {TOOL_LABEL[tool]} runs.</p>
                 {groups.map((l) => (
                   <div key={l.id} className="mt-5">
                     <p className="text-[13px] font-bold">{l.name}</p>
@@ -343,23 +345,11 @@ export function AssignmentView({ initial, siteUrl, rank }: { initial: Assignment
               <section data-testid="starter-script" className="min-w-0 rounded-2xl border bg-card p-6 shadow-sm sm:p-8">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <h2 className="text-xl font-extrabold">Starter script</h2>
-                  <div role="tablist" aria-label="Automation tool" className="inline-flex rounded-lg bg-slate-200 p-[3px] dark:bg-slate-800">
-                    {(["playwright", "cypress"] as const).map((t) => (
-                      <button
-                        key={t}
-                        type="button"
-                        role="tab"
-                        aria-selected={tool === t}
-                        data-testid={`starter-tab-${t}`}
-                        onClick={() => setTool(t)}
-                        className={`rounded-md px-2.5 py-1 text-xs font-bold ${tool === t ? "bg-white text-foreground shadow-sm dark:bg-slate-950" : "text-muted-foreground"}`}
-                      >
-                        {t === "playwright" ? "Playwright" : "Cypress"}
-                      </button>
-                    ))}
-                  </div>
+                  <span data-testid="starter-tool" className="rounded-full bg-slate-900 px-3 py-1 text-xs font-bold text-white dark:bg-slate-100 dark:text-slate-900">{TOOL_LABEL[tool]}</span>
                 </div>
-                <p className="mt-1 text-[13px] text-muted-foreground">Your links are already filled in. Paste it into a test file and finish the TODOs.</p>
+                <p className="mt-1 text-[13px] text-muted-foreground">
+                  Your links are already filled in. Paste it into a {tool === "cypress" ? "cypress/e2e/*.cy.ts" : "tests/*.spec.ts"} file and finish the TODOs.
+                </p>
                 <pre className="mt-4 max-h-72 overflow-auto rounded-[10px] bg-slate-900 p-4 text-[11px] leading-relaxed text-slate-200"><code data-testid="starter-code">{starterScript(tool, loginUrl)}</code></pre>
                 <CopyButton text={starterScript(tool, loginUrl)} label="Copy script" testid="copy-starter" className="mt-3 h-10 w-full text-[13px]" />
               </section>
@@ -367,7 +357,7 @@ export function AssignmentView({ initial, siteUrl, rank }: { initial: Assignment
                 <h2 className="text-lg font-extrabold text-blue-900 dark:text-blue-200">How verification works</h2>
                 <ul className="m-0 mt-4 list-none space-y-4 p-0">
                   {[
-                    ["Automation tools only", "Steps count when Playwright, Cypress, Selenium or Puppeteer run them."],
+                    [`${TOOL_LABEL[tool]} runs only on this track`, `A ${TOOL_LABEL[otherTool(tool)]} run on these links is refused — use your ${TOOL_LABEL[otherTool(tool)]} links for that.`],
                     ["Hand-driven steps don’t count", "We record them and tell you why, so you can re-run with your script."],
                     ["Your typing stays private", "We only count mouse and key activity. We never read what you type."],
                   ].map(([h, d]) => (

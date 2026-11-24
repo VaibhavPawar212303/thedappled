@@ -6,6 +6,8 @@ import { Check, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FRAMEWORK_STEPS, type AssignmentStatus } from "@/lib/assignments";
 import { REASON_TEXT } from "@/lib/verification";
+import { TOOL_LABEL, withTool, type Tool } from "@/lib/tools";
+import { TrackLine } from "../../_components/card-tool";
 
 type Env = { BASE_URL: string; ASSIGNMENT_TOKEN: string; DEMO_EMAIL: string; DEMO_PASSWORD: string };
 type Check = { ok: boolean; message: string };
@@ -31,7 +33,7 @@ function CopyButton({ text, testid }: { text: string; testid?: string }) {
   );
 }
 
-const SNIPPET = `// playwright.config.ts
+const PLAYWRIGHT_SNIPPET = `// playwright.config.ts
 import 'dotenv/config';
 import { defineConfig } from '@playwright/test';
 
@@ -48,7 +50,41 @@ test('signs in with the .env credentials', async ({ page }) => {
   await expect(page.getByTestId('env-success')).toBeVisible();
 });`;
 
-export function FrameworkView({ initial, env, siteUrl, rank }: { initial: AssignmentStatus; env: Env; siteUrl: string; rank?: { rank: number; total: number } | null }) {
+const CYPRESS_SNIPPET = `// cypress.config.ts
+import 'dotenv/config';
+import { defineConfig } from 'cypress';
+
+export default defineConfig({
+  e2e: {
+    baseUrl: process.env.BASE_URL,
+    env: {
+      ASSIGNMENT_TOKEN: process.env.ASSIGNMENT_TOKEN,
+      DEMO_EMAIL: process.env.DEMO_EMAIL,
+      DEMO_PASSWORD: process.env.DEMO_PASSWORD,
+    },
+  },
+});
+
+// cypress/e2e/login.cy.ts
+it('signs in with the .env credentials', () => {
+  cy.visit(\`/testing/framework-setup/login?a=\${Cypress.env('ASSIGNMENT_TOKEN')}\`);
+  cy.get('[data-testid="env-email"]').type(Cypress.env('DEMO_EMAIL'));
+  cy.get('[data-testid="env-password"]').type(Cypress.env('DEMO_PASSWORD'), { log: false });
+  cy.get('[data-testid="env-submit"]').click();
+  cy.get('[data-testid="env-success"]').should('be.visible');
+});
+
+# .github/workflows/tests.yml (run step)
+- run: npx cypress run
+  env:
+    BASE_URL: \${{ secrets.BASE_URL }}
+    ASSIGNMENT_TOKEN: \${{ secrets.ASSIGNMENT_TOKEN }}
+    DEMO_EMAIL: \${{ secrets.DEMO_EMAIL }}
+    DEMO_PASSWORD: \${{ secrets.DEMO_PASSWORD }}`;
+
+const SNIPPETS: Record<Tool, string> = { playwright: PLAYWRIGHT_SNIPPET, cypress: CYPRESS_SNIPPET };
+
+export function FrameworkView({ tool, initial, env, siteUrl, rank }: { tool: Tool; initial: AssignmentStatus; env: Env; siteUrl: string; rank?: { rank: number; total: number } | null }) {
   const [status, setStatus] = React.useState(initial);
   const [showPw, setShowPw] = React.useState(false);
   const [repoUrl, setRepoUrl] = React.useState("");
@@ -62,20 +98,20 @@ export function FrameworkView({ initial, env, siteUrl, rank }: { initial: Assign
     if (completed) return;
     const id = setInterval(async () => {
       try {
-        const r = await fetch("/api/assignments/framework-setup", { cache: "no-store" });
+        const r = await fetch(`/api/assignments/framework-setup?tool=${tool}`, { cache: "no-store" });
         if (!r.ok) return;
         const { assignment } = await r.json();
         if (assignment) setStatus(assignment);
       } catch {}
     }, 3000);
     return () => clearInterval(id);
-  }, [completed]);
+  }, [completed, tool]);
 
   const check = async () => {
     setBusy(true);
     setError(null);
     try {
-      const r = await fetch("/api/assignments/framework-setup/repo", {
+      const r = await fetch(`/api/assignments/framework-setup/repo?tool=${tool}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ repoUrl }),
@@ -103,14 +139,14 @@ export function FrameworkView({ initial, env, siteUrl, rank }: { initial: Assign
   const groups = ["Run your tests", "Save it on GitHub"] as const;
 
   const rankChip = (
-    <Link href="/testing/leaderboard?stage=framework-setup" data-testid="assignment-rank" className="inline-flex items-center gap-3 rounded-xl border bg-card px-4 py-2.5 text-sm shadow-sm hover:shadow-md">
+    <Link href={withTool("/testing/leaderboard?stage=framework-setup", tool)} data-testid="assignment-rank" className="inline-flex items-center gap-3 rounded-xl border bg-card px-4 py-2.5 text-sm shadow-sm hover:shadow-md">
       {rank && (
         <span>
           <span className="text-muted-foreground">Rank </span>
           <span className="font-extrabold">#{rank.rank} of {rank.total}</span>
         </span>
       )}
-      <span className="font-bold text-blue-600">View leaderboard →</span>
+      <span className="font-bold text-blue-600">View {TOOL_LABEL[tool]} leaderboard →</span>
     </Link>
   );
 
@@ -120,7 +156,7 @@ export function FrameworkView({ initial, env, siteUrl, rank }: { initial: Assign
         <nav aria-label="Breadcrumb" className="mb-6 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
           <Link href="/testing" className="hover:text-foreground">Testing</Link>
           <span aria-hidden="true">/</span>
-          <Link href="/testing/framework-setup" className="hover:text-foreground">Framework setup</Link>
+          <Link href={withTool("/testing/framework-setup", tool)} className="hover:text-foreground">Framework setup</Link>
           <span aria-hidden="true">/</span>
           <span aria-current="page" className="font-semibold text-foreground">Assignment</span>
         </nav>
@@ -130,7 +166,7 @@ export function FrameworkView({ initial, env, siteUrl, rank }: { initial: Assign
             <div className="flex items-center gap-5">
               <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-white/15 text-4xl">✓</span>
               <div>
-                <h1 className="text-3xl font-extrabold tracking-tight">Assignment complete!</h1>
+                <h1 className="text-3xl font-extrabold tracking-tight">{TOOL_LABEL[tool]} assignment complete!</h1>
                 <p className="mt-2 text-purple-100">Your framework reads its config from .env and runs in GitHub Actions with secrets.</p>
                 <p className="mt-2 text-sm text-purple-100/80">Took {minutes} minute{minutes === 1 ? "" : "s"}</p>
               </div>
@@ -144,6 +180,7 @@ export function FrameworkView({ initial, env, siteUrl, rank }: { initial: Assign
             <div>
               <h1 className="text-3xl font-extrabold tracking-tight md:text-4xl">Assignment: framework setup</h1>
               <div className="mt-3 flex flex-wrap items-center gap-3 text-sm">
+                <TrackLine slug="framework-setup" tool={tool} />
                 <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-950 dark:text-amber-300">● In progress</span>
                 <span className="text-muted-foreground">Test runs update live · GitHub checks run when you submit your repo</span>
               </div>
@@ -237,7 +274,7 @@ export function FrameworkView({ initial, env, siteUrl, rank }: { initial: Assign
               <ol className="m-0 mt-4 list-none space-y-3 p-0 text-sm font-medium">
                 {[
                   "Create the project and a .env file with the values above",
-                  "Read them in playwright.config / cypress.config",
+                  `Read them in ${tool}.config`,
                   "Run your tests against the sign-in link",
                   "Add .env to .gitignore and commit .env.example (keys only)",
                   "Push to GitHub, add repository secrets, run tests in Actions",
@@ -250,8 +287,8 @@ export function FrameworkView({ initial, env, siteUrl, rank }: { initial: Assign
                 ))}
               </ol>
               <details className="mt-5">
-                <summary className="cursor-pointer text-sm font-bold text-purple-700 dark:text-purple-300">Show a Playwright example</summary>
-                <pre className="mt-3 overflow-x-auto rounded-xl bg-slate-900 p-4 text-xs leading-5 text-slate-100">{SNIPPET}</pre>
+                <summary className="cursor-pointer text-sm font-bold text-purple-700 dark:text-purple-300">Show a {TOOL_LABEL[tool]} example</summary>
+                <pre data-testid="tool-snippet" className="mt-3 overflow-x-auto rounded-xl bg-slate-900 p-4 text-xs leading-5 text-slate-100">{SNIPPETS[tool]}</pre>
               </details>
             </section>
           </div>

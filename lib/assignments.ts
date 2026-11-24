@@ -1,6 +1,7 @@
 import { randomBytes } from "crypto";
 import { prisma } from "@/lib/db";
 import type { Reason, Signals, Verdict } from "@/lib/verification";
+import { DEFAULT_TOOL, NO_TOOL, type Tool, type ToolKey } from "@/lib/tools";
 
 export const UI_AUTOMATION = "ui-automation";
 export const FRAMEWORK_SETUP = "framework-setup";
@@ -98,6 +99,7 @@ const STEPS_BY_SLUG: Record<string, Step[]> = {
   [UI_AUTOMATION]: STEPS,
   [FRAMEWORK_SETUP]: FRAMEWORK_STEPS,
   [PAGE_OBJECTS]: POM_STEPS,
+  [CROSS_BROWSER]: CROSS_BROWSER_STEPS,
   [MANUAL_TESTING]: MANUAL_STEPS,
 };
 export const stepsFor = (slug: string): Step[] => STEPS_BY_SLUG[slug] ?? STEPS;
@@ -108,6 +110,7 @@ export const isStepId = (v: unknown): v is StepId => typeof v === "string" && ST
 export type AssignmentStatus = {
   token: string;
   slug: string;
+  tool: ToolKey;
   startedAt: string;
   completedAt: string | null;
   done: number;
@@ -119,6 +122,7 @@ export type AssignmentStatus = {
 type AssignmentWithEvents = {
   token: string;
   slug: string;
+  tool: string;
   startedAt: Date;
   completedAt: Date | null;
   events: { name: string; createdAt: Date; verified: boolean; reason: string | null }[];
@@ -141,6 +145,7 @@ export function toStatus(a: AssignmentWithEvents): AssignmentStatus {
   return {
     token: a.token,
     slug: a.slug,
+    tool: a.tool as ToolKey,
     startedAt: a.startedAt.toISOString(),
     // Completion only stands if every step is verified (older, unverified completions don't count).
     completedAt: done >= steps.length && a.completedAt ? a.completedAt.toISOString() : null,
@@ -150,25 +155,34 @@ export function toStatus(a: AssignmentWithEvents): AssignmentStatus {
   };
 }
 
-export async function getAssignmentForUser(userId: string, slug: AssignmentSlug = UI_AUTOMATION): Promise<AssignmentStatus | null> {
+// Manual testing has one assignment per learner; each automation stage has one per tool.
+export const toolKeyFor = (slug: string, tool: Tool = DEFAULT_TOOL): ToolKey => (slug === MANUAL_TESTING ? NO_TOOL : tool);
+
+export async function getAssignmentForUser(userId: string, slug: AssignmentSlug = UI_AUTOMATION, tool: Tool = DEFAULT_TOOL): Promise<AssignmentStatus | null> {
   const a = await prisma.assignment.findUnique({
-    where: { userId_slug: { userId, slug } },
+    where: { userId_slug_tool: { userId, slug, tool: toolKeyFor(slug, tool) } },
     include: { events: true },
   });
   return a ? toStatus(a) : null;
 }
 
-export async function startAssignment(userId: string, slug: AssignmentSlug = UI_AUTOMATION): Promise<AssignmentStatus> {
-  const existing = await getAssignmentForUser(userId, slug);
+export async function startAssignment(userId: string, slug: AssignmentSlug = UI_AUTOMATION, tool: Tool = DEFAULT_TOOL): Promise<AssignmentStatus> {
+  const existing = await getAssignmentForUser(userId, slug, tool);
   if (existing) return existing;
   const created = await prisma.assignment
     .create({
-      data: { userId, slug, token: randomBytes(9).toString("base64url") },
+      data: { userId, slug, tool: toolKeyFor(slug, tool), token: randomBytes(9).toString("base64url") },
       include: { events: true },
     })
     .catch(async () => null); // lost a race with a concurrent start: read the winner below
   if (created) return toStatus(created);
-  return (await getAssignmentForUser(userId, slug))!;
+  return (await getAssignmentForUser(userId, slug, tool))!;
+}
+
+// The tool an assignment link belongs to (null = unknown token).
+export async function toolOfToken(token: string): Promise<ToolKey | null> {
+  const a = await prisma.assignment.findUnique({ where: { token }, select: { tool: true } });
+  return a ? (a.tool as ToolKey) : null;
 }
 
 export async function getStatusByToken(token: string): Promise<AssignmentStatus | null> {

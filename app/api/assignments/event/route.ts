@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getStatusByToken, isStepId, recordEvent } from "@/lib/assignments";
+import { getStatusByToken, isStepId, recordEvent, toolOfToken } from "@/lib/assignments";
 import { describeSignals, sanitizeSignals, verdictFromSignals } from "@/lib/verification";
 import { engineFromUserAgent, engineOfStep } from "@/lib/browser-engine";
+import { isTool, TOOL_LABEL, toolFromSignals } from "@/lib/tools";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +28,21 @@ export async function POST(req: NextRequest) {
   }
 
   const signals = sanitizeSignals(body?.signals);
+
+  // Each assignment link belongs to one tool. A run by the other tool doesn't count on this track.
+  const linkTool = await toolOfToken(token);
+  if (!linkTool) return NextResponse.json({ error: "Unknown assignment" }, { status: 404 });
+  const runTool = toolFromSignals(signals);
+  if (isTool(linkTool) && runTool && runTool !== linkTool) {
+    return NextResponse.json(
+      {
+        error: "Wrong tool for this link",
+        message: `This assignment link is for the ${TOOL_LABEL[linkTool]} track, but this run used ${TOOL_LABEL[runTool]}. Use your ${TOOL_LABEL[runTool]} link instead (pick ${TOOL_LABEL[runTool]} on the stage page).`,
+      },
+      { status: 409 },
+    );
+  }
+
   const serverHeadlessUa = /HeadlessChrome/i.test(ua);
   const verdict = verdictFromSignals(signals, serverHeadlessUa);
 
@@ -38,6 +54,7 @@ export async function POST(req: NextRequest) {
     done: status.done,
     total: status.total,
     completed: Boolean(status.completedAt),
+    tool: status.tool,
     verified: result.verified,
     reason: result.reason,
     // Why a step did not count, in plain terms, so a learner can see what the page observed.
@@ -51,5 +68,5 @@ export async function GET(req: NextRequest) {
   if (!TOKEN_RE.test(token)) return NextResponse.json({ error: "Bad request" }, { status: 400 });
   const status = await getStatusByToken(token);
   if (!status) return NextResponse.json({ error: "Unknown assignment" }, { status: 404 });
-  return NextResponse.json({ done: status.done, total: status.total, completed: Boolean(status.completedAt) });
+  return NextResponse.json({ done: status.done, total: status.total, completed: Boolean(status.completedAt), tool: status.tool });
 }

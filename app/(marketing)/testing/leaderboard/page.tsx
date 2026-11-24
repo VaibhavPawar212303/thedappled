@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
 import { getAllTracksBoard, getBoard } from "@/lib/leaderboard";
 import { getAssignmentForUser, isAssignmentSlug } from "@/lib/assignments";
+import { chosenTool } from "@/lib/tool-choice";
 import { LeaderboardView } from "./leaderboard-view";
 import { AllTracksView } from "./all-tracks-view";
 
@@ -15,18 +16,20 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 // ?stage=<slug> shows one track's board; no stage (or an unknown one) shows the All tracks board.
-export default async function LeaderboardPage({ searchParams }: { searchParams: Promise<{ stage?: string }> }) {
-  const { stage: raw } = await searchParams;
+// ?tool=playwright|cypress picks the tool (automation boards are ranked per tool; Manual testing is shared).
+export default async function LeaderboardPage({ searchParams }: { searchParams: Promise<{ stage?: string; tool?: string }> }) {
+  const { stage: raw, tool: rawTool } = await searchParams;
+  const tool = await chosenTool(rawTool);
   const { userId } = await auth();
 
   if (!isAssignmentSlug(raw)) {
-    const board = await getAllTracksBoard(userId);
-    return <AllTracksView board={board} signedIn={Boolean(userId)} />;
+    const board = await getAllTracksBoard(userId, tool);
+    return <AllTracksView board={board} signedIn={Boolean(userId)} tool={tool} />;
   }
 
   const [board, mine] = await Promise.all([
-    getBoard(userId, raw),
-    userId ? getAssignmentForUser(userId, raw).catch(() => null) : Promise.resolve(null),
+    getBoard(userId, raw, tool),
+    userId ? getAssignmentForUser(userId, raw, tool).catch(() => null) : Promise.resolve(null),
   ]);
-  return <LeaderboardView stage={raw} board={board} signedIn={Boolean(userId)} hasAssignment={Boolean(mine)} />;
+  return <LeaderboardView stage={raw} board={board} signedIn={Boolean(userId)} hasAssignment={Boolean(mine)} tool={tool} />;
 }

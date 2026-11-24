@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { formatMinutes } from "@/lib/leaderboard-utils";
 import type { Board, BoardRow } from "@/lib/leaderboard";
 import type { AssignmentSlug } from "@/lib/assignments";
+import { TOOL_LABEL, withTool, type Tool } from "@/lib/tools";
 import { BoardTabs } from "./board-tabs";
 
 type Tab = "all" | "completed" | "progress";
@@ -179,8 +180,23 @@ function Rank({ n }: { n: number }) {
   );
 }
 
-export function LeaderboardView({ stage, board, signedIn, hasAssignment }: { stage: AssignmentSlug; board: Board; signedIn: boolean; hasAssignment: boolean }) {
+export function LeaderboardView({
+  stage,
+  board,
+  signedIn,
+  hasAssignment,
+  tool,
+}: {
+  stage: AssignmentSlug;
+  board: Board;
+  signedIn: boolean;
+  hasAssignment: boolean;
+  tool: Tool;
+}) {
   const st = STAGES[stage];
+  // Automation boards are per tool, so their links keep it; Manual testing is shared by both tools.
+  const manual = stage === "manual-testing";
+  const link = (href: string) => (manual ? href : withTool(href, tool));
   const router = useRouter();
   const [tab, setTab] = React.useState<Tab>("all");
   const [shown, setShown] = React.useState(PAGE);
@@ -226,14 +242,16 @@ export function LeaderboardView({ stage, board, signedIn, hasAssignment }: { sta
           <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
             <Link href="/testing" className="hover:text-foreground">Testing</Link>
             <span aria-hidden="true">/</span>
-            <Link href={st.href} className="hover:text-foreground">{st.label}</Link>
+            <Link href={link(st.href)} className="hover:text-foreground">{st.label}</Link>
             <span aria-hidden="true">/</span>
             <span aria-current="page" className="font-semibold text-foreground">Leaderboard</span>
           </nav>
-          <h1 className="mt-5 text-4xl font-extrabold tracking-tight md:text-5xl">Leaderboard</h1>
+          <h1 className="mt-5 text-4xl font-extrabold tracking-tight md:text-5xl">
+            Leaderboard{!manual && <span data-testid="board-tool" className="text-muted-foreground"> · {TOOL_LABEL[tool]}</span>}
+          </h1>
           <p className="mt-3 text-lg text-muted-foreground">{st.sub}</p>
           <p className={`mt-4 text-[13px] font-semibold ${st.live}`}>● Live · updates as learners complete checks</p>
-          <BoardTabs current={stage} />
+          <BoardTabs current={stage} tool={tool} />
         </div>
       </section>
 
@@ -255,7 +273,7 @@ export function LeaderboardView({ stage, board, signedIn, hasAssignment }: { sta
             <h2 className="mt-6 text-2xl font-extrabold">No one is on the board yet</h2>
             <p className="mt-2 text-muted-foreground">{st.startText}</p>
             <Button asChild size="lg" className={`mt-6 ${st.solid}`}>
-              <Link href={st.href}>{st.startLabel}</Link>
+              <Link href={link(st.href)}>{st.startLabel}</Link>
             </Button>
           </section>
         ) : (
@@ -305,7 +323,7 @@ export function LeaderboardView({ stage, board, signedIn, hasAssignment }: { sta
                   </p>
                 </div>
                 <Button asChild className={st.bannerBtn}>
-                  <Link href={st.continueHref}>{you.completed ? st.doneLabel : st.continueLabel}</Link>
+                  <Link href={link(st.continueHref)}>{you.completed ? st.doneLabel : st.continueLabel}</Link>
                 </Button>
               </>
             ) : (
@@ -316,7 +334,7 @@ export function LeaderboardView({ stage, board, signedIn, hasAssignment }: { sta
                     : `You’re not on the board yet — ${st.startLabel.toLowerCase()} to join.`}
                 </p>
                 <Button asChild className={st.bannerBtn}>
-                  <Link href={hasAssignment ? st.continueHref : st.href}>{hasAssignment ? st.continueLabel : st.startLabel} <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                  <Link href={link(hasAssignment ? st.continueHref : st.href)}>{hasAssignment ? st.continueLabel : st.startLabel} <ArrowRight className="ml-2 h-4 w-4" /></Link>
                 </Button>
               </>
             )}

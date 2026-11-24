@@ -3,8 +3,9 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { PROGRESS_EVENT, detectAutomationFlags, isAutomated, type Progress } from "./assignment-reporter";
+import { PROGRESS_EVENT, REFUSED_EVENT, detectAutomationFlags, isAutomated, type Progress } from "./assignment-reporter";
 import { REASON_TEXT } from "@/lib/verification";
+import { isTool, TOOL_LABEL } from "@/lib/tools";
 
 // Shown on the demo pages only when opened from an assignment link (`?a=<token>`).
 export function AssignmentBanner() {
@@ -42,8 +43,9 @@ export function AssignmentBanner() {
   // and type, so a verified step also proves automation.
   const proven = p?.verified === true;
   const manual = automated === false && !proven;
+  const tool = p && isTool(p.tool) ? p.tool : null;
   const link = (
-    <Link href={`/testing/${stage}/assignment`} className="underline underline-offset-2">
+    <Link href={`/testing/${stage}/assignment${tool ? `?tool=${tool}` : ""}`} className="underline underline-offset-2">
       View assignment →
     </Link>
   );
@@ -61,7 +63,7 @@ export function AssignmentBanner() {
             ? "● Checking how this page is being driven…"
             : manual
               ? "⚠ No automation detected yet — steps done by hand won’t count. Run it with Playwright, Cypress or Selenium."
-              : "● Automation detected — your steps are being recorded."}
+              : `● Automation detected — your steps are being recorded${tool ? ` on the ${TOOL_LABEL[tool]} track` : ""}.`}
         </span>
         <span className={manual ? "text-amber-100" : stage === "framework-setup" ? "text-purple-100" : stage === "cross-browser" ? "text-blue-100" : "text-emerald-100"}>
           {!manual && (p ? `${p.done} of ${p.total} verified · ` : "")}
@@ -76,13 +78,31 @@ export function AssignmentBanner() {
 export function AssignmentNote() {
   const token = useSearchParams().get("a");
   const [p, setP] = React.useState<Progress | null>(null);
+  const [refused, setRefused] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     if (!token) return;
-    const onProgress = (e: Event) => setP((e as CustomEvent<Progress>).detail);
+    const onProgress = (e: Event) => {
+      setRefused(null);
+      setP((e as CustomEvent<Progress>).detail);
+    };
+    const onRefused = (e: Event) => setRefused((e as CustomEvent<string>).detail);
     window.addEventListener(PROGRESS_EVENT, onProgress);
-    return () => window.removeEventListener(PROGRESS_EVENT, onProgress);
+    window.addEventListener(REFUSED_EVENT, onRefused);
+    return () => {
+      window.removeEventListener(PROGRESS_EVENT, onProgress);
+      window.removeEventListener(REFUSED_EVENT, onRefused);
+    };
   }, [token]);
+
+  if (token && refused) {
+    return (
+      <div data-testid="assignment-note-wrong-tool" role="alert" className="mt-4 rounded-[10px] border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-300">
+        <p className="font-bold">Not counted — wrong tool for this link</p>
+        <p className="mt-1 text-[13px]">{refused}</p>
+      </div>
+    );
+  }
 
   if (!token || !p || p.verified === undefined) return null;
 
@@ -96,7 +116,7 @@ export function AssignmentNote() {
   return (
     <div data-testid="assignment-note-rejected" role="alert" className="mt-4 rounded-[10px] border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-300">
       <p className="font-bold">{REASON_TEXT[p.reason ?? "no-automation"].long}</p>
-      <p className="mt-1 text-[13px]">Run it with your Playwright or Cypress script to record it.</p>
+      <p className="mt-1 text-[13px]">Run it with your {isTool(p.tool) ? TOOL_LABEL[p.tool] : "Playwright or Cypress"} script to record it.</p>
       {p.seen && <p data-testid="assignment-note-seen" className="mt-2 text-xs opacity-80">What we saw: {p.seen}</p>}
     </div>
   );
