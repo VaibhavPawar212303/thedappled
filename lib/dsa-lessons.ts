@@ -13,7 +13,9 @@ export const DSA_FOUNDATIONS = "dsa-foundations";
 
 // Steps 1-4 replace the earlier single "Complexity & Big-O" lesson (id "dsa-complexity"), split
 // into short beginner lessons. Design: Penpot "27 - DSA Learning Path", pages "Foundations 1-4".
+// Step 0 ("Start here") was added before step 1 so the existing step numbers stay the same.
 export const FOUNDATIONS_STEPS: DsaStep[] = [
+  { n: 0, id: "dsa-intro", title: "What is DSA?", blurb: "Data structures and algorithms in plain words, with everyday examples.", href: "/dsa/foundations/what-is-dsa", isNew: true },
   { n: 1, id: "dsa-algorithms", title: "What is an algorithm?", blurb: "Recipes, the phone-book search, and counting steps instead of seconds.", href: "/dsa/foundations/algorithms", isNew: true },
   { n: 2, id: "dsa-reading-loops", title: "Reading loops", blurb: "No loop O(1), one loop O(n), loop in a loop O(n²), halving O(log n).", href: "/dsa/foundations/reading-loops", isNew: true },
   { n: 3, id: "dsa-comparing", title: "Comparing two solutions", blurb: "Best and worst case, brute force vs better, and O, Ω and Θ.", href: "/dsa/foundations/comparing-solutions", isNew: true },
@@ -23,6 +25,39 @@ export const FOUNDATIONS_STEPS: DsaStep[] = [
   { n: 7, id: "dsa-linked-lists", title: "Linked lists", blurb: "Pointers, reversal, fast and slow runners, merging lists." },
   { n: 8, id: "dsa-stacks-queues", title: "Stacks & queues", blurb: "LIFO and FIFO, balanced brackets, monotonic stacks." },
   { n: 9, id: "dsa-recursion", title: "Recursion", blurb: "Base cases, the call stack, and thinking in smaller problems." },
+];
+
+const INTRO: DsaQuestion[] = [
+  {
+    q: "What does DSA stand for?",
+    options: ["Data Structures and Algorithms", "Data Science and Analytics", "Digital Systems Architecture", "Data Storage Arrays"],
+    answer: 0,
+    why: "DSA is Data Structures (how you store data) and Algorithms (the steps that use it).",
+  },
+  {
+    q: "Which of these is a data structure?",
+    options: ["A stack: like a pile of plates, last in is first out", "Sorting a list", "Finding the tallest person", "A for loop"],
+    answer: 0,
+    why: "A stack is a way to store data. Sorting and finding the tallest are algorithms; a for loop is a piece of code.",
+  },
+  {
+    q: "A line at a ticket counter, where the first person in is served first, works like a…",
+    options: ["Stack", "Queue", "Tree", "Hash map"],
+    answer: 1,
+    why: "A queue is first in, first out, exactly like a line of people.",
+  },
+  {
+    q: "Folders inside folders on your computer are organised like a…",
+    options: ["Queue", "Tree", "Stack", "Array"],
+    answer: 1,
+    why: "A tree has one top item with branches below it, and each branch can have its own branches.",
+  },
+  {
+    q: "Why does choosing the right data structure matter?",
+    options: ["It makes the algorithm's steps shorter and faster", "It changes the programming language", "It makes the code longer", "It doesn't matter"],
+    answer: 0,
+    why: "The same task can take a few steps or a huge number of steps depending on how the data is stored.",
+  },
 ];
 
 const ALGORITHMS: DsaQuestion[] = [
@@ -158,6 +193,7 @@ const GROWTH_MEMORY: DsaQuestion[] = [
 ];
 
 export const DSA_QUIZZES: Record<string, DsaQuestion[]> = {
+  "dsa-intro": INTRO,
   "dsa-algorithms": ALGORITHMS,
   "dsa-reading-loops": READING_LOOPS,
   "dsa-comparing": COMPARING,

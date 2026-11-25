@@ -62,7 +62,7 @@ export async function DsaLessonLayout({
           </nav>
           <div className="mt-5 flex flex-wrap items-center gap-2">
             <span className="inline-flex rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700 dark:bg-blue-950 dark:text-blue-300">
-              Foundations · Step {S.n} · Beginner
+              Foundations · {S.n === 0 ? "Start here" : `Step ${S.n}`} · Beginner
             </span>
             {completed && (
               <span data-testid="lesson-completed" className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
