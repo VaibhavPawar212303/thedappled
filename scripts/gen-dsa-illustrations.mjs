@@ -25,7 +25,7 @@ let BB;
 const resetBB = () => (BB = { x0: Infinity, y0: Infinity, x1: -Infinity, y1: -Infinity });
 const track = (x, y) => { BB.x0 = Math.min(BB.x0, x); BB.y0 = Math.min(BB.y0, y); BB.x1 = Math.max(BB.x1, x); BB.y1 = Math.max(BB.y1, y); };
 
-const iso = (ox, oy, s) => (x, y, z) => [ox + (x - y) * C * s, oy + (x + y) * S * s - z * s];
+const iso = (ox, oy, s) => Object.assign((x, y, z) => [ox + (x - y) * C * s, oy + (x + y) * S * s - z * s], { s });
 const f = (n) => n.toFixed(1);
 const pts = (a) => a.map(([x, y]) => (track(x, y), `${f(x)},${f(y)}`)).join(" ");
 
@@ -281,6 +281,7 @@ if (LESSON === "what-is-dsa") {
 }
 
 // ===================== "What is an algorithm?" (Foundations step 1) =====================
+// Objects are drawn with gaps between them so nothing overlaps its neighbour, even while moving.
 if (LESSON === "algorithms") {
   const pct = (v) => `${(+v).toFixed(1)}%`;
   // CSS for a label shown only between a% and z% of the loop. `first` labels also show from 96% (after the reset).
@@ -288,188 +289,247 @@ if (LESSON === "algorithms") {
     `.${cls}{animation:${cls} ${dur}s linear infinite;opacity:${first ? 1 : 0}}@keyframes ${cls}{` +
     (first ? `0%,${pct(z)}{opacity:1}${pct(z + 0.2)},${pct(95.8)}{opacity:0}96%,100%{opacity:1}}` : `0%,${pct(a - 0.2)}{opacity:0}${pct(a)},${pct(z)}{opacity:1}${pct(z + 0.2)},100%{opacity:0}}`);
 
-  // 1. Recipe: a staircase of steps that light up in order while a token hops along
+  const STEEL = { top: "#F1F5F9", left: "#CBD5E1", right: "#94A3B8", edge: "#64748B" };
+  const PAPER = { top: "#FFFFFF", left: "#E2E8F0", right: "#CBD5E1", edge: "#94A3B8" };
+  const TEA = { top: "#FDE68A", left: "#FBBF24", right: "#F59E0B", edge: "#B45309" };
+  const WOOD = { top: "#E7C9A0", left: "#C8A27A", right: "#A47E57", edge: "#7C5A3A" };
+  const CHINA = { top: "#FFFFFF", left: "#F8FAFC", right: "#E2E8F0", edge: "#94A3B8" };
+  const GLASS = { top: "#ECFDF5", left: "#D1FAE5", right: "#A7F3D0", edge: "#059669" };
+
+  // An upright cylinder standing on (x, y, z): side as a polygon (no paths, so the Penpot copy imports cleanly).
+  const cyl = (p, x, y, z, r, h, col, attrs = "") => {
+    const rx = r * Math.SQRT2 * C * p.s, ry = r * Math.SQRT2 * S * p.s;
+    const [bx, by] = p(x, y, z), [tx, ty] = p(x, y, z + h);
+    const arc = [];
+    for (let k = 0; k <= 16; k++) { const a = (Math.PI * k) / 16; arc.push([bx + rx * Math.cos(a), by + ry * Math.sin(a)]); }
+    const side = [[tx + rx, ty], ...arc, [tx - rx, ty]];
+    track(tx - rx, ty - ry); track(tx + rx, ty - ry);
+    const st = `stroke="${col.edge}" stroke-width="1" stroke-linejoin="round"`;
+    // two-tone side: light on the left half, darker on the right half
+    const leftHalf = [[tx, ty + ry], ...arc.slice(8), [tx - rx, ty]];
+    return `<g ${attrs}><polygon points="${pts(side)}" fill="${col.right}" ${st}/><polygon points="${pts(leftHalf)}" fill="${col.left}" stroke="none"/><polygon points="${pts(side)}" fill="none" ${st}/><ellipse cx="${f(tx)}" cy="${f(ty)}" rx="${f(rx)}" ry="${f(ry)}" fill="${col.top}" ${st}/></g>`;
+  };
+  // soft contact shadow on the ground
+  const shadow = (p, x, y, r) => {
+    const [sx, sy] = p(x + 0.12, y + 0.12, 0);
+    return `<ellipse cx="${f(sx)}" cy="${f(sy)}" rx="${f(r * Math.SQRT2 * C * p.s * 1.05)}" ry="${f(r * Math.SQRT2 * S * p.s * 1.05)}" fill="#0F172A" fill-opacity="0.08"/>`;
+  };
+  const poly = (ptsArr, fill, extra = "") => `<polygon points="${pts(ptsArr)}" fill="${fill}" ${extra}/>`;
+  const line = (ptsArr, col, w = 2, extra = "") => `<polyline points="${pts(ptsArr)}" fill="none" stroke="${col}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" ${extra}/>`;
+
+  // 1. Recipe: four stations (kettle, tea, hourglass, cup) that light up in order
   {
     resetBB();
-    const p = iso(0, 0, 26);
-    const names = ["Boil water", "Add tea", "Wait 3 min", "Pour"];
-    let b = ground(p, -0.4, -0.4, 4 * 1.7 + 0.2, 1.9);
-    let lit = "", labels = "", css = "";
-    const tops = [];
+    const p = iso(0, 0, 22);
+    const D = 2.5, Z0 = 0.22, DUR = 6;
+    const at = (i) => [i * D, -i * D]; // left to right on screen
+    const on = (i) => 6 + i * 21; // % when station i lights
+    const names = ["1. Boil water", "2. Add tea", "3. Wait 3 min", "4. Pour"];
+    let b = "";
+    let css = "";
     names.forEach((nm, i) => {
-      const x = i * 1.7, h = 0.5 + i * 0.55;
-      b += box(p, x, 0, 0, 1.4, 1.4, h, BLUE);
-      const on = 8 + i * 18; // % of the cycle when this step lights
-      lit += `<g class="lit${i}">${box(p, x, 0, 0, 1.4, 1.4, h, GREEN)}</g>`;
-      css += `.lit${i}{animation:lit${i} 5s ease-in-out infinite;opacity:0}@keyframes lit${i}{0%,${pct(on - 1)}{opacity:0}${pct(on + 3)},90%{opacity:1}97%,100%{opacity:0}}`;
-      const [tx, ty] = topC(p, x, 0, 0, 1.4, 1.4, h);
-      tops.push([tx, ty]);
-      labels += text(tx, ty + 5, String(i + 1), { size: 14, weight: 800, fill: "#1E3A8A" });
-      const [nx, ny] = p(x + 0.7, 2.1, 0);
-      labels += text(nx, ny + 14, nm, { size: 12, weight: 700, fill: "#334155", anchor: "end" });
+      const [x, y] = at(i);
+      // platform (grey), green overlay that lights up
+      b += shadow(p, x, y, 1.0) + cyl(p, x, y, 0, 1.0, Z0, STEEL);
+      b += `<g class="lit${i}">${cyl(p, x, y, 0, 1.0, Z0, GREEN)}</g>`;
+      css += `.lit${i}{animation:lit${i} ${DUR}s ease-in-out infinite;opacity:0}@keyframes lit${i}{0%,${pct(on(i) - 1)}{opacity:0}${pct(on(i) + 3)},92%{opacity:1}97%,100%{opacity:0}}`;
+      // arrow on the ground to the next station
+      const [lx, ly] = p(x, y, 0);
+      const r1 = 1.0 * Math.SQRT2 * C * p.s;
+      if (i < 3) b += arrow(lx + r1 + 5, ly, lx + 2 * D * C * p.s - r1 - 5, ly, "#94A3B8");
+      b += text(lx, ly + 1.0 * Math.SQRT2 * S * p.s + 20, nm, { size: 12, weight: 700, fill: "#334155" });
     });
-    // token: a small cube hopping from step to step
-    const [x0, y0] = tops[0];
-    const tok = `<g class="tok"><circle cx="${f(x0)}" cy="${f(y0 - 26)}" r="6" fill="#059669" stroke="#047857"/></g>`;
-    track(x0 - 6, y0 - 32);
-    let kf = `0%{opacity:0;transform:translate(0,-10px)}6%{opacity:1;transform:translate(0,0)}`;
-    tops.forEach(([x, y], i) => {
-      const on = 8 + i * 18;
-      kf += `${pct(on - 6)}{transform:translate(${f(tops[Math.max(0, i - 1)][0] - x0)}px,${f(tops[Math.max(0, i - 1)][1] - y0 - (i ? 14 : 0))}px)}`;
-      kf += `${pct(on)}{transform:translate(${f(x - x0)}px,${f(y - y0)}px)}`;
-    });
-    kf += `90%{opacity:1;transform:translate(${f(tops[3][0] - x0)}px,${f(tops[3][1] - y0)}px)}97%,100%{opacity:0;transform:translate(${f(tops[3][0] - x0)}px,${f(tops[3][1] - y0)}px)}`;
-    css += `.tok{animation:tok 5s ease-in-out infinite}@keyframes tok{${kf}}`;
-    labels += caption("The same steps, in the same order, every time");
-    files["recipe"] = svg("An algorithm is a recipe: numbered steps followed in order", b + (STATIC ? "" : lit) + labels + (STATIC ? "" : tok), css);
+    // station 1: kettle with steam
+    {
+      const [x, y] = at(0);
+      b += cyl(p, x, y, Z0, 0.5, 0.8, STEEL) + cyl(p, x, y, Z0 + 0.8, 0.22, 0.1, STEEL) + cyl(p, x, y, Z0 + 0.9, 0.08, 0.08, { ...STEEL, top: "#475569" });
+      const [cx, cy] = p(x, y, Z0 + 0.8), rx = 0.5 * Math.SQRT2 * C * p.s;
+      b += line([[cx - rx * 0.7, cy - 2], [cx - rx * 0.5, cy - 16], [cx + rx * 0.5, cy - 16], [cx + rx * 0.7, cy - 2]], "#475569", 3);
+      const [sx, sy] = p(x, y, Z0 + 0.45);
+      b += poly([[sx + rx - 2, sy - 2], [sx + rx + 16, sy - 14], [sx + rx + 18, sy - 10], [sx + rx - 2, sy + 6]], "#94A3B8", 'stroke="#64748B" stroke-width="1"');
+      [0, 1, 2].forEach((k) => {
+        const bx = sx + rx + 16 + k * 6, by = sy - 18;
+        b += line([[bx, by], [bx - 3, by - 6], [bx + 2, by - 12], [bx - 1, by - 18]], "#94A3B8", 2, `class="steam" style="animation-delay:${(k * 0.4).toFixed(1)}s"`);
+      });
+      css += `.steam{animation:steam 1.8s ease-out infinite;opacity:0}@keyframes steam{0%{opacity:0;transform:translateY(4px)}30%{opacity:.9}100%{opacity:0;transform:translateY(-10px)}}`;
+    }
+    // station 2: box of tea
+    {
+      const [x, y] = at(1);
+      b += box(p, x - 0.45, y - 0.45, Z0, 0.9, 0.9, 0.75, TEA);
+      const [tx, ty] = topC(p, x - 0.45, y - 0.45, Z0, 0.9, 0.9, 0.75);
+      b += text(tx, ty + 4, "TEA", { size: 11, weight: 800, fill: "#92400E" });
+    }
+    // station 3: hourglass, sand runs while the step is lit
+    {
+      const [x, y] = at(2);
+      b += cyl(p, x, y, Z0, 0.5, 0.1, WOOD);
+      const [gx, gyB] = p(x, y, Z0 + 0.1), [, gyT] = p(x, y, Z0 + 1.6);
+      const w = 13, mid = (gyB + gyT) / 2;
+      b += poly([[gx - w, gyT], [gx + w, gyT], [gx + 2, mid], [gx + w, gyB], [gx - w, gyB], [gx - 2, mid]], "#FFFFFF", 'fill-opacity="0.55" stroke="#94A3B8" stroke-width="1.2"');
+      b += `<g class="sandTop">${poly([[gx - w + 3, gyT + 4], [gx + w - 3, gyT + 4], [gx, mid - 1]], "#F59E0B")}</g>`;
+      b += `<g class="sandBot">${poly([[gx - w + 2, gyB - 1], [gx + w - 2, gyB - 1], [gx, gyB - 12]], "#F59E0B")}</g>`;
+      b += cyl(p, x, y, Z0 + 1.6, 0.5, 0.1, WOOD);
+      const s0 = on(2), s1 = on(2) + 16;
+      css += `.sandTop{animation:sandTop ${DUR}s linear infinite;transform-origin:50% 0}@keyframes sandTop{0%,${pct(s0)}{transform:scaleY(1)}${pct(s1)},96%{transform:scaleY(.08)}100%{transform:scaleY(1)}}`;
+      css += `.sandBot{animation:sandBot ${DUR}s linear infinite;transform-origin:50% 100%}@keyframes sandBot{0%,${pct(s0)}{transform:scaleY(.15)}${pct(s1)},96%{transform:scaleY(1)}100%{transform:scaleY(.15)}}`;
+    }
+    // station 4: cup on a saucer, fills with tea
+    {
+      const [x, y] = at(3);
+      b += cyl(p, x, y, Z0, 0.68, 0.06, CHINA) + cyl(p, x, y, Z0 + 0.06, 0.42, 0.55, CHINA);
+      const [cx, cy] = p(x, y, Z0 + 0.61), rx = 0.42 * Math.SQRT2 * C * p.s, ry = 0.42 * Math.SQRT2 * S * p.s;
+      b += `<ellipse class="teaFill" cx="${f(cx)}" cy="${f(cy)}" rx="${f(rx * 0.82)}" ry="${f(ry * 0.8)}" fill="#B45309"/>`;
+      const [hx, hy] = p(x, y, Z0 + 0.35);
+      b += line([[hx + rx - 1, hy - 7], [hx + rx + 8, hy - 6], [hx + rx + 9, hy + 2], [hx + rx - 1, hy + 4]], "#94A3B8", 3);
+      css += `.teaFill{animation:teaFill ${DUR}s ease-in-out infinite;opacity:0}@keyframes teaFill{0%,${pct(on(3))}{opacity:0}${pct(on(3) + 6)},92%{opacity:1}97%,100%{opacity:0}}`;
+    }
+    b += caption("The same steps, in the same order, every time");
+    files["recipe"] = svg("An algorithm is a recipe: boil water, add tea, wait, pour, in that order", b, css);
   }
 
-  // A row of standing pages (a phone book seen from the side). Returns tops for pointers.
-  const pages = (p, n, gap, colOf) => {
+  // Name cards lying on a table, 2 rows of 8, sorted A to T. Card 10 is "M" for Meera.
+  const LETTERS = ["A", "B", "C", "D", "F", "G", "H", "J", "K", "L", "M", "N", "P", "R", "S", "T"];
+  const TARGET = 10;
+  const cardGrid = (p) => {
+    // column -> right on screen (world 1,-1); row -> down on screen (world 1,1)
+    const at = (i) => { const c = i % 8, r = Math.floor(i / 8); return { x: c * 1.1 + r * 2.3, y: -c * 1.1 + r * 2.3 }; };
+    const order = [...LETTERS.keys()].sort((a, c) => at(a).x + at(a).y - (at(c).x + at(c).y));
     let s = "";
     const tops = [];
-    for (let i = 0; i < n; i++) {
-      const x = i * gap;
-      s += `<g class="pg${i}">${box(p, x, 0, 0, gap * 0.62, 1.3, 1.7, colOf(i))}</g>`;
-      tops.push(topC(p, x, 0, 0, gap * 0.62, 1.3, 1.7));
-    }
+    order.forEach((i) => {
+      const { x, y } = at(i);
+      const hot = i === TARGET;
+      const [tx, ty] = topC(p, x, y, 0, 1, 1, 0.12);
+      tops[i] = [tx, ty];
+      s += `<g class="cd${i}">${box(p, x, y, 0, 1, 1, 0.12, PAPER)}${hot ? `<g class="found">${box(p, x, y, 0, 1, 1, 0.12, GREEN)}</g>` : ""}${text(tx, ty + 5, LETTERS[i], { size: 13, weight: 800, fill: hot ? "#065F46" : "#334155" })}</g>`;
+    });
     return { s, tops };
   };
   const pointer = (x, y, cls) => {
-    track(x - 7, y - 30);
-    return `<polygon class="${cls}" points="${f(x - 7)},${f(y - 30)} ${f(x + 7)},${f(y - 30)} ${f(x)},${f(y - 18)}" fill="#2563EB"/>`;
+    track(x - 7, y - 34);
+    return `<polygon class="${cls}" points="${f(x - 7)},${f(y - 34)} ${f(x + 7)},${f(y - 34)} ${f(x)},${f(y - 22)}" fill="#2563EB"/>`;
   };
-  // "N looks" counter: stacked texts, each visible in its window
-  const counter = (x, y, windows, word = "look") =>
-    windows
-      .map((_, i) => text(x, y, `${i + 1} ${word}${i ? "s" : ""}`, { size: 13, weight: 800, fill: "#2563EB", attrs: `class="c${i}"` }))
-      .join("");
-  const counterCss = (windows) =>
-    windows.map(([a, z], i) => shown(`c${i}`, 7, a, i < windows.length - 1 ? z - 0.3 : z)).join("");
+  const counter = (x, y, wins) => wins.map((_, i) => text(x, y, `${i + 1} look${i ? "s" : ""}`, { size: 13, weight: 800, fill: "#2563EB", attrs: `class="c${i}"` })).join("");
+  const counterCss = (wins, dur) => wins.map(([a, z], i) => shown(`c${i}`, dur, a, i < wins.length - 1 ? z - 0.3 : z)).join("");
+  const fadeOut = (i, t, dur) => `.cd${i}{animation:cd${i} ${dur}s ease-in-out infinite}@keyframes cd${i}{0%,${pct(t)}{opacity:1}${pct(t + 3)},92%{opacity:.28}97%,100%{opacity:1}}`;
+  const foundCss = (t, dur) =>
+    `.found{animation:found ${dur}s ease-in-out infinite;opacity:0}@keyframes found{0%,${pct(t)}{opacity:0}${pct(t + 3)},92%{opacity:1}97%,100%{opacity:0}}` +
+    `.cd${TARGET}{animation:lift ${dur}s ease-in-out infinite}@keyframes lift{0%,${pct(t)}{transform:translateY(0)}${pct(t + 4)},90%{transform:translateY(-7px)}96%,100%{transform:translateY(0)}}`;
 
-  // 2. Phone book, way 1: check every page in turn
+  // 2. Way 1: check every card in order
   {
     resetBB();
-    const p = iso(0, 0, 22);
-    const N = 10, T = 7; // "Meera" is on page 7
-    let b = ground(p, -0.4, -0.4, N * 0.9 + 0.2, 2);
-    const { s, tops } = pages(p, N, 0.9, (i) => (i === T ? GREEN : GREY));
-    b += s;
-    const [x0, y0] = tops[0];
-    let kf = "", css = "";
-    const win = [];
-    for (let i = 0; i <= T; i++) {
-      const t = 6 + i * 10;
-      kf += `${pct(t)}{opacity:1;transform:translate(${f(tops[i][0] - x0)}px,${f(tops[i][1] - y0)}px)}`;
-      win.push([t, i === T ? 92 : t + 10]);
-    }
-    css += `.p1{animation:p1 7s steps(1,end) infinite}@keyframes p1{0%{opacity:0}${pct(5.9)}{opacity:0}${kf}92%{opacity:1;transform:translate(${f(tops[T][0] - x0)}px,${f(tops[T][1] - y0)}px)}93%,100%{opacity:0}}`;
-    css += `.pg${T}{animation:hit 7s ease-in-out infinite}@keyframes hit{0%,${pct(76)}{transform:translateY(0)}${pct(80)},90%{transform:translateY(-8px)}96%,100%{transform:translateY(0)}}`;
-    const cy = Math.min(...tops.map((t) => t[1])) - 44;
-    const cnt = counter((BB.x0 + BB.x1) / 2, cy, win);
-    css += counterCss(win);
-    const cap = caption("Check every name: one look per page");
-    files["phone-book-scan"] = svg("Way 1: check every page, one look at a time, until the name is found", b + (STATIC ? "" : pointer(x0, y0, "p1") + cnt) + cap, css);
-  }
-
-  // 3. Phone book, way 2: open the middle and throw half away each time
-  {
-    resetBB();
-    const p = iso(0, 0, 22);
-    const N = 16, T = 11;
-    // looks at the middle of the current range; after each look the other half goes
-    const ranges = [[0, 16], [8, 16], [8, 12], [10, 12]];
-    const mids = [8, 12, 10, 11];
-    const lookAt = (k) => 8 + k * 20; // % when look k happens
-    const goneAfter = (i) => { for (let k = 0; k < ranges.length; k++) { const [a, z] = ranges[k + 1] ?? [T, T + 1]; if (i < a || i >= z) return k; } return -1; };
-    let b = ground(p, -0.4, -0.4, N * 0.62 + 0.2, 2);
-    const { s, tops } = pages(p, N, 0.62, (i) => (i === T ? GREEN : GREY));
-    b += s;
+    const p = iso(0, 0, 21);
+    const DUR = 8;
+    const { s, tops } = cardGrid(p);
+    const lookAt = (k) => 5 + k * 6.6; // 11 looks: 5% .. 71%
     let css = "";
-    for (let i = 0; i < N; i++) {
-      if (i === T) continue;
-      const k = goneAfter(i);
-      const t = lookAt(k) + 8;
-      css += `.pg${i}{animation:g${i} 7s ease-in-out infinite}@keyframes g${i}{0%,${pct(t)}{opacity:1;transform:translateY(0)}${pct(t + 6)},92%{opacity:.18;transform:translateY(6px)}98%,100%{opacity:1;transform:translateY(0)}}`;
+    const [x0, y0] = tops[0];
+    let kf = `0%,${pct(lookAt(0) - 0.1)}{opacity:0;transform:translate(0,0)}`;
+    const wins = [];
+    for (let k = 0; k <= TARGET; k++) {
+      kf += `${pct(lookAt(k))}{opacity:1;transform:translate(${f(tops[k][0] - x0)}px,${f(tops[k][1] - y0)}px)}`;
+      if (k < TARGET) css += fadeOut(k, lookAt(k) + 2, DUR);
+      wins.push([lookAt(k), k === TARGET ? 92 : lookAt(k + 1) - 0.1]);
     }
-    css += `.pg${T}{animation:hit2 7s ease-in-out infinite}@keyframes hit2{0%,${pct(lookAt(3))}{transform:translateY(0)}${pct(lookAt(3) + 5)},90%{transform:translateY(-8px)}96%,100%{transform:translateY(0)}}`;
-    const [x0, y0] = tops[mids[0]];
-    let kf = `0%{opacity:0}${pct(lookAt(0) - 0.1)}{opacity:0}`;
-    mids.forEach((m, k) => (kf += `${pct(lookAt(k))}{opacity:1;transform:translate(${f(tops[m][0] - x0)}px,${f(tops[m][1] - y0)}px)}`));
-    kf += `92%{opacity:1;transform:translate(${f(tops[T][0] - x0)}px,${f(tops[T][1] - y0)}px)}93%,100%{opacity:0}`;
-    css += `.p2{animation:p2 7s steps(1,end) infinite}@keyframes p2{${kf}}`;
-    const win = mids.map((_, k) => [lookAt(k), k === 3 ? 92 : lookAt(k + 1) - 0.2]);
-    const cy = Math.min(...tops.map((t) => t[1])) - 44;
-    const cnt = counter((BB.x0 + BB.x1) / 2, cy, win);
-    css += counterCss(win);
-    const cap = caption("Open the middle: each look throws half away");
-    files["phone-book-halve"] = svg("Way 2: open the middle and keep the half with the name; four looks for sixteen pages", b + (STATIC ? "" : pointer(x0, y0, "p2") + cnt) + cap, css);
+    for (let k = TARGET + 1; k < LETTERS.length; k++) css += fadeOut(k, lookAt(TARGET) + 2, DUR);
+    kf += `92%{opacity:1;transform:translate(${f(tops[TARGET][0] - x0)}px,${f(tops[TARGET][1] - y0)}px)}93%,100%{opacity:0}`;
+    css += `.p1{animation:p1 ${DUR}s steps(1,end) infinite}@keyframes p1{${kf}}` + foundCss(lookAt(TARGET), DUR) + counterCss(wins, DUR);
+    const head = text(BB.x0 + 4, BB.y0 - 30, "Looking for: Meera", { size: 13, weight: 800, fill: "#334155", anchor: "start" });
+    const cnt = counter(BB.x1 - 30, BB.y0 - 30, wins);
+    const cap = caption("Check every card in order: 11 looks to reach M");
+    files["phone-book-scan"] = svg("Way 1: check every name card in order until Meera is found", s + head + (STATIC ? "" : pointer(x0, y0, "p1") + cnt) + cap, css);
   }
 
-  // 4. Add up a list: each number hops into the total, which counts up
+  // 3. Way 2: open the middle, rule out half each time
   {
     resetBB();
-    const p = iso(0, 0, 24);
+    const p = iso(0, 0, 21);
+    const DUR = 8;
+    const { s, tops } = cardGrid(p);
+    // looks: K (8) -> M is later; P (12) -> M is earlier; M (10) found
+    const looks = [8, 12, 10];
+    const lookAt = (k) => 8 + k * 22;
+    const ruledOut = [[0, 8], [12, 15]]; // after look 0 and look 1
+    let css = "";
+    ruledOut.forEach(([a, z], k) => { for (let i = a; i <= z; i++) css += fadeOut(i, lookAt(k) + 6, DUR); });
+    for (const i of [9, 11]) css += fadeOut(i, lookAt(2) + 4, DUR);
+    const [x0, y0] = tops[looks[0]];
+    let kf = `0%,${pct(lookAt(0) - 0.1)}{opacity:0;transform:translate(0,0)}`;
+    looks.forEach((m, k) => (kf += `${pct(lookAt(k))}{opacity:1;transform:translate(${f(tops[m][0] - x0)}px,${f(tops[m][1] - y0)}px)}`));
+    kf += `92%{opacity:1;transform:translate(${f(tops[TARGET][0] - x0)}px,${f(tops[TARGET][1] - y0)}px)}93%,100%{opacity:0}`;
+    const wins = looks.map((_, k) => [lookAt(k), k === looks.length - 1 ? 92 : lookAt(k + 1) - 0.1]);
+    css += `.p2{animation:p2 ${DUR}s steps(1,end) infinite}@keyframes p2{${kf}}` + foundCss(lookAt(2), DUR) + counterCss(wins, DUR);
+    const head = text(BB.x0 + 4, BB.y0 - 30, "Looking for: Meera", { size: 13, weight: 800, fill: "#334155", anchor: "start" });
+    const cnt = counter(BB.x1 - 30, BB.y0 - 30, wins);
+    const cap = caption("Open the middle, rule out half: 3 looks to reach M");
+    files["phone-book-halve"] = svg("Way 2: open the middle card and rule out half each time; Meera is found in three looks", s + head + (STATIC ? "" : pointer(x0, y0, "p2") + cnt) + cap, css);
+  }
+
+  // 4. Add up a list: spaced number blocks hop one by one into a glass jar that shows the total
+  {
+    resetBB();
+    const p = iso(0, 0, 22);
+    const DUR = 6.5;
     const vals = [3, 1, 4, 1, 5];
-    let b = ground(p, -0.4, -0.4, 5 * 1.3 + 2.6, 1.9);
-    const TX = 5 * 1.3 + 0.4;
-    b += box(p, TX, -0.2, 0, 1.5, 1.5, 1.3, GREEN);
-    const [tx, ty] = topC(p, TX, -0.2, 0, 1.5, 1.5, 1.3);
+    const SP = 1.8, JX = 5 * SP + 1.0, JY = 0.45;
+    let b = ground(p, -0.6, -0.6, JX + 1.8, 2.3);
+    b += shadow(p, JX, JY, 0.85) + cyl(p, JX, JY, 0, 0.85, 1.2, GLASS);
+    const [jx, jy] = p(JX, JY, 1.2);
     let css = "", blocks = "";
-    const hopAt = (i) => 10 + i * 15;
+    const hopAt = (i) => 8 + i * 16;
     vals.forEach((v, i) => {
-      const x = i * 1.3;
-      const [bx, by] = topC(p, x, 0, 0, 1, 1, 0.8);
-      blocks += `<g class="n${i}">${box(p, x, 0, 0, 1, 1, 0.8, BLUE)}${text(bx, by + 5, v, { size: 14, weight: 800, fill: "#1E3A8A" })}</g>`;
-      const dx = tx - bx, dy = ty - by, t = hopAt(i);
-      // straight up, across above the row, then down into the total
-      const up = -64 - Math.max(0, -dy);
-      css += `.n${i}{animation:n${i} 6s ease-in-out infinite}@keyframes n${i}{0%,${pct(t)}{transform:translate(0,0);opacity:1}${pct(t + 3)}{transform:translate(0,${f(up)}px);opacity:1}${pct(t + 7)}{transform:translate(${f(dx)}px,${f(up)}px);opacity:1}${pct(t + 9)}{transform:translate(${f(dx)}px,${f(dy - 26)}px);opacity:0}93%{transform:translate(${f(dx)}px,${f(dy - 26)}px);opacity:0}96%{transform:translate(0,0);opacity:0}100%{transform:translate(0,0);opacity:1}}`;
+      const x = i * SP;
+      const [bx, by] = topC(p, x, 0, 0, 0.9, 0.9, 0.9);
+      blocks += `<g class="n${i}">${box(p, x, 0, 0, 0.9, 0.9, 0.9, BLUE)}${text(bx, by + 5, v, { size: 14, weight: 800, fill: "#1E3A8A" })}</g>`;
+      const dx = jx - bx, dy = jy - by, t = hopAt(i), up = -64 - Math.max(0, -dy);
+      css += `.n${i}{animation:n${i} ${DUR}s ease-in-out infinite}@keyframes n${i}{0%,${pct(t)}{transform:translate(0,0);opacity:1}${pct(t + 3)}{transform:translate(0,${f(up)}px);opacity:1}${pct(t + 7)}{transform:translate(${f(dx)}px,${f(up)}px);opacity:1}${pct(t + 9)}{transform:translate(${f(dx)}px,${f(dy - 30)}px);opacity:0}93%{transform:translate(${f(dx)}px,${f(dy - 30)}px);opacity:0}96%{transform:translate(0,0);opacity:0}100%{transform:translate(0,0);opacity:1}}`;
+      b += shadow(p, x + 0.45, 0.45, 0.6);
     });
-    // running total, shown on the total box
+    track(jx, jy - 96);
     const totals = [0, 3, 4, 8, 9, 14];
     let tot = "";
     totals.forEach((v, k) => {
-      const a = k === 0 ? 0 : hopAt(k - 1) + 10, z = k === totals.length - 1 ? 94 : hopAt(k) + 10;
-      tot += text(tx, ty + 6, v, { size: 16, weight: 800, fill: "#065F46", attrs: `class="t${k}"` });
-      css += shown(`t${k}`, 6, a, k === totals.length - 1 ? z : z - 0.4, k === 0);
+      const a = k === 0 ? 0 : hopAt(k - 1) + 9, z = k === totals.length - 1 ? 94 : hopAt(k) + 9;
+      tot += text(jx, jy + 6, v, { size: 17, weight: 800, fill: "#065F46", attrs: `class="t${k}"` });
+      css += shown(`t${k}`, DUR, a, k === totals.length - 1 ? z : z - 0.4, k === 0);
     });
-    const [rx, ry] = p(TX + 1.5, -0.2, 1.3);
-    const label = text(rx + 10, ry + 4, "total", { size: 12, weight: 800, fill: "#059669", anchor: "start" });
-    track(tx, ty - 84); // room for the hop
+    const [rx, ry] = p(JX + 0.85, JY, 1.2);
+    const label = text(rx + 12, ry + 4, "total", { size: 12, weight: 800, fill: "#059669", anchor: "start" });
     const cap = caption("5 numbers → 5 additions, on any computer");
-    const staticTot = text(tx, ty + 6, 14, { size: 16, weight: 800, fill: "#065F46" });
+    const staticTot = text(jx, jy + 6, 14, { size: 17, weight: 800, fill: "#065F46" });
     files["sum"] = svg("Adding up a list: each number is added to the total once", b + blocks + (STATIC ? staticTot : tot) + label + cap, css);
   }
 
   // 5. What n means: n doubles; the n-step row doubles, the log n tower adds one block
   {
     resetBB();
-    const p = iso(0, 0, 15);
-    const q = iso(205, 6, 15);
-    let b = ground(p, -0.4, -0.4, 16 * 0.8 + 0.2, 1.6);
-    let css = "", row = "", tower = "";
-    const phase = [0, 33, 66]; // n = 4, 8, 16
-    const showAt = (ph) => phase[ph];
+    const p = iso(0, 0, 13);
+    const q = iso(236, 0, 13);
+    q.s = 13;
+    const DUR = 7.5;
+    const showAt = (ph) => [0, 33, 66][ph];
     const fade = (cls, ph) =>
-      ph === 0 ? "" : `.${cls}{animation:${cls} 7.5s ease-out infinite;opacity:0}@keyframes ${cls}{0%,${pct(showAt(ph) + 1)}{opacity:0;transform:translateY(-10px)}${pct(showAt(ph) + 6)},94%{opacity:1;transform:translateY(0)}98%,100%{opacity:0}}`;
+      ph === 0 ? "" : `.${cls}{animation:${cls} ${DUR}s ease-out infinite;opacity:0}@keyframes ${cls}{0%,${pct(showAt(ph) + 1)}{opacity:0;transform:translateY(-10px)}${pct(showAt(ph) + 6)},94%{opacity:1;transform:translateY(0)}98%,100%{opacity:0}}`;
+    let b = ground(p, -0.5, -0.5, 16 * 1.15 + 0.3, 1.7);
+    let css = "", row = "", tower = "";
     for (let i = 0; i < 16; i++) {
       const ph = i < 4 ? 0 : i < 8 ? 1 : 2;
-      row += `<g class="r${i}">${box(p, i * 0.8, 0, 0, 0.6, 0.6, 0.6, BLUE)}</g>`;
-      css += fade(`r${i}`, ph).replaceAll(`@keyframes r${i}`, `@keyframes r${i}`);
+      row += `<g class="r${i}">${box(p, i * 1.15, 0, 0, 0.7, 0.7, 0.7, BLUE)}</g>`;
+      css += fade(`r${i}`, ph);
     }
-    b += `${ground(q, -0.6, -0.6, 1.8, 1.8)}`;
+    b += ground(q, -0.6, -0.6, 2, 2);
     for (let j = 0; j < 4; j++) {
       const ph = j < 2 ? 0 : j === 2 ? 1 : 2;
-      tower += `<g class="w${j}">${box(q, 0, 0, j * 0.7, 0.6, 0.6, 0.6, GREEN)}</g>`;
+      tower += `<g class="w${j}">${box(q, 0, 0, j * 0.85, 0.8, 0.8, 0.75, GREEN)}</g>`;
       css += fade(`w${j}`, ph);
     }
-    // labels: n = 4 / 8 / 16 with step counts
-    const [lx, ly] = p(6, 2.2, 0);
-    const [wx, wy] = q(0.3, 1.6, 0);
+    const [lx, ly] = p(8.5, 2.4, 0);
+    const [wx, wy] = q(0.4, 1.9, 0);
     const lab = (k, n, lg) => {
-      const a = showAt(k), z = k === 2 ? 94 : showAt(k + 1) - 0.2;
-      css += shown(`l${k}`, 7.5, a, k === 2 ? z : z - 0.4, k === 0);
+      const a = showAt(k), z = k === 2 ? 94 : showAt(k + 1) - 0.4;
+      css += shown(`l${k}`, DUR, a, z, k === 0);
       return `<g class="l${k}">${text(lx, ly + 22, `n = ${n} → ${n} steps`, { size: 13, weight: 800, fill: "#1D4ED8" })}${text(wx, wy + 22, `log n → ${lg} steps`, { size: 13, weight: 800, fill: "#047857" })}</g>`;
     };
     const labels = STATIC
