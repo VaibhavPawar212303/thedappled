@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { AUTOMATION_SLUGS, getAssignmentForUser } from "@/lib/assignments";
 import { chosenTool } from "@/lib/tool-choice";
 import { getManualProgress } from "@/lib/manual-progress";
+import { ManualPendingSync } from "./manual-testing/_components/manual-pending-sync";
 
 export const metadata: Metadata = {
   title: "Learn Software Testing – Testing Learning Path",
@@ -359,6 +360,7 @@ export default async function TestingPage() {
         </div>
         <div className="border-t border-slate-800 px-4 py-6 text-center text-xs text-slate-500">© 2026 Thedappled Inc. All rights reserved.</div>
       </footer>
+      <ManualPendingSync />
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { ArrowLeft, Check, Clock } from "lucide-react";
 import { MANUAL_LESSONS, manualLesson, type ManualLessonSlug } from "@/lib/manual-quizzes";
 import { getManualProgress } from "@/lib/manual-progress";
 import { LessonQuiz } from "./lesson-quiz";
+import { ManualPendingSync } from "./manual-pending-sync";
 
 // Shared frame for Manual testing lessons: hero (with "Completed" badge), sidebar ("Your progress" +
 // "On this page" + previous/next), the lesson content, the quiz, and previous/next navigation.
@@ -211,6 +212,7 @@ export async function LessonLayout({
           </div>
         </aside>
       </div>
+      <ManualPendingSync skip={lesson} />
     </div>
   );
 }

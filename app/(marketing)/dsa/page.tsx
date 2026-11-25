@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { FOUNDATIONS_STEPS } from "@/lib/dsa-lessons";
 import { getDsaProgress } from "@/lib/dsa-progress";
 import { COMPILER_URL, DsaFooter } from "./_components/dsa-footer";
+import { DsaPendingSync } from "./_components/dsa-pending-sync";
 
 export const metadata: Metadata = {
   title: "Learn Data Structures and Algorithms – DSA Learning Path",
@@ -300,6 +301,7 @@ export default async function DsaPage() {
         </div>
       </section>
 
+      <DsaPendingSync />
       <DsaFooter />
     </div>
   );

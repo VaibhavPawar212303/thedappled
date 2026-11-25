@@ -6,6 +6,7 @@ import { DSA_QUIZZES, FOUNDATIONS_STEPS, dsaStep } from "@/lib/dsa-lessons";
 import { getDsaProgress } from "@/lib/dsa-progress";
 import { DsaQuiz } from "./dsa-quiz";
 import { DsaFooter } from "./dsa-footer";
+import { DsaPendingSync } from "./dsa-pending-sync";
 
 // Shared frame for DSA Foundations lessons: hero (with "Completed" badge), the lesson sections,
 // the quiz, step navigation, and a sidebar ("Your progress", "On this page", next step).
@@ -196,6 +197,7 @@ export async function DsaLessonLayout({
           </div>
         </aside>
       </div>
+      <DsaPendingSync skip={S.id} />
       <DsaFooter />
     </div>
   );

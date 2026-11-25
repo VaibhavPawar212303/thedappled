@@ -3,9 +3,10 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { SignInButton } from "@clerk/nextjs";
+import { SignInButton, useAuth } from "@clerk/nextjs";
 import { ArrowRight, Check, Info, X } from "lucide-react";
 import type { DsaQuestion } from "@/lib/dsa-lessons";
+import { readPending, savePending, sendQuiz } from "./dsa-pending";
 
 type Saved = { passed: boolean; done: number; totalSteps: number };
 
@@ -15,7 +16,7 @@ type Saved = { passed: boolean; done: number; totalSteps: number };
 export function DsaQuiz({
   step,
   questions,
-  signedIn,
+  signedIn: signedInOnServer,
   next,
 }: {
   step: string;
@@ -24,6 +25,9 @@ export function DsaQuiz({
   next?: { label: string; href: string };
 }) {
   const router = useRouter();
+  // The server's answer at render time, or Clerk's live state (true as soon as the sign-in modal closes).
+  const { isSignedIn } = useAuth();
+  const signedIn = signedInOnServer || Boolean(isSignedIn);
   const total = questions.length;
   const [picked, setPicked] = React.useState<(number | null)[]>(() => questions.map(() => null));
   const [result, setResult] = React.useState<(boolean | null)[]>(() => questions.map(() => null));
@@ -41,27 +45,51 @@ export function DsaQuiz({
     setResult((r) => r.map((v, i) => (i === qi ? null : v)));
   };
 
+  // A quiz finished (5 of 5) while signed out is kept in this browser (see dsa-pending.ts) and saved
+  // as soon as the learner signs in.
+  const submit = React.useCallback(
+    async (answers: (number | null)[]) => {
+      setSaving(true);
+      setSaveError(false);
+      try {
+        const d = await sendQuiz(step, answers);
+        if (!d) throw new Error();
+        setSaved({ passed: Boolean(d.passed), done: d.done, totalSteps: d.totalSteps });
+        if (d.passed) router.refresh(); // update the "Completed" badge and sidebar progress
+      } catch {
+        setSaveError(true);
+      }
+      setSaving(false);
+    },
+    [step, router],
+  );
+
   const check = async () => {
-    setResult(questions.map((q, i) => picked[i] === q.answer));
+    const marks = questions.map((q, i) => picked[i] === q.answer);
+    setResult(marks);
     setAttempts((n) => n + 1);
-    if (!signedIn) return;
-    setSaving(true);
-    setSaveError(false);
-    try {
-      const r = await fetch("/api/dsa/quiz", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ step, answers: picked }),
-      });
-      if (!r.ok) throw new Error();
-      const d = await r.json();
-      setSaved({ passed: Boolean(d.passed), done: d.done, totalSteps: d.totalSteps });
-      if (d.passed) router.refresh(); // update the "Completed" badge and sidebar progress
-    } catch {
-      setSaveError(true);
+    if (!signedIn) {
+      if (marks.every(Boolean)) savePending(step, picked);
+      return;
     }
-    setSaving(false);
+    await submit(picked);
   };
+
+  // After signing in: save this lesson's quiz if it was finished while signed out (still on screen, or
+  // stored from before a sign-in that reloaded the page or happened elsewhere). Shows it as finished.
+  const autoSaved = React.useRef(false);
+  React.useEffect(() => {
+    if (!signedIn || autoSaved.current) return;
+    const stored = readPending(step);
+    const pending = stored && stored.length === total ? stored : finished && !saved ? picked : null;
+    if (!pending) return;
+    autoSaved.current = true;
+    setPicked(pending);
+    setResult(questions.map((q, i) => pending[i] === q.answer));
+    setAttempts((n) => Math.max(n, 1));
+    void submit(pending);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [signedIn]);
 
   return (
     <div data-testid="dsa-quiz" className="mt-6 rounded-2xl border bg-card p-6 sm:p-8">
@@ -176,7 +204,7 @@ function ResultPanel({
         <Info className="h-6 w-6 shrink-0 text-blue-600" aria-hidden="true" />
         <div className="min-w-0 flex-1">
           <p className="font-extrabold text-blue-700 dark:text-blue-300">Sign in to save your progress.</p>
-          <p className="text-sm text-blue-900 dark:text-blue-200">The quiz works without an account, but only signed-in learners keep their progress.</p>
+          <p className="text-sm text-blue-900 dark:text-blue-200">Your result is kept in this browser and saved to your roadmap as soon as you sign in.</p>
         </div>
         <SignInButton mode="modal">
           <button type="button" className="h-10 shrink-0 rounded-[10px] bg-blue-600 px-5 text-sm font-bold text-white hover:bg-blue-700">Sign in</button>
@@ -185,7 +213,8 @@ function ResultPanel({
     );
   }
 
-  if (saving) return <p className="mt-3 text-sm text-muted-foreground">Saving your result…</p>;
+  // Not saved yet and no error: a save is about to start (e.g. right after signing in).
+  if (saving || (!saved && !saveError)) return <p className="mt-3 text-sm text-muted-foreground">Saving your result…</p>;
 
   if (saveError || !saved?.passed) {
     return (
