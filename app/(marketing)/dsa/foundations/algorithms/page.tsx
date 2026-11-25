@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { DsaLessonLayout, SectionHead } from "../../_components/dsa-lesson-layout";
 import { CodeBlock } from "../../_components/code-block";
-import { Cards, KeyIdea, P, PlainSteps, Tip } from "../../_components/lesson-blocks";
+import { Cards, Figure, Illustration, KeyIdea, P, PlainSteps, Tip } from "../../_components/lesson-blocks";
+
+// Animated isometric illustrations (public/dsa/algorithms/*.svg, made by scripts/gen-dsa-illustrations.mjs).
+const PIC = "/dsa/algorithms";
 
 // Design: Penpot "27 - DSA Learning Path", page "Foundations 1 – What is an algorithm?".
 
@@ -46,6 +49,11 @@ export default function AlgorithmsLessonPage() {
             { t: "Sorting playing cards", d: "Find the smallest card, put it first, repeat." },
           ]}
         />
+        <Figure
+          src={`${PIC}/recipe.svg`}
+          alt="Four steps as a staircase (boil water, add tea, wait, pour) lighting up one after another"
+          caption="An algorithm runs its steps in a fixed order, from the first to the last."
+        />
         <KeyIdea>
           A computer can&apos;t guess. An algorithm spells out every step so the computer can follow it exactly, and so we can count how many steps it takes.
         </KeyIdea>
@@ -56,12 +64,22 @@ export default function AlgorithmsLessonPage() {
         <P>Imagine a printed phone book with 1,000 names, sorted A to Z. You want to find “Meera”. Here are two algorithms that both work:</P>
         <div data-testid="phone-book" className="mt-6 grid gap-4 rounded-2xl border bg-card p-4 sm:grid-cols-2 sm:p-5">
           <div className="rounded-xl border border-red-200 bg-red-50 p-5 dark:border-red-900 dark:bg-red-950/30">
+            <Illustration
+              src={`${PIC}/phone-book-scan.svg`}
+              alt="A row of ten pages; a pointer checks each one in turn and finds the name on the eighth look"
+              className="-mx-5 -mt-5 mb-4 rounded-t-xl border-b border-red-200 dark:border-red-900"
+            />
             <p className="font-bold">Way 1: check every name</p>
             <p className="mt-1 text-sm text-muted-foreground">Start at the first page and read each name until you find it.</p>
             <p className="mt-4 text-3xl font-extrabold text-red-700 dark:text-red-400">up to 1,000 looks</p>
             <p className="mt-3 text-sm text-slate-700 dark:text-slate-300">Twice the names → twice the looks.</p>
           </div>
           <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-5 dark:border-emerald-900 dark:bg-emerald-950/30">
+            <Illustration
+              src={`${PIC}/phone-book-halve.svg`}
+              alt="Sixteen pages; each look opens the middle and the other half fades away, finding the name in four looks"
+              className="-mx-5 -mt-5 mb-4 rounded-t-xl border-b border-emerald-200 dark:border-emerald-900"
+            />
             <p className="font-bold">Way 2: open the middle</p>
             <p className="mt-1 text-sm text-muted-foreground">Names are sorted. Open the middle, keep the half with your name, repeat.</p>
             <p className="mt-4 text-3xl font-extrabold text-emerald-700 dark:text-emerald-400">about 10 looks</p>
@@ -82,6 +100,11 @@ export default function AlgorithmsLessonPage() {
           Why not just time the code with a stopwatch? Because the same code runs faster on a new laptop than on an old phone. Seconds tell you about the computer.
           Steps tell you about the algorithm.
         </P>
+        <Figure
+          src={`${PIC}/sum.svg`}
+          alt="Numbers 3, 1, 4, 1 and 5 hop one by one into a total box that counts up to 14"
+          caption="One addition per number: 5 numbers, 5 additions."
+        />
         <PlainSteps
           title="Add up a list of numbers"
           steps={["Start with a total of 0.", "Go through the numbers one by one.", "Add each number to the total.", "When you reach the end, the total is the answer."]}
@@ -101,6 +124,11 @@ export default function AlgorithmsLessonPage() {
             { big: "n", t: "Phone book, way 1", d: "Up to n looks: one per name." },
             { big: "log n", t: "Phone book, way 2", d: "About log₂ n looks: halve until one name is left." },
           ]}
+        />
+        <Figure
+          src={`${PIC}/n-grows.svg`}
+          alt="As n goes from 4 to 8 to 16, a row of n blocks doubles while a log n tower grows by one block"
+          caption="n = 4, 8, 16: the n-step row doubles each time, the log n tower adds just one block."
         />
         <KeyIdea title="Next step">Big-O is a short label for how the number of steps grows as n grows. In the next step you&apos;ll learn to read it straight from a loop.</KeyIdea>
       </section>
