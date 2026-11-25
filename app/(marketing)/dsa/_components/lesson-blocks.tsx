@@ -56,6 +56,43 @@ export function Illustration({ src, alt, className = "", maxW = "max-w-[360px]" 
   );
 }
 
+// A small table, e.g. "n → steps". The first column is the row label; `hot` highlights one column.
+export function DataTable({ caption, head, rows, hot }: { caption?: string; head: string[]; rows: React.ReactNode[][]; hot?: number }) {
+  return (
+    <div className="mt-6 overflow-x-auto rounded-2xl border">
+      <table className="w-full border-collapse text-left text-[15px]">
+        {caption && <caption className="border-b bg-slate-50 px-4 py-2.5 text-left text-sm font-bold text-slate-700 dark:bg-slate-900/40 dark:text-slate-300">{caption}</caption>}
+        <thead>
+          <tr className="bg-slate-50 dark:bg-slate-900/40">
+            {head.map((h, i) => (
+              <th key={h} scope="col" className={`whitespace-nowrap border-b px-4 py-2.5 text-xs font-bold uppercase tracking-wide ${i === hot ? "text-blue-700 dark:text-blue-300" : "text-muted-foreground"}`}>
+                {h}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((r, ri) => (
+            <tr key={ri} className="border-b last:border-b-0">
+              {r.map((c, ci) =>
+                ci === 0 ? (
+                  <th key={ci} scope="row" className="whitespace-nowrap px-4 py-2.5 font-mono font-bold text-slate-900 dark:text-slate-100">
+                    {c}
+                  </th>
+                ) : (
+                  <td key={ci} className={`whitespace-nowrap px-4 py-2.5 font-mono ${ci === hot ? "font-bold text-blue-700 dark:text-blue-300" : "text-slate-700 dark:text-slate-300"}`}>
+                    {c}
+                  </td>
+                ),
+              )}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 // A wide illustration for a section (e.g. above the plain-English steps).
 export function Figure({ src, alt, caption }: { src: string; alt: string; caption?: string }) {
   return (

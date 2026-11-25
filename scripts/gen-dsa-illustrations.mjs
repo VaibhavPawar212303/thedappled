@@ -1,6 +1,7 @@
 // Animated isometric SVG illustrations for the DSA Foundations lessons.
 //   node scripts/gen-dsa-illustrations.mjs what-is-dsa public/dsa/what-is-dsa
 //   node scripts/gen-dsa-illustrations.mjs algorithms public/dsa/algorithms
+//   node scripts/gen-dsa-illustrations.mjs reading-loops public/dsa/reading-loops
 // (add --static for the Penpot copy)
 // Each picture is centred: the viewBox is fitted to the drawing's bounds (360:220, padded).
 // Animations are CSS inside the SVG (they run in <img>), and stop for prefers-reduced-motion.
@@ -9,7 +10,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const [LESSON, OUT = "."] = process.argv.slice(2).filter((a) => !a.startsWith("--"));
-if (!["what-is-dsa", "algorithms"].includes(LESSON)) throw new Error("usage: gen-dsa-illustrations.mjs <what-is-dsa|algorithms> <outDir> [--static]");
+if (!["what-is-dsa", "algorithms", "reading-loops"].includes(LESSON)) throw new Error("usage: gen-dsa-illustrations.mjs <what-is-dsa|algorithms|reading-loops> <outDir> [--static]");
 const STATIC = process.argv.includes("--static");
 const AR = 360 / 220;
 const C = Math.cos(Math.PI / 6), S = Math.sin(Math.PI / 6);
@@ -282,20 +283,21 @@ if (LESSON === "what-is-dsa") {
 
 // ===================== "What is an algorithm?" (Foundations step 1) =====================
 // Objects are drawn with gaps between them so nothing overlaps its neighbour, even while moving.
+// ---- shared by the lesson blocks below ----
+const pct = (v) => `${(+v).toFixed(1)}%`;
+// CSS for a label shown only between a% and z% of the loop. `first` labels also show from 96% (after the reset).
+const shown = (cls, dur, a, z, first = false) =>
+  `.${cls}{animation:${cls} ${dur}s linear infinite;opacity:${first ? 1 : 0}}@keyframes ${cls}{` +
+  (first ? `0%,${pct(z)}{opacity:1}${pct(z + 0.2)},${pct(95.8)}{opacity:0}96%,100%{opacity:1}}` : `0%,${pct(a - 0.2)}{opacity:0}${pct(a)},${pct(z)}{opacity:1}${pct(z + 0.2)},100%{opacity:0}}`);
+
+const STEEL = { top: "#F1F5F9", left: "#CBD5E1", right: "#94A3B8", edge: "#64748B" };
+const PAPER = { top: "#FFFFFF", left: "#E2E8F0", right: "#CBD5E1", edge: "#94A3B8" };
+const TEA = { top: "#FDE68A", left: "#FBBF24", right: "#F59E0B", edge: "#B45309" };
+const WOOD = { top: "#E7C9A0", left: "#C8A27A", right: "#A47E57", edge: "#7C5A3A" };
+const CHINA = { top: "#FFFFFF", left: "#F8FAFC", right: "#E2E8F0", edge: "#94A3B8" };
+const GLASS = { top: "#ECFDF5", left: "#D1FAE5", right: "#A7F3D0", edge: "#059669" };
+
 if (LESSON === "algorithms") {
-  const pct = (v) => `${(+v).toFixed(1)}%`;
-  // CSS for a label shown only between a% and z% of the loop. `first` labels also show from 96% (after the reset).
-  const shown = (cls, dur, a, z, first = false) =>
-    `.${cls}{animation:${cls} ${dur}s linear infinite;opacity:${first ? 1 : 0}}@keyframes ${cls}{` +
-    (first ? `0%,${pct(z)}{opacity:1}${pct(z + 0.2)},${pct(95.8)}{opacity:0}96%,100%{opacity:1}}` : `0%,${pct(a - 0.2)}{opacity:0}${pct(a)},${pct(z)}{opacity:1}${pct(z + 0.2)},100%{opacity:0}}`);
-
-  const STEEL = { top: "#F1F5F9", left: "#CBD5E1", right: "#94A3B8", edge: "#64748B" };
-  const PAPER = { top: "#FFFFFF", left: "#E2E8F0", right: "#CBD5E1", edge: "#94A3B8" };
-  const TEA = { top: "#FDE68A", left: "#FBBF24", right: "#F59E0B", edge: "#B45309" };
-  const WOOD = { top: "#E7C9A0", left: "#C8A27A", right: "#A47E57", edge: "#7C5A3A" };
-  const CHINA = { top: "#FFFFFF", left: "#F8FAFC", right: "#E2E8F0", edge: "#94A3B8" };
-  const GLASS = { top: "#ECFDF5", left: "#D1FAE5", right: "#A7F3D0", edge: "#059669" };
-
   // An upright cylinder standing on (x, y, z): side as a polygon (no paths, so the Penpot copy imports cleanly).
   const cyl = (p, x, y, z, r, h, col, attrs = "") => {
     const rx = r * Math.SQRT2 * C * p.s, ry = r * Math.SQRT2 * S * p.s;
@@ -537,6 +539,213 @@ if (LESSON === "algorithms") {
       : lab(0, 4, 2) + lab(1, 8, 3) + lab(2, 16, 4);
     const cap = caption("Double n: the row doubles, the tower grows by one");
     files["n-grows"] = svg("As n doubles, n steps doubles but log n steps grows by only one", b + row + tower + labels + cap, css);
+  }
+}
+
+// ===================== "Reading loops" (Foundations step 2) =====================
+if (LESSON === "reading-loops") {
+  const RED = { top: "#FECACA", left: "#F87171", right: "#EF4444", edge: "#B91C1C" };
+  const SKY = { top: "#CFFAFE", left: "#67E8F9", right: "#22D3EE", edge: "#0E7490" };
+  // A flat tile / short block in a grid laid out across the screen: col -> right, row -> down.
+  const cell = (col, row, gap, rowGap = gap) => ({ x: col * gap + row * rowGap, y: -col * gap + row * rowGap });
+  const pointer = (x, y, cls) => {
+    track(x - 7, y - 34);
+    return `<polygon class="${cls}" points="${f(x - 7)},${f(y - 34)} ${f(x + 7)},${f(y - 34)} ${f(x)},${f(y - 22)}" fill="#2563EB"/>`;
+  };
+  // stacked labels: label k is visible in wins[k] = [a, z] (% of the loop)
+  const stackedText = (x, y, labels, wins, dur, o, prefix) => {
+    let s = "", css = "";
+    labels.forEach((t, k) => {
+      s += text(x, y, t, { ...o, attrs: `class="${prefix}${k}"` });
+      const [a, z] = wins[k];
+      css += shown(`${prefix}${k}`, dur, a, k < labels.length - 1 ? z - 0.6 : z, k === 0 && a === 0);
+    });
+    return { s, css };
+  };
+  const phaseAppear = (cls, at, dur) =>
+    `.${cls}{animation:${cls} ${dur}s ease-out infinite;opacity:0}@keyframes ${cls}{0%,${pct(at + 0.5)}{opacity:0;transform:translateY(-8px)}${pct(at + 5)},94%{opacity:1;transform:translateY(0)}98%,100%{opacity:0}}`;
+
+  // 1. Big-O shapes: as n goes 2 -> 4 -> 8, count the steps of O(1), O(log n), O(n), O(n²)
+  {
+    resetBB();
+    const p = iso(0, 0, 15);
+    const DUR = 9, PH = [0, 33, 66], NS = [2, 4, 8];
+    const T = 0.56, G = 0.64; // block size, block pitch
+    const plural = (c) => `${c} step${c === 1 ? "" : "s"}`;
+    let b = "", css = "";
+    // four groups placed left to right on screen
+    const groups = [
+      { key: "o1", name: "O(1)", col: GREEN, steps: () => [[0, 0]], count: () => 1 },
+      { key: "olog", name: "O(log n)", col: SKY, steps: (n) => [...Array(Math.log2(n)).keys()].map((k) => [0, k]), count: (n) => Math.log2(n) },
+      { key: "on", name: "O(n)", col: BLUE, steps: (n) => [...Array(n).keys()].map((k) => [k, 0]), count: (n) => n },
+      { key: "on2", name: "O(n²)", col: RED, steps: (n) => [...Array(n * n).keys()].map((k) => [k % n, Math.floor(k / n)]), count: (n) => n * n },
+    ];
+    const OX = [0, 2.6, 5.6, 11.2]; // group origins along the screen row (units of the (1,-1) direction)
+    const labelsY = [];
+    groups.forEach((g, gi) => {
+      const ox = OX[gi], base = { x: ox, y: -ox };
+      const outer = BB; resetBB(); // measure this group on its own, then merge
+      // every tile this group ever shows, with the phase it first appears in
+      const firstPhase = new Map();
+      NS.forEach((n, ph) => g.steps(n).forEach(([a, r]) => { const k = `${a},${r}`; if (!firstPhase.has(k)) firstPhase.set(k, ph); }));
+      const tiles = [...firstPhase.entries()].map(([k, ph]) => { const [a, r] = k.split(",").map(Number); return { a, r, ph }; });
+      // [a, r]: a runs down-right along the floor (world +x), r stacks upward (z); draw back to front, bottom to top
+      tiles.sort((u, v) => u.a - v.a || u.r - v.r);
+      tiles.forEach(({ a, r, ph }, ti) => {
+        const cls = `${g.key}${ti}`;
+        b += `<g class="${cls}">${box(p, base.x + a * G, base.y, r * G, T, T, T, g.col)}</g>`;
+        if (ph > 0) css += phaseAppear(cls, PH[ph], DUR);
+      });
+      labelsY.push([(BB.x0 + BB.x1) / 2, BB.y1]);
+      const mine = BB; BB = outer; track(mine.x0, mine.y0); track(mine.x1, mine.y1);
+    });
+    // names and step counts under each group (same baseline)
+    const baseY = BB.y1 + 22;
+    groups.forEach((g, gi) => {
+      const [lx] = labelsY[gi];
+      b += text(lx, baseY, g.name, { size: 14, weight: 800, fill: g.col.edge });
+      const st = stackedText(lx, baseY + 18, NS.map((n) => plural(g.count(n))), PH.map((a, k) => [a, k < 2 ? PH[k + 1] : 94]), DUR, { size: 12, weight: 700, fill: "#475569" }, `${g.key}c`);
+      b += STATIC ? text(lx, baseY + 18, plural(g.count(8)), { size: 12, weight: 700, fill: "#475569" }) : st.s;
+      css += st.css;
+    });
+    const nl = stackedText((BB.x0 + BB.x1) / 2, BB.y0 - 16, NS.map((n) => `n = ${n}`), PH.map((a, k) => [a, k < 2 ? PH[k + 1] : 94]), DUR, { size: 15, weight: 800, fill: "#0F172A" }, "nn");
+    b += STATIC ? text((BB.x0 + BB.x1) / 2, BB.y0 - 16, "n = 8", { size: 15, weight: 800, fill: "#0F172A" }) : nl.s;
+    css += nl.css;
+    files["big-o-shapes"] = svg("As n goes 2, 4, 8: O(1) stays 1 step, O(log n) adds one step, O(n) doubles, O(n²) grows into a square", b, css);
+  }
+
+  // Row of n items across the screen (used by one-loop, halving, no-loop)
+  const rowItems = (p, n, gap, colOf, labelOf, size = 0.6) => {
+    let s = "";
+    const tops = [];
+    for (let i = 0; i < n; i++) {
+      const { x, y } = cell(i, 0, gap);
+      const [tx, ty] = topC(p, x, y, 0, size, size, 0.45);
+      tops.push([tx, ty]);
+      s += `<g class="it${i}">${box(p, x, y, 0, size, size, 0.45, colOf(i))}${labelOf ? text(tx, ty + 4, labelOf(i), { size: 11, weight: 800, fill: "#1E3A8A" }) : ""}</g>`;
+    }
+    return { s, tops };
+  };
+
+  // 2. One loop: visit each of 8 items once
+  {
+    resetBB();
+    const p = iso(0, 0, 21);
+    const DUR = 7, N = 8, vals = [7, 3, 9, 1, 4, 8, 2, 6];
+    const { s, tops } = rowItems(p, N, 1.0, () => BLUE, (i) => vals[i], 0.8);
+    let css = "", lit = "";
+    const at = (k) => 6 + k * 9.5;
+    tops.forEach(([tx, ty], i) => {
+      const { x, y } = cell(i, 0, 1.0);
+      lit += `<g class="v${i}">${box(p, x, y, 0, 0.8, 0.8, 0.45, GREEN)}${text(tx, ty + 4, vals[i], { size: 11, weight: 800, fill: "#065F46" })}</g>`;
+      css += `.v${i}{animation:v${i} ${DUR}s ease-in-out infinite;opacity:0}@keyframes v${i}{0%,${pct(at(i))}{opacity:0}${pct(at(i) + 2)},92%{opacity:1}97%,100%{opacity:0}}`;
+    });
+    const [x0, y0] = tops[0];
+    let kf = `0%,${pct(at(0) - 0.1)}{opacity:0;transform:translate(0,0)}`;
+    tops.forEach(([x, y], k) => (kf += `${pct(at(k))}{opacity:1;transform:translate(${f(x - x0)}px,${f(y - y0)}px)}`));
+    kf += `92%{opacity:1;transform:translate(${f(tops[N - 1][0] - x0)}px,${f(tops[N - 1][1] - y0)}px)}93%,100%{opacity:0}`;
+    css += `.ptr{animation:ptr ${DUR}s steps(1,end) infinite}@keyframes ptr{${kf}}`;
+    const ptr = pointer(x0, y0, "ptr");
+    const cnt = stackedText((BB.x0 + BB.x1) / 2, BB.y0 - 14, vals.map((_, k) => `${k + 1} step${k ? "s" : ""}`), vals.map((_, k) => [at(k), k < N - 1 ? at(k + 1) : 92]), DUR, { size: 14, weight: 800, fill: "#2563EB" }, "c");
+    css += cnt.css;
+    const lab = text((BB.x0 + BB.x1) / 2, BB.y1 + 22, "n = 8 items → the loop body runs 8 times", { size: 13, weight: 700, fill: "#334155" });
+    files["one-loop"] = svg("One loop: a pointer visits each of 8 items once, 8 steps in total", s + (STATIC ? "" : lit + ptr + cnt.s) + lab, css);
+  }
+
+  // 3. Loop inside a loop: 4 x 4 grid, inner pointer sweeps each row
+  {
+    resetBB();
+    const p = iso(0, 0, 22);
+    const DUR = 10, N = 4, names = ["A", "B", "C", "D"], GAP = 1.15, RG = 2.0;
+    const at = (k) => 6 + k * 5.3; // 16 visits: 6% .. 85.5%
+    let s = "", lit = "", css = "";
+    const tops = [];
+    for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+      const { x, y } = cell(c, r, GAP, RG);
+      const [tx, ty] = topC(p, x, y, 0, 0.9, 0.9, 0.2);
+      tops.push([tx, ty]);
+      s += box(p, x, y, 0, 0.9, 0.9, 0.2, PAPER) + text(tx, ty + 4, names[r] + names[c], { size: 10, weight: 700, fill: "#94A3B8" });
+      const k = r * N + c;
+      lit += `<g class="g${k}">${box(p, x, y, 0, 0.9, 0.9, 0.2, GREEN)}${text(tx, ty + 4, names[r] + names[c], { size: 10, weight: 800, fill: "#065F46" })}</g>`;
+      css += `.g${k}{animation:g${k} ${DUR}s ease-in-out infinite;opacity:0}@keyframes g${k}{0%,${pct(at(k))}{opacity:0}${pct(at(k) + 1.5)},92%{opacity:1}97%,100%{opacity:0}}`;
+    }
+    // row labels (outer loop i) on the left, column labels (inner loop j) on top
+    for (let r = 0; r < N; r++) { const { x, y } = cell(-1, r, GAP, RG); const [lx, ly] = topC(p, x, y, 0, 0.9, 0.9, 0); s += text(lx, ly + 4, names[r], { size: 12, weight: 800, fill: "#7C3AED" }); }
+    for (let c = 0; c < N; c++) { const { x, y } = cell(c, -1.45, GAP, RG); const [lx, ly] = topC(p, x, y, 0, 0.9, 0.9, 0); s += text(lx, ly + 4, names[c], { size: 12, weight: 800, fill: "#2563EB" }); }
+    // outer-loop row marker (purple bar at the left of the current row)
+    const [rx0, ry0] = topC(p, cell(-1, 0, GAP, RG).x, cell(-1, 0, GAP, RG).y, 0, 0.9, 0.9, 0);
+    let okf = "";
+    for (let r = 0; r < N; r++) { const [rx, ry] = topC(p, cell(-1, r, GAP, RG).x, cell(-1, r, GAP, RG).y, 0, 0.9, 0.9, 0); okf += `${pct(at(r * N))}{opacity:1;transform:translate(${f(rx - rx0)}px,${f(ry - ry0)}px)}`; }
+    const row = `<rect class="orow" x="${f(rx0 - 13)}" y="${f(ry0 - 12)}" width="26" height="22" rx="7" fill="#7C3AED" fill-opacity="0.16" stroke="#7C3AED"/>`;
+    track(rx0 - 13, ry0 - 12);
+    css += `.orow{animation:orow ${DUR}s steps(1,end) infinite}@keyframes orow{0%,${pct(at(0) - 0.1)}{opacity:0}${okf}92%{opacity:1}93%,100%{opacity:0}}`;
+    const [x0, y0] = tops[0];
+    let kf = `0%,${pct(at(0) - 0.1)}{opacity:0;transform:translate(0,0)}`;
+    tops.forEach(([x, y], k) => (kf += `${pct(at(k))}{opacity:1;transform:translate(${f(x - x0)}px,${f(y - y0)}px)}`));
+    kf += `92%{opacity:1;transform:translate(${f(tops[15][0] - x0)}px,${f(tops[15][1] - y0)}px)}93%,100%{opacity:0}`;
+    css += `.ptr{animation:ptr ${DUR}s steps(1,end) infinite}@keyframes ptr{${kf}}`;
+    const ptr = pointer(x0, y0, "ptr");
+    const cnt = stackedText((BB.x0 + BB.x1) / 2, BB.y0 - 14, tops.map((_, k) => `${k + 1} step${k ? "s" : ""}`), tops.map((_, k) => [at(k), k < 15 ? at(k + 1) : 92]), DUR, { size: 14, weight: 800, fill: "#2563EB" }, "c");
+    css += cnt.css;
+    const lab = text((BB.x0 + BB.x1) / 2, BB.y1 + 22, "4 items → each pairs with all 4 → 4 × 4 = 16 steps", { size: 13, weight: 700, fill: "#334155" });
+    files["nested-loop"] = svg("Loop inside a loop: for each of 4 rows the inner loop visits all 4 columns, 16 steps in total", s + (STATIC ? "" : lit + row + ptr + cnt.s) + lab, css);
+  }
+
+  // 4. Halving: 16 -> 8 -> 4 -> 2 -> 1
+  {
+    resetBB();
+    const p = iso(0, 0, 17);
+    const DUR = 8, N = 16, TGT = 11;
+    const { s, tops } = rowItems(p, N, 0.68, (i) => (i === TGT ? GREEN : BLUE), null, 0.55);
+    // kept ranges after each halving
+    const R = [[0, 16], [8, 16], [8, 12], [10, 12], [11, 12]];
+    const at = (k) => 8 + k * 18; // halving k happens at at(k)
+    let css = "";
+    for (let i = 0; i < N; i++) {
+      if (i === TGT) continue;
+      const k = R.findIndex(([a, z]) => i < a || i >= z); // first range that drops it
+      const t = at(k - 1) + 4;
+      css += `.it${i}{animation:it${i} ${DUR}s ease-in-out infinite}@keyframes it${i}{0%,${pct(t)}{opacity:1;transform:translateY(0)}${pct(t + 4)},92%{opacity:.15;transform:translateY(8px)}97%,100%{opacity:1;transform:translateY(0)}}`;
+    }
+    css += `.it${TGT}{animation:lift ${DUR}s ease-in-out infinite}@keyframes lift{0%,${pct(at(3) + 4)}{transform:translateY(0)}${pct(at(3) + 8)},90%{transform:translateY(-8px)}96%,100%{transform:translateY(0)}}`;
+    // a cut line at the middle of the current range, each step
+    let cuts = "";
+    R.slice(0, 4).forEach(([a, z], k) => {
+      const m = (a + z) / 2;
+      const [cx, cy] = topC(p, cell(m - 0.5, 0, 0.68).x, cell(m - 0.5, 0, 0.68).y, 0, 0.55, 0.55, 0.45);
+      const cx2 = (cx + tops[Math.min(m, N - 1)][0]) / 2;
+      cuts += `<line class="cut${k}" x1="${f(cx2)}" y1="${f(cy - 26)}" x2="${f(cx2)}" y2="${f(cy + 26)}" stroke="#DC2626" stroke-width="2" stroke-dasharray="4 3"/>`;
+      track(cx2, cy - 26); track(cx2, cy + 26);
+      css += shown(`cut${k}`, DUR, at(k) - 3, at(k) + 5);
+    });
+    const left = ["16 left", "8 left", "4 left", "2 left", "1 left: found"];
+    const steps = ["start", "step 1", "step 2", "step 3", "step 4"];
+    const wins = left.map((_, k) => [k === 0 ? 0 : at(k - 1) + 6, k < 4 ? at(k) + 6 : 94]);
+    const top1 = stackedText((BB.x0 + BB.x1) / 2, BB.y0 - 30, steps, wins, DUR, { size: 14, weight: 800, fill: "#2563EB" }, "s");
+    const top2 = stackedText((BB.x0 + BB.x1) / 2, BB.y0 - 12, left, wins, DUR, { size: 13, weight: 700, fill: "#334155" }, "l");
+    css += top1.css + top2.css;
+    const lab = text((BB.x0 + BB.x1) / 2, BB.y1 + 22, "16 → 8 → 4 → 2 → 1: four halvings, so log₂ 16 = 4 steps", { size: 13, weight: 700, fill: "#334155" });
+    const stat = text((BB.x0 + BB.x1) / 2, BB.y0 - 12, "16 items", { size: 13, weight: 700, fill: "#334155" });
+    files["halving"] = svg("Halving: 16 items, keep half each step, one item left after 4 steps", s + (STATIC ? stat : cuts + top1.s + top2.s) + lab, css);
+  }
+
+  // 5. No loop: the row grows 4 -> 8 -> 16, reading a[0] is always one step
+  {
+    resetBB();
+    const p = iso(0, 0, 17);
+    const DUR = 8, PH = [0, 33, 66], NS = [4, 8, 16];
+    const { s: row, tops } = rowItems(p, 16, 0.68, (i) => (i === 0 ? GREEN : BLUE), (i) => i, 0.55);
+    let css = "";
+    for (let i = 4; i < 16; i++) css += phaseAppear(`it${i}`, PH[i < 8 ? 1 : 2], DUR);
+    const [x0, y0] = tops[0];
+    const arr = arrow(x0, y0 - 46, x0, y0 - 12, "#059669", 'class="jump"') + text(x0, y0 - 52, "a[0]", { size: 13, weight: 800, fill: "#059669", attrs: 'class="jump"' });
+    css += `.jump{animation:jump ${DUR / 3}s ease-in-out infinite}@keyframes jump{0%,20%{transform:translateY(-14px);opacity:0}40%,85%{transform:translateY(0);opacity:1}100%{opacity:0}}`;
+    const wins = PH.map((a, k) => [a, k < 2 ? PH[k + 1] : 94]);
+    const cnt = stackedText((BB.x0 + BB.x1) / 2 + 60, BB.y0 + 4, NS.map((n) => `n = ${n} → 1 step`), wins, DUR, { size: 14, weight: 800, fill: "#2563EB" }, "c");
+    css += cnt.css;
+    const lab = text((BB.x0 + BB.x1) / 2, BB.y1 + 22, "Reading a[0] takes one step, however long the list is", { size: 13, weight: 700, fill: "#334155" });
+    const stat = text((BB.x0 + BB.x1) / 2 + 60, BB.y0 + 4, "n = 16 → 1 step", { size: 14, weight: 800, fill: "#2563EB" });
+    files["no-loop"] = svg("No loop: the list grows from 4 to 8 to 16 items, but reading a[0] is always one step", row + arr + (STATIC ? stat : cnt.s) + lab, css);
   }
 }
 
