@@ -44,8 +44,7 @@ export function Cards({ items }: { items: { t: string; d: React.ReactNode; big?:
 export function PlainSteps({ title, steps }: { title?: string; steps: string[] }) {
   return (
     <div data-testid="plain-steps" className="mt-6 rounded-xl border bg-slate-50 p-5 dark:bg-slate-900/40">
-      <p className="text-[11px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">In plain English</p>
-      {title && <p className="mt-1 font-bold">{title}</p>}
+      {title && <p className="font-bold">{title}</p>}
       <ol className="m-0 mt-3 list-none space-y-2.5 p-0">
         {steps.map((s, i) => (
           <li key={s} className="flex items-start gap-3 text-[15px] text-slate-700 dark:text-slate-300">
