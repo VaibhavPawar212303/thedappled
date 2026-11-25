@@ -18,6 +18,12 @@ const nextConfig: NextConfig = {
         destination: "https://thedappled.com/:path*",
         permanent: true,
       },
+      // The single "Complexity & Big-O" lesson was split into DSA Foundations steps 1-4.
+      {
+        source: "/dsa/foundations/complexity",
+        destination: "/dsa/foundations/algorithms",
+        permanent: true,
+      },
     ];
   },
 

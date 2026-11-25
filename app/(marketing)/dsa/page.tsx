@@ -25,7 +25,7 @@ const NEW_CHIP = "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-
 
 // Design: Penpot "27 - DSA Learning Path", Roadmap page, board "DSA roadmap — desktop (new)".
 // Steps without an href have no page yet and show "Coming soon".
-type Step = { title: string; blurb: string; href?: string; id?: string };
+type Step = { title: string; blurb: string; href?: string; id?: string; isNew?: boolean };
 type Track = { id: string; title: string; level: string; tone: Tone; Icon: typeof Binary; isNew?: boolean; blurb: string; steps: Step[] };
 
 const TRACKS: Track[] = [
@@ -36,8 +36,8 @@ const TRACKS: Track[] = [
     tone: "blue",
     Icon: Binary,
     isNew: true,
-    blurb: "Learn how to measure code, then build the core data structures yourself: arrays, hash maps, linked lists, stacks and queues, and recursion.",
-    steps: FOUNDATIONS_STEPS.map(({ id, title, blurb, href }) => ({ id, title, blurb, href })),
+    blurb: "Start from zero: what an algorithm is and how to measure it, then build the core data structures yourself — arrays, hash maps, linked lists, stacks and queues, and recursion.",
+    steps: FOUNDATIONS_STEPS.map(({ id, title, blurb, href, isNew }) => ({ id, title, blurb, href, isNew })),
   },
   {
     id: "patterns",
@@ -211,7 +211,10 @@ export default async function DsaPage() {
                             <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-lg font-extrabold ${tone.chip}`}>{n}</span>
                           )}
                           <span className="min-w-0 flex-1">
-                            <span className="block text-xs font-bold uppercase tracking-wide text-muted-foreground">Step {n}</span>
+                            <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                              Step {n}
+                              {st.isNew && <span className={`rounded-full px-2 py-0.5 text-[11px] normal-case tracking-normal ${NEW_CHIP}`}>New</span>}
+                            </span>
                             <span className="mt-0.5 block text-lg font-bold">{st.title}</span>
                             <span className="mt-1 block text-sm leading-relaxed text-muted-foreground">{st.blurb}</span>
                           </span>
