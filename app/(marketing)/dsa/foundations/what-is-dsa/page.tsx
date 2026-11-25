@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { DsaLessonLayout, SectionHead } from "../../_components/dsa-lesson-layout";
 import { CodeBlock } from "../../_components/code-block";
-import { Cards, KeyIdea, P, PlainSteps, Tip } from "../../_components/lesson-blocks";
+import { Cards, Figure, KeyIdea, P, PlainSteps, Tip } from "../../_components/lesson-blocks";
+
+// Isometric illustrations for the data structure cards (public/dsa/what-is-dsa/*.svg).
+const pic = (name: string, alt: string) => ({ src: `/dsa/what-is-dsa/${name}.svg`, alt });
 
 // Design: Penpot "27 - DSA Learning Path", page "Foundations 0 – What is DSA?".
 
@@ -59,16 +62,12 @@ export default function WhatIsDsaLessonPage() {
         <P>You already use data structures in real life. Each one is good at a different job:</P>
         <Cards
           items={[
-            { t: "Array", d: "A row of numbered boxes, like seats in a cinema row. Jump straight to seat 5." },
-            { t: "Stack", d: "A pile of plates. You add to the top and take from the top." },
-            { t: "Queue", d: "A line at a ticket counter. The first person in is served first." },
-          ]}
-        />
-        <Cards
-          items={[
-            { t: "Hash map", d: "A dictionary. Look up a word and get its meaning straight away." },
-            { t: "Tree", d: "A family tree, or folders inside folders on your computer." },
-            { t: "Graph", d: "A map of cities and roads: anything connected to anything." },
+            { t: "Array", d: "A row of numbered boxes, like seats in a cinema row. Jump straight to seat 5.", img: pic("array", "A row of six numbered boxes; box 5 is reached directly") },
+            { t: "Stack", d: "A pile of plates. You add to the top and take from the top.", img: pic("stack", "A pile of plates; push adds to the top, pop takes from the top") },
+            { t: "Queue", d: "A line at a ticket counter. The first person in is served first.", img: pic("queue", "A line of blocks; new ones join at the back, the front one leaves first") },
+            { t: "Hash map", d: "A dictionary. Look up a word and get its meaning straight away.", img: pic("hash-map", "Keys cat, sun and map each drop straight into their own bucket") },
+            { t: "Tree", d: "A family tree, or folders inside folders on your computer.", img: pic("tree", "A root block with two branches, each with two more branches") },
+            { t: "Graph", d: "A map of cities and roads: anything connected to anything.", img: pic("graph", "Five city blocks joined by roads; one route is highlighted") },
           ]}
         />
         <Tip>Picking the right structure is half the work. Finding a word is slow in a pile of loose pages and fast in a sorted dictionary.</Tip>
@@ -77,6 +76,11 @@ export default function WhatIsDsaLessonPage() {
       <section>
         <SectionHead n={3} id="algorithms" title="Algorithms: steps that use the data" />
         <P>An algorithm is a list of steps. Here is one that works on a simple array of heights:</P>
+        <Figure
+          src="/dsa/what-is-dsa/tallest.svg"
+          alt="Six people as pillars of different heights in a line; the tallest, 222, is highlighted"
+          caption="Heights in a line. Walk down it once, remembering the tallest so far: here it ends at 222."
+        />
         <PlainSteps
           title="Find the tallest person in a line"
           steps={[

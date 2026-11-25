@@ -25,18 +25,44 @@ export function Tip({ title = "Remember", children }: { title?: string; children
   );
 }
 
-// Row of small concept cards. `big` is an optional large label (e.g. "n", "log n").
-export function Cards({ items }: { items: { t: string; d: React.ReactNode; big?: React.ReactNode }[] }) {
+// Row of small concept cards. `big` is an optional large label (e.g. "n", "log n"); `img` is an
+// optional illustration shown on top of the card (an SVG in /public, 360 × 220).
+type CardItem = { t: string; d: React.ReactNode; big?: React.ReactNode; img?: { src: string; alt: string } };
+
+export function Cards({ items }: { items: CardItem[] }) {
   return (
-    <div className="mt-6 grid gap-4 sm:grid-cols-3">
+    <div className={`mt-6 grid gap-4 ${items.some((c) => c.img) ? "sm:grid-cols-2" : "sm:grid-cols-3"}`}>
       {items.map((c) => (
-        <div key={c.t} className="rounded-2xl border bg-slate-50 p-5 dark:bg-slate-900/40">
-          {c.big && <p className="mb-2 font-mono text-2xl font-extrabold text-blue-700 dark:text-blue-300">{c.big}</p>}
-          <p className="font-bold">{c.t}</p>
-          <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{c.d}</p>
+        <div key={c.t} className="overflow-hidden rounded-2xl border bg-slate-50 dark:bg-slate-900/40">
+          {c.img && <Illustration src={c.img.src} alt={c.img.alt} className="border-b" />}
+          <div className="p-5">
+            {c.big && <p className="mb-2 font-mono text-2xl font-extrabold text-blue-700 dark:text-blue-300">{c.big}</p>}
+            <p className="font-bold">{c.t}</p>
+            <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{c.d}</p>
+          </div>
         </div>
       ))}
     </div>
+  );
+}
+
+// An isometric illustration (SVG, 360 × 220) on a light panel, so its colours read the same in dark mode.
+export function Illustration({ src, alt, className = "", maxW = "max-w-[360px]" }: { src: string; alt: string; className?: string; maxW?: string }) {
+  return (
+    <div className={`bg-slate-50 dark:bg-slate-100 ${className}`}>
+      {/* eslint-disable-next-line @next/next/no-img-element -- static SVG, nothing to optimise */}
+      <img src={src} alt={alt} width={360} height={220} loading="lazy" className={`mx-auto block h-auto w-full ${maxW}`} />
+    </div>
+  );
+}
+
+// A wide illustration for a section (e.g. above the plain-English steps).
+export function Figure({ src, alt, caption }: { src: string; alt: string; caption?: string }) {
+  return (
+    <figure className="mt-6 overflow-hidden rounded-2xl border">
+      <Illustration src={src} alt={alt} className="py-2" maxW="max-w-[480px]" />
+      {caption && <figcaption className="border-t px-5 py-3 text-sm text-muted-foreground">{caption}</figcaption>}
+    </figure>
   );
 }
 
