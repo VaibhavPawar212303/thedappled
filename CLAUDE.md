@@ -25,6 +25,6 @@ Posts are rows in the Notion database **LinkedIn Insta Drafts**. The Make scenar
 1. **Schedule:** weekdays only (prefer Tue–Thu, never Sat/Sun). Leave at least one day with no post between two posts. 3–4 posts a week. No two Ready rows on the same date.
 2. **Text:** 1,300–2,000 characters. Hook in the first two lines (about 200 characters). Short paragraphs with blank lines between them. End with one question.
 3. **Hashtags:** 3–5, at the end of the post.
-4. **Links:** at most one, near the end, never in the first two lines. (Make's LinkedIn app has no comment module, so the link can't go in a first comment.)
+4. **Links:** never in the post text. Put one link in the row's **First Comment** field; the post says "The link is in the first comment." The Make scenario posts that comment right after the post (LinkedIn API call) and sets **Comment Status** to Posted or Failed.
 5. **Image:** every post has one. 1080 × 1350 px portrait PNG, under 5 MB, in the Thedappled dark card style. Save it as `public/social/linkedin/<slug>.png` and push to `main` so it is live at `https://thedappled.com/social/linkedin/<slug>.png`.
 6. **Ready only when done:** set Status = Ready only after the text is final, the date follows rule 1, and the image URL loads in a browser. A broken image link makes the post fail.
