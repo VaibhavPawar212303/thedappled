@@ -14,17 +14,20 @@ export const DSA_FOUNDATIONS = "dsa-foundations";
 // Steps 1-4 replace the earlier single "Complexity & Big-O" lesson (id "dsa-complexity"), split
 // into short beginner lessons. Design: Penpot "27 - DSA Learning Path", pages "Foundations 1-4".
 // Step 0 ("Start here") was added before step 1 so the existing step numbers stay the same.
+// Step 3 ("DSA techniques") was added after Reading loops and the later steps moved down one. Step
+// ids (the progress keys) did not change, so saved progress is kept.
 export const FOUNDATIONS_STEPS: DsaStep[] = [
   { n: 0, id: "dsa-intro", title: "What is DSA?", blurb: "Data structures and algorithms in plain words, with everyday examples.", href: "/dsa/foundations/what-is-dsa", isNew: true },
   { n: 1, id: "dsa-algorithms", title: "What is an algorithm?", blurb: "Recipes, the phone-book search, and counting steps instead of seconds.", href: "/dsa/foundations/algorithms", isNew: true },
   { n: 2, id: "dsa-reading-loops", title: "Reading loops", blurb: "No loop O(1), one loop O(n), loop in a loop O(n²), halving O(log n).", href: "/dsa/foundations/reading-loops", isNew: true },
-  { n: 3, id: "dsa-comparing", title: "Comparing two solutions", blurb: "Best and worst case, brute force vs better, and O, Ω and Θ.", href: "/dsa/foundations/comparing-solutions", isNew: true },
-  { n: 4, id: "dsa-growth-memory", title: "Growth rates & memory", blurb: "Nine growth rates from O(1) to O(n!), and space complexity.", href: "/dsa/foundations/growth-rates", isNew: true },
-  { n: 5, id: "dsa-arrays", title: "Arrays & strings", blurb: "Indexing, in-place updates, prefix sums and string building." },
-  { n: 6, id: "dsa-hashing", title: "Hashing", blurb: "Hash maps and sets for counting, lookups and de-duplication." },
-  { n: 7, id: "dsa-linked-lists", title: "Linked lists", blurb: "Pointers, reversal, fast and slow runners, merging lists." },
-  { n: 8, id: "dsa-stacks-queues", title: "Stacks & queues", blurb: "LIFO and FIFO, balanced brackets, monotonic stacks." },
-  { n: 9, id: "dsa-recursion", title: "Recursion", blurb: "Base cases, the call stack, and thinking in smaller problems." },
+  { n: 3, id: "dsa-techniques", title: "DSA techniques", blurb: "20 techniques with real-world pictures, and how to spot them in a question.", href: "/dsa/foundations/techniques", isNew: true },
+  { n: 4, id: "dsa-comparing", title: "Comparing two solutions", blurb: "Best and worst case, brute force vs better, and O, Ω and Θ.", href: "/dsa/foundations/comparing-solutions", isNew: true },
+  { n: 5, id: "dsa-growth-memory", title: "Growth rates & memory", blurb: "Nine growth rates from O(1) to O(n!), and space complexity.", href: "/dsa/foundations/growth-rates", isNew: true },
+  { n: 6, id: "dsa-arrays", title: "Arrays & strings", blurb: "Indexing, in-place updates, prefix sums and string building." },
+  { n: 7, id: "dsa-hashing", title: "Hashing", blurb: "Hash maps and sets for counting, lookups and de-duplication." },
+  { n: 8, id: "dsa-linked-lists", title: "Linked lists", blurb: "Pointers, reversal, fast and slow runners, merging lists." },
+  { n: 9, id: "dsa-stacks-queues", title: "Stacks & queues", blurb: "LIFO and FIFO, balanced brackets, monotonic stacks." },
+  { n: 10, id: "dsa-recursion", title: "Recursion", blurb: "Base cases, the call stack, and thinking in smaller problems." },
 ];
 
 const INTRO: DsaQuestion[] = [
@@ -126,6 +129,39 @@ const READING_LOOPS: DsaQuestion[] = [
   },
 ];
 
+const TECHNIQUES: DsaQuestion[] = [
+  {
+    q: "Concatenation of Array (nums followed by nums again) mainly uses which technique?",
+    options: ["Binary search", "Backtracking", "Traversal", "Dynamic programming"],
+    answer: 2,
+    why: "You visit each item once and write it in two places: that's a traversal, O(n).",
+  },
+  {
+    q: "In the kitchen picture, which part is the technique?",
+    options: ["The containers", "Chopping", "The pancake recipe", "The fridge"],
+    answer: 1,
+    why: "A technique is a general way of working, like chopping. Containers are data structures; a recipe is an algorithm.",
+  },
+  {
+    q: "A question asks for the longest subarray with a sum under 10. Which technique should you try first?",
+    options: ["Sliding window", "Topological sort", "Union-Find", "Bit manipulation"],
+    answer: 0,
+    why: "“Longest subarray” is a sliding-window clue: a section of the list that grows and shrinks as it moves along.",
+  },
+  {
+    q: "You must check, many times, whether a name was seen before. What makes each check one step?",
+    options: ["Sorting the names every time", "Hashing: a hash set", "Two nested loops", "Recursion"],
+    answer: 1,
+    why: "A hash set jumps straight to where a name would be, like going straight to locker number 7.",
+  },
+  {
+    q: "Paying 65 with the biggest coin that fits each time (50, then 10, then 5) is an example of…",
+    options: ["Greedy", "Dynamic programming", "Binary search", "BFS"],
+    answer: 0,
+    why: "Greedy takes the best-looking choice at each step and never goes back.",
+  },
+];
+
 const COMPARING: DsaQuestion[] = [
   {
     q: "Searching a list for a number that happens to be first is the…",
@@ -196,6 +232,7 @@ export const DSA_QUIZZES: Record<string, DsaQuestion[]> = {
   "dsa-intro": INTRO,
   "dsa-algorithms": ALGORITHMS,
   "dsa-reading-loops": READING_LOOPS,
+  "dsa-techniques": TECHNIQUES,
   "dsa-comparing": COMPARING,
   "dsa-growth-memory": GROWTH_MEMORY,
 };

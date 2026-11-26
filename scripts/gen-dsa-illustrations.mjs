@@ -2,6 +2,7 @@
 //   node scripts/gen-dsa-illustrations.mjs what-is-dsa public/dsa/what-is-dsa
 //   node scripts/gen-dsa-illustrations.mjs algorithms public/dsa/algorithms
 //   node scripts/gen-dsa-illustrations.mjs reading-loops public/dsa/reading-loops
+//   node scripts/gen-dsa-illustrations.mjs techniques public/dsa/techniques
 // (add --static for the Penpot copy)
 // Each picture is centred: the viewBox is fitted to the drawing's bounds (360:220, padded).
 // Animations are CSS inside the SVG (they run in <img>), and stop for prefers-reduced-motion.
@@ -10,7 +11,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const [LESSON, OUT = "."] = process.argv.slice(2).filter((a) => !a.startsWith("--"));
-if (!["what-is-dsa", "algorithms", "reading-loops"].includes(LESSON)) throw new Error("usage: gen-dsa-illustrations.mjs <what-is-dsa|algorithms|reading-loops> <outDir> [--static]");
+if (!["what-is-dsa", "algorithms", "reading-loops", "techniques"].includes(LESSON)) throw new Error("usage: gen-dsa-illustrations.mjs <what-is-dsa|algorithms|reading-loops|techniques> <outDir> [--static]");
 const STATIC = process.argv.includes("--static");
 const AR = 360 / 220;
 const C = Math.cos(Math.PI / 6), S = Math.sin(Math.PI / 6);
@@ -297,28 +298,50 @@ const WOOD = { top: "#E7C9A0", left: "#C8A27A", right: "#A47E57", edge: "#7C5A3A
 const CHINA = { top: "#FFFFFF", left: "#F8FAFC", right: "#E2E8F0", edge: "#94A3B8" };
 const GLASS = { top: "#ECFDF5", left: "#D1FAE5", right: "#A7F3D0", edge: "#059669" };
 
-if (LESSON === "algorithms") {
-  // An upright cylinder standing on (x, y, z): side as a polygon (no paths, so the Penpot copy imports cleanly).
-  const cyl = (p, x, y, z, r, h, col, attrs = "") => {
-    const rx = r * Math.SQRT2 * C * p.s, ry = r * Math.SQRT2 * S * p.s;
-    const [bx, by] = p(x, y, z), [tx, ty] = p(x, y, z + h);
-    const arc = [];
-    for (let k = 0; k <= 16; k++) { const a = (Math.PI * k) / 16; arc.push([bx + rx * Math.cos(a), by + ry * Math.sin(a)]); }
-    const side = [[tx + rx, ty], ...arc, [tx - rx, ty]];
-    track(tx - rx, ty - ry); track(tx + rx, ty - ry);
-    const st = `stroke="${col.edge}" stroke-width="1" stroke-linejoin="round"`;
-    // two-tone side: light on the left half, darker on the right half
-    const leftHalf = [[tx, ty + ry], ...arc.slice(8), [tx - rx, ty]];
-    return `<g ${attrs}><polygon points="${pts(side)}" fill="${col.right}" ${st}/><polygon points="${pts(leftHalf)}" fill="${col.left}" stroke="none"/><polygon points="${pts(side)}" fill="none" ${st}/><ellipse cx="${f(tx)}" cy="${f(ty)}" rx="${f(rx)}" ry="${f(ry)}" fill="${col.top}" ${st}/></g>`;
-  };
-  // soft contact shadow on the ground
-  const shadow = (p, x, y, r) => {
-    const [sx, sy] = p(x + 0.12, y + 0.12, 0);
-    return `<ellipse cx="${f(sx)}" cy="${f(sy)}" rx="${f(r * Math.SQRT2 * C * p.s * 1.05)}" ry="${f(r * Math.SQRT2 * S * p.s * 1.05)}" fill="#0F172A" fill-opacity="0.08"/>`;
-  };
-  const poly = (ptsArr, fill, extra = "") => `<polygon points="${pts(ptsArr)}" fill="${fill}" ${extra}/>`;
-  const line = (ptsArr, col, w = 2, extra = "") => `<polyline points="${pts(ptsArr)}" fill="none" stroke="${col}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" ${extra}/>`;
 
+// ---- shapes and animation helpers shared by the lessons below ----
+// An upright cylinder standing on (x, y, z): side as a polygon (no paths, so the Penpot copy imports cleanly).
+const cyl = (p, x, y, z, r, h, col, attrs = "") => {
+  const rx = r * Math.SQRT2 * C * p.s, ry = r * Math.SQRT2 * S * p.s;
+  const [bx, by] = p(x, y, z), [tx, ty] = p(x, y, z + h);
+  const arc = [];
+  for (let k = 0; k <= 16; k++) { const a = (Math.PI * k) / 16; arc.push([bx + rx * Math.cos(a), by + ry * Math.sin(a)]); }
+  const side = [[tx + rx, ty], ...arc, [tx - rx, ty]];
+  track(tx - rx, ty - ry); track(tx + rx, ty - ry);
+  const st = `stroke="${col.edge}" stroke-width="1" stroke-linejoin="round"`;
+  // two-tone side: light on the left half, darker on the right half
+  const leftHalf = [[tx, ty + ry], ...arc.slice(8), [tx - rx, ty]];
+  return `<g ${attrs}><polygon points="${pts(side)}" fill="${col.right}" ${st}/><polygon points="${pts(leftHalf)}" fill="${col.left}" stroke="none"/><polygon points="${pts(side)}" fill="none" ${st}/><ellipse cx="${f(tx)}" cy="${f(ty)}" rx="${f(rx)}" ry="${f(ry)}" fill="${col.top}" ${st}/></g>`;
+};
+// soft contact shadow on the ground
+const shadow = (p, x, y, r) => {
+  const [sx, sy] = p(x + 0.12, y + 0.12, 0);
+  return `<ellipse cx="${f(sx)}" cy="${f(sy)}" rx="${f(r * Math.SQRT2 * C * p.s * 1.05)}" ry="${f(r * Math.SQRT2 * S * p.s * 1.05)}" fill="#0F172A" fill-opacity="0.08"/>`;
+};
+const poly = (ptsArr, fill, extra = "") => `<polygon points="${pts(ptsArr)}" fill="${fill}" ${extra}/>`;
+const line = (ptsArr, col, w = 2, extra = "") => `<polyline points="${pts(ptsArr)}" fill="none" stroke="${col}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" ${extra}/>`;
+
+// A flat tile / short block in a grid laid out across the screen: col -> right, row -> down.
+const cell = (col, row, gap, rowGap = gap) => ({ x: col * gap + row * rowGap, y: -col * gap + row * rowGap });
+const pointer = (x, y, cls) => {
+  track(x - 7, y - 34);
+  return `<polygon class="${cls}" points="${f(x - 7)},${f(y - 34)} ${f(x + 7)},${f(y - 34)} ${f(x)},${f(y - 22)}" fill="#2563EB"/>`;
+};
+// stacked labels: label k is visible in wins[k] = [a, z] (% of the loop)
+const stackedText = (x, y, labels, wins, dur, o, prefix) => {
+  let s = "", css = "";
+  labels.forEach((t, k) => {
+    s += text(x, y, t, { ...o, attrs: `class="${prefix}${k}"` });
+    const [a, z] = wins[k];
+    css += shown(`${prefix}${k}`, dur, a, k < labels.length - 1 ? z - 0.6 : z, k === 0 && a === 0);
+  });
+  return { s, css };
+};
+const phaseAppear = (cls, at, dur) =>
+  `.${cls}{animation:${cls} ${dur}s ease-out infinite;opacity:0}@keyframes ${cls}{0%,${pct(at + 0.5)}{opacity:0;transform:translateY(-8px)}${pct(at + 5)},94%{opacity:1;transform:translateY(0)}98%,100%{opacity:0}}`;
+
+
+if (LESSON === "algorithms") {
   // 1. Recipe: four stations (kettle, tea, hourglass, cup) that light up in order
   {
     resetBB();
@@ -546,25 +569,6 @@ if (LESSON === "algorithms") {
 if (LESSON === "reading-loops") {
   const RED = { top: "#FECACA", left: "#F87171", right: "#EF4444", edge: "#B91C1C" };
   const SKY = { top: "#CFFAFE", left: "#67E8F9", right: "#22D3EE", edge: "#0E7490" };
-  // A flat tile / short block in a grid laid out across the screen: col -> right, row -> down.
-  const cell = (col, row, gap, rowGap = gap) => ({ x: col * gap + row * rowGap, y: -col * gap + row * rowGap });
-  const pointer = (x, y, cls) => {
-    track(x - 7, y - 34);
-    return `<polygon class="${cls}" points="${f(x - 7)},${f(y - 34)} ${f(x + 7)},${f(y - 34)} ${f(x)},${f(y - 22)}" fill="#2563EB"/>`;
-  };
-  // stacked labels: label k is visible in wins[k] = [a, z] (% of the loop)
-  const stackedText = (x, y, labels, wins, dur, o, prefix) => {
-    let s = "", css = "";
-    labels.forEach((t, k) => {
-      s += text(x, y, t, { ...o, attrs: `class="${prefix}${k}"` });
-      const [a, z] = wins[k];
-      css += shown(`${prefix}${k}`, dur, a, k < labels.length - 1 ? z - 0.6 : z, k === 0 && a === 0);
-    });
-    return { s, css };
-  };
-  const phaseAppear = (cls, at, dur) =>
-    `.${cls}{animation:${cls} ${dur}s ease-out infinite;opacity:0}@keyframes ${cls}{0%,${pct(at + 0.5)}{opacity:0;transform:translateY(-8px)}${pct(at + 5)},94%{opacity:1;transform:translateY(0)}98%,100%{opacity:0}}`;
-
   // 1. Big-O shapes: as n goes 2 -> 4 -> 8, count the steps of O(1), O(log n), O(n), O(n²)
   {
     resetBB();
@@ -746,6 +750,291 @@ if (LESSON === "reading-loops") {
     const lab = text((BB.x0 + BB.x1) / 2, BB.y1 + 22, "Reading a[0] takes one step, however long the list is", { size: 13, weight: 700, fill: "#334155" });
     const stat = text((BB.x0 + BB.x1) / 2 + 60, BB.y0 + 4, "n = 16 → 1 step", { size: 14, weight: 800, fill: "#2563EB" });
     files["no-loop"] = svg("No loop: the list grows from 4 to 8 to 16 items, but reading a[0] is always one step", row + arr + (STATIC ? stat : cnt.s) + lab, css);
+  }
+}
+
+// ===================== "DSA techniques" (Foundations step 3) =====================
+if (LESSON === "techniques") {
+  const PURPLE = { top: "#E9D5FF", left: "#C084FC", right: "#A855F7", edge: "#7E22CE" };
+  const SKY = { top: "#CFFAFE", left: "#67E8F9", right: "#22D3EE", edge: "#0E7490" };
+  const RED = { top: "#FECACA", left: "#F87171", right: "#EF4444", edge: "#B91C1C" };
+  // a pointer that jumps between screen points at the given % and hides after z%
+  const jumper = (cls, dur, stops, z, col = "#2563EB") => {
+    const [x0, y0] = stops[0].pt;
+    let kf = `0%,${pct(stops[0].at - 0.1)}{opacity:0;transform:translate(0,0)}`;
+    stops.forEach(({ pt: [x, y], at }) => (kf += `${pct(at)}{opacity:1;transform:translate(${f(x - x0)}px,${f(y - y0)}px)}`));
+    const [lx, ly] = stops[stops.length - 1].pt;
+    kf += `${pct(z)}{opacity:1;transform:translate(${f(lx - x0)}px,${f(ly - y0)}px)}${pct(z + 0.1)},100%{opacity:0}`;
+    for (const { pt: [x, y] } of stops) track(x - 7, y - 34);
+    return {
+      s: `<polygon class="${cls}" points="${f(x0 - 7)},${f(y0 - 34)} ${f(x0 + 7)},${f(y0 - 34)} ${f(x0)},${f(y0 - 22)}" fill="${col}"/>`,
+      css: `.${cls}{animation:${cls} ${dur}s steps(1,end) infinite;opacity:0}@keyframes ${cls}{${kf}}`,
+    };
+  };
+  // fade in at `at`% and stay until `off`%
+  const litAt = (cls, dur, at, off = 92) =>
+    `.${cls}{animation:${cls} ${dur}s ease-in-out infinite;opacity:0}@keyframes ${cls}{0%,${pct(at)}{opacity:0}${pct(at + 2)},${pct(off)}{opacity:1}${pct(off + 4)},100%{opacity:0}}`;
+  const HEAD = { size: 13, weight: 800, fill: "#0F172A" };
+
+  // 1. Kitchen: containers (data structure), chopping (technique), a recipe card (algorithm)
+  {
+    resetBB();
+    const p = iso(0, 0, 22);
+    const D = 2.7, Z0 = 0.22, DUR = 6, RR = 1.05;
+    const at = (i) => [i * D, -i * D];
+    const on = (i) => 5 + i * 26;
+    let b = "", css = "";
+    const names = [["Data structure", "the containers"], ["Technique", "chopping"], ["Algorithm", "the recipe"]];
+    names.forEach(([nm, sub], i) => {
+      const [x, y] = at(i);
+      b += shadow(p, x, y, RR) + cyl(p, x, y, 0, RR, Z0, STEEL);
+      b += `<g class="lit${i}">${cyl(p, x, y, 0, RR, Z0, GREEN)}</g>`;
+      css += litAt(`lit${i}`, DUR, on(i));
+      const [lx, ly] = p(x, y, 0);
+      const r1 = RR * Math.SQRT2 * C * p.s;
+      if (i < 2) b += arrow(lx + r1 + 5, ly, lx + D * 2 * C * p.s - r1 - 5, ly, "#94A3B8");
+      b += text(lx, ly + RR * Math.SQRT2 * S * p.s + 20, nm, { size: 12, weight: 800, fill: "#334155" });
+      b += text(lx, ly + RR * Math.SQRT2 * S * p.s + 35, sub, { size: 11, weight: 600, fill: LABEL });
+    });
+    // jars on station 0, drawn back to front
+    {
+      const [x, y] = at(0);
+      [[-0.35, -0.35, BLUE, 0.75], [0.35, -0.3, TEA, 0.6], [-0.3, 0.35, GREEN, 0.55], [0.35, 0.35, PURPLE, 0.7]]
+        .sort((u, v) => u[0] + u[1] - (v[0] + v[1]))
+        .forEach(([dx, dy, col, h]) => (b += cyl(p, x + dx, y + dy, Z0, 0.26, h, col)));
+    }
+    // board + carrot on station 1: a whole carrot, then three pieces; a knife chops above it
+    {
+      const [x, y] = at(1);
+      b += box(p, x - 0.75, y - 0.5, Z0, 1.5, 1.0, 0.1, WOOD);
+      const z = Z0 + 0.1;
+      b += `<g class="whole">${box(p, x - 0.55, y - 0.15, z, 1.1, 0.3, 0.26, TEA)}</g>`;
+      let pieces = "";
+      [-0.6, -0.15, 0.3].forEach((dx) => (pieces += box(p, x + dx, y - 0.15, z, 0.3, 0.3, 0.26, TEA)));
+      b += `<g class="pieces">${pieces}</g>`;
+      const [kx, ky] = p(x + 0.05, y - 0.05, z + 0.26);
+      b += `<g class="knife"><rect x="${f(kx - 3)}" y="${f(ky - 40)}" width="6" height="26" rx="2" fill="#CBD5E1" stroke="#64748B"/><rect x="${f(kx - 4)}" y="${f(ky - 52)}" width="8" height="12" rx="2" fill="#7C5A3A"/></g>`;
+      track(kx - 4, ky - 60);
+      css += `.whole{animation:whole ${DUR}s linear infinite}@keyframes whole{0%,${pct(on(1) + 6)}{opacity:1}${pct(on(1) + 7)},96%{opacity:0}97%,100%{opacity:1}}`;
+      css += `.pieces{animation:pieces ${DUR}s linear infinite;opacity:0}@keyframes pieces{0%,${pct(on(1) + 6)}{opacity:0}${pct(on(1) + 7)},96%{opacity:1}97%,100%{opacity:0}}`;
+      css += `.knife{animation:knife ${DUR / 6}s ease-in-out infinite}@keyframes knife{0%,100%{transform:translateY(-8px)}50%{transform:translateY(0)}}`;
+    }
+    // recipe card on station 2: a paper card whose three lines tick off in order
+    {
+      const [x, y] = at(2);
+      b += box(p, x - 0.7, y - 0.55, Z0, 1.4, 1.1, 0.06, PAPER);
+      const z = Z0 + 0.06;
+      for (let k = 0; k < 3; k++) {
+        const yy = y - 0.3 + k * 0.32;
+        const a = p(x - 0.45, yy, z), c = p(x + 0.5, yy, z);
+        b += `<polyline points="${pts([a, c])}" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"/>`;
+        b += `<polyline class="tick${k}" points="${pts([a, c])}" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round"/>`;
+        css += litAt(`tick${k}`, DUR, on(2) + 4 + k * 6);
+      }
+    }
+    files["kitchen"] = svg("A kitchen: the containers are the data structure, chopping is the technique, the recipe is the algorithm", b, css);
+  }
+
+  // 2. Going through data: traversal, then two pointers, then a sliding window of 3
+  {
+    resetBB();
+    const p = iso(0, 0, 21);
+    const DUR = 15, N = 8, vals = [2, 7, 1, 8, 2, 8, 1, 8], G = 1.0, SZ = 0.8, H = 0.45;
+    let b = "", css = "";
+    const tops = [];
+    for (let i = 0; i < N; i++) {
+      const { x, y } = cell(i, 0, G);
+      const [tx, ty] = topC(p, x, y, 0, SZ, SZ, H);
+      tops.push([tx, ty]);
+      b += box(p, x, y, 0, SZ, SZ, H, BLUE) + text(tx, ty + 4, vals[i], { size: 11, weight: 800, fill: "#1E3A8A" });
+    }
+    // phase A (3-30%): traversal, one pointer visits each item
+    const A = (k) => 3 + k * 3.3;
+    const pA = jumper("pa", DUR, tops.map((pt, k) => ({ pt, at: A(k) })), 30);
+    // phase B (37-62%): two pointers move in from both ends
+    const Bt = (k) => 37 + k * 6;
+    const pL = jumper("pl", DUR, [0, 1, 2, 3].map((i, k) => ({ pt: tops[i], at: Bt(k) })), 62, "#2563EB");
+    const pR = jumper("pr", DUR, [7, 6, 5, 4].map((i, k) => ({ pt: tops[i], at: Bt(k) })), 62, "#7C3AED");
+    // phase C (69-94%): an amber frame over 3 items slides along
+    const Cw = (k) => 69 + k * 4.4;
+    // the window: a rounded frame (in screen space) around 3 neighbouring items
+    const iw = SZ * 2 * C * p.s, pitch = tops[1][0] - tops[0][0], fx = tops[0][0] - iw / 2 - 5, fy = tops[0][1] - SZ * S * p.s - 6;
+    const fw = 2 * pitch + iw + 10, fh = 2 * SZ * S * p.s + H * p.s + 12;
+    track(fx, fy); track(fx + fw + 5 * pitch, fy + fh);
+    const step = [tops[1][0] - tops[0][0], tops[1][1] - tops[0][1]];
+    let wkf = `0%,${pct(Cw(0) - 0.1)}{opacity:0;transform:translate(0,0)}`;
+    for (let k = 0; k <= 5; k++) wkf += `${pct(Cw(k))}{opacity:1;transform:translate(${f(step[0] * k)}px,${f(step[1] * k)}px)}`;
+    wkf += `94%{opacity:1;transform:translate(${f(step[0] * 5)}px,${f(step[1] * 5)}px)}94.1%,100%{opacity:0}`;
+    const frame = `<rect class="win" x="${f(fx)}" y="${f(fy)}" width="${f(fw)}" height="${f(fh)}" rx="8" fill="#F59E0B" fill-opacity="0.18" stroke="#D97706" stroke-width="2"/>`;
+    css += `.win{animation:win ${DUR}s steps(1,end) infinite;opacity:0}@keyframes win{${wkf}}`;
+    // labels on top: the technique name, then a detail line
+    const midX = (BB.x0 + BB.x1) / 2, topY = BB.y0 - 30;
+    const names = stackedText(midX, topY, ["Traversal: visit each item once", "Two pointers: start at both ends", "Sliding window: 3 items at a time"], [[0, 33], [33, 66], [66, 95]], DUR, { size: 14, weight: 800, fill: "#0F172A" }, "n");
+    const sums = [0, 1, 2, 3, 4, 5].map((k) => vals[k] + vals[k + 1] + vals[k + 2]);
+    const det = stackedText(
+      midX, topY + 18,
+      [...tops.map((_, k) => `${k + 1} of 8 visited`), "they move in and meet in the middle", ...sums.map((s, k) => `items ${k + 1} to ${k + 3}: sum = ${s}`)],
+      [...tops.map((_, k) => [k === 0 ? 0 : A(k), k < N - 1 ? A(k + 1) : 33]), [33, 66], ...sums.map((_, k) => [k === 0 ? 66 : Cw(k), k < 5 ? Cw(k + 1) : 94])],
+      DUR, { size: 12, weight: 700, fill: "#475569" }, "d",
+    );
+    css += pA.css + pL.css + pR.css + names.css + det.css;
+    const stat = text(midX, topY, "Traversal, two pointers, sliding window", { size: 14, weight: 800, fill: "#0F172A" });
+    files["going-through"] = svg("A row of 8 items: one pointer visits each item, then two pointers move in from both ends, then a window of 3 slides along", b + (STATIC ? stat : frame + pA.s + pL.s + pR.s + names.s + det.s), css);
+  }
+
+  // 3. Hashing: names drop straight into their lockers, then a lookup goes straight to one
+  {
+    resetBB();
+    const p = iso(0, 0, 22);
+    const DUR = 10, N = 5, G = 1.15, SZ = 0.9, H = 1.3;
+    let b = "", css = "";
+    const tops = [];
+    for (let i = 0; i < N; i++) {
+      const { x, y } = cell(i, 0, G);
+      tops.push(topC(p, x, y, 0, SZ, SZ, H));
+      b += box(p, x, y, 0, SZ, SZ, H, STEEL);
+      const [nx, ny] = p(x + SZ / 2, y + SZ + 0.55, 0);
+      b += text(nx, ny + 10, `locker ${i}`, { size: 10, weight: 700, fill: "#475569" });
+    }
+    const keys = [["Ana", 3, 6], ["Raj", 0, 26], ["Mia", 4, 46]];
+    keys.forEach(([nm, slot, at], k) => {
+      const { x, y } = cell(slot, 0, G);
+      const [tx, ty] = topC(p, x + 0.1, y + 0.1, H, 0.7, 0.7, 0.3);
+      const chip = box(p, x + 0.1, y + 0.1, H, 0.7, 0.7, 0.3, GREEN) + text(tx, ty + 4, nm, { size: 10, weight: 800, fill: "#065F46" });
+      track(tx, ty - 50);
+      b += `<g class="key${k}">${chip}</g>`;
+      css += `.key${k}{animation:key${k} ${DUR}s ease-in infinite;opacity:0}@keyframes key${k}{0%,${pct(at)}{opacity:0;transform:translateY(-36px)}${pct(at + 2)}{opacity:1;transform:translateY(-36px)}${pct(at + 8)},94%{opacity:1;transform:translateY(0)}97%,100%{opacity:0;transform:translateY(0)}}`;
+    });
+    // lookup: an arrow straight down onto Raj's locker
+    const [ax, ay] = tops[0];
+    const look = arrow(ax, ay - 74, ax, ay - 40, "#2563EB", 'class="look"') + text(ax, ay - 80, "find Raj", { size: 12, weight: 800, fill: "#2563EB", attrs: 'class="look"' });
+    css += shown("look", DUR, 68, 94);
+    const midX = (BB.x0 + BB.x1) / 2, topY = BB.y0 - 16;
+    const lab = stackedText(midX, topY, ["“Ana” → hash → locker 3", "“Raj” → hash → locker 0", "“Mia” → hash → locker 4", "Find “Raj”: straight to locker 0, one step"], [[0, 24], [24, 44], [44, 66], [66, 94]], DUR, HEAD, "h");
+    css += lab.css;
+    const stat = text(midX, topY, "Each key goes straight to its own locker", HEAD);
+    files["hashing"] = svg("Hashing: each name goes straight to its own locker; finding Raj takes one step", b + (STATIC ? stat + look : look + lab.s), css);
+  }
+
+  // 4. Divide and conquer (merge sort): split down to pairs, then merge back up, sorted
+  {
+    resetBB();
+    const p = iso(0, 0, 19);
+    const DUR = 12, G = 0.85, GG = 0.6, RG = 1.75, SZ = 0.68, H = 0.16;
+    const rows = [
+      { g: [[5, 2, 7, 1, 6, 3, 8, 4]], col: BLUE, label: "8 items" },
+      { g: [[5, 2, 7, 1], [6, 3, 8, 4]], col: BLUE, label: "split" },
+      { g: [[5, 2], [7, 1], [6, 3], [8, 4]], col: BLUE, label: "split" },
+      { g: [[2, 5], [1, 7], [3, 6], [4, 8]], col: GREEN, label: "sort pairs" },
+      { g: [[1, 2, 5, 7], [3, 4, 6, 8]], col: GREEN, label: "merge" },
+      { g: [[1, 2, 3, 4, 5, 6, 7, 8]], col: GREEN, label: "merge" },
+    ];
+    let b = "", css = "";
+    rows.forEach((r, ri) => {
+      const cls = `row${ri}`, per = 8 / r.g.length, gap = r.g.length === 1 ? 0 : (3 * GG) / (r.g.length - 1);
+      const shift = r.g.length === 1 ? 1.5 * GG : 0; // keep every row centred on the same middle
+      let s = "";
+      r.g.flat().forEach((v, i) => {
+        const c = i * G + Math.floor(i / per) * gap + shift;
+        const { x, y } = cell(c / G, ri, G, RG);
+        const [tx, ty] = topC(p, x, y, 0, SZ, SZ, H);
+        s += box(p, x, y, 0, SZ, SZ, H, r.col) + text(tx, ty + 4, v, { size: 10, weight: 800, fill: r.col === GREEN ? "#065F46" : "#1E3A8A" });
+      });
+      const { x: lx0, y: ly0 } = cell(-0.9, ri, G, RG);
+      const [lx, ly] = topC(p, lx0, ly0, 0, SZ, SZ, H);
+      s += text(lx, ly + 4, r.label, { size: 11, weight: 800, fill: r.col === GREEN ? "#059669" : "#2563EB", anchor: "end" });
+      b += `<g class="${cls}">${s}</g>`;
+      if (ri > 0) css += phaseAppear(cls, 3 + ri * 14, DUR);
+    });
+    files["divide-conquer"] = svg("Merge sort: 8 numbers split in half, then into pairs; each pair is sorted, then the pairs merge back into one sorted row", b, css);
+  }
+
+  // 5. Greedy: pay 65 with the biggest coin that still fits, each time
+  {
+    resetBB();
+    const p = iso(0, 0, 24);
+    const DUR = 9, coins = [50, 20, 10, 5, 1], D = 1.55, R = [0.62, 0.55, 0.5, 0.44, 0.38];
+    let b = "", css = "";
+    const plan = [[0, true, 8], [1, false, 28], [2, true, 48], [3, true, 66]]; // 50 fits, 20 is too big, 10 fits, 5 fits
+    const tops = [];
+    coins.forEach((v, i) => {
+      const x = i * D, y = -i * D;
+      b += shadow(p, x, y, R[i]) + cyl(p, x, y, 0, R[i], 0.22, TEA);
+      const [tx, ty] = p(x, y, 0.22);
+      tops.push([tx, ty]);
+      b += text(tx, ty + 4, v, { size: 12, weight: 800, fill: "#78350F" });
+    });
+    plan.forEach(([i, take, at], k) => {
+      const [tx, ty] = tops[i];
+      b += `<g class="c${k}">${cyl(p, i * D, -i * D, 0, R[i], 0.22, take ? GREEN : RED)}${text(tx, ty + 4, coins[i], { size: 12, weight: 800, fill: take ? "#065F46" : "#991B1B" })}</g>`;
+      b += text(tx, ty - R[i] * Math.SQRT2 * S * p.s - 10, take ? "✓" : "✗", { size: 15, weight: 800, fill: take ? "#059669" : "#DC2626", attrs: `class="c${k}"` });
+      css += take ? litAt(`c${k}`, DUR, at) : `.c${k}{animation:c${k} ${DUR}s ease-in-out infinite;opacity:0}@keyframes c${k}{0%,${pct(at)}{opacity:0}${pct(at + 2)},${pct(at + 14)}{opacity:1}${pct(at + 17)},100%{opacity:0}}`;
+    });
+    const midX = (BB.x0 + BB.x1) / 2, topY = BB.y0 - 16;
+    const lab = stackedText(midX, topY, ["Pay 65: take the biggest coin that fits", "Take 50 → paid 50", "20 is too big (50 + 20 > 65): skip it", "Take 10 → paid 60", "Take 5 → paid 65: done with 3 coins"], [[0, 8], [8, 28], [28, 48], [48, 66], [66, 94]], DUR, HEAD, "t");
+    css += lab.css;
+    const stat = text(midX, topY, "Pay 65: 50 + 10 + 5, the biggest coin that fits", HEAD);
+    files["greedy"] = svg("Greedy: to pay 65, take 50, skip 20 because it is too big, take 10, then take 5", b + (STATIC ? stat : lab.s), css);
+  }
+
+  // 6. Dynamic programming: ways to climb a staircase, each answer built from the two before it
+  {
+    resetBB();
+    const p = iso(0, 0, 19);
+    const DUR = 11, N = 6, ways = [1, 2, 3, 5, 8, 13], G = 1.1, SZ = 1.0;
+    let b = "", css = "";
+    const at = (k) => 6 + k * 14;
+    for (let k = 0; k < N; k++) {
+      const { x, y } = cell(k, 0, G);
+      const h = 0.35 + k * 0.35;
+      const [tx, ty] = topC(p, x, y, 0, SZ, SZ, h);
+      b += box(p, x, y, 0, SZ, SZ, h, STEEL) + text(tx, ty + 4, "?", { size: 13, weight: 800, fill: "#94A3B8", attrs: `class="q${k}"` });
+      css += `.q${k}{animation:q${k} ${DUR}s linear infinite}@keyframes q${k}{0%,${pct(at(k) - 0.1)}{opacity:1}${pct(at(k))},${pct(96)}{opacity:0}${pct(96.1)},100%{opacity:1}}`;
+      b += `<g class="w${k}">${box(p, x, y, 0, SZ, SZ, h, GREEN)}${text(tx, ty + 5, ways[k], { size: 14, weight: 800, fill: "#065F46" })}</g>`;
+      css += litAt(`w${k}`, DUR, at(k));
+      const [nx, ny] = p(x + SZ / 2, y + SZ + 0.5, 0);
+      b += text(nx, ny + 10, `${k + 1}`, { size: 11, weight: 700, fill: LABEL });
+    }
+    const midX = (BB.x0 + BB.x1) / 2, topY = BB.y0 - 16;
+    const lines = ["1 stair: 1 way", "2 stairs: 2 ways", "3 stairs: 1 + 2 = 3 ways", "4 stairs: 2 + 3 = 5 ways", "5 stairs: 3 + 5 = 8 ways", "6 stairs: 5 + 8 = 13 ways"];
+    const lab = stackedText(midX, topY, lines, lines.map((_, k) => [k === 0 ? 0 : at(k), k < N - 1 ? at(k + 1) : 94]), DUR, HEAD, "t");
+    css += lab.css;
+    const stat = text(midX, topY, "Each answer = the two answers before it", HEAD);
+    files["dynamic-programming"] = svg("Dynamic programming: the ways to climb 1 to 6 stairs are 1, 2, 3, 5, 8, 13; each is the sum of the two before it", b + (STATIC ? stat : lab.s), css);
+  }
+
+  // 7. BFS: start at S, light up neighbours level by level, like ripples
+  {
+    resetBB();
+    const p = iso(0, 0, 18);
+    const DUR = 9;
+    const nodes = { S: [2, 2, 0], a: [4, 2, 1], b: [2, 4, 1], c: [0, 2, 1], d: [6, 2, 2], e: [4, 4, 2], f: [2, 6, 2], g: [0, 0, 2], h: [6, 4, 3], i: [4, 6, 3] };
+    const edges = [["S", "a"], ["S", "b"], ["S", "c"], ["a", "d"], ["a", "e"], ["b", "e"], ["b", "f"], ["c", "g"], ["d", "h"], ["e", "i"]];
+    const at = (lv) => 6 + lv * 20;
+    const LV = [GREEN, BLUE, SKY, PURPLE];
+    let b = ground(p, -0.9, -0.9, 7.8, 7.8), css = "";
+    for (const [u, v] of edges) {
+      const a = p(nodes[u][0], nodes[u][1], 0), c = p(nodes[v][0], nodes[v][1], 0);
+      b += `<polyline points="${pts([a, c])}" fill="none" stroke="#94A3B8" stroke-width="2.5" stroke-linecap="round"/>`;
+    }
+    const [sx, sy] = p(2, 2, 0);
+    for (let k = 0; k < 2; k++) {
+      const r = (k + 1) * 2;
+      b += `<ellipse class="rip${k}" cx="${f(sx)}" cy="${f(sy)}" rx="${f(r * Math.SQRT2 * C * p.s)}" ry="${f(r * Math.SQRT2 * S * p.s)}" fill="none" stroke="#2563EB" stroke-opacity="0.5" stroke-width="1.5" stroke-dasharray="5 4"/>`;
+      css += shown(`rip${k}`, DUR, at(k + 1) - 2, 94);
+    }
+    Object.entries(nodes).sort((u, v) => u[1][0] + u[1][1] - (v[1][0] + v[1][1])).forEach(([id, [x, y, lv]]) => {
+      const [tx, ty] = topC(p, x - 0.4, y - 0.4, 0, 0.8, 0.8, 0.5);
+      if (lv === 0) { b += box(p, x - 0.4, y - 0.4, 0, 0.8, 0.8, 0.5, GREEN) + text(tx, ty + 4, "S", { size: 11, weight: 800, fill: "#065F46" }); return; }
+      b += box(p, x - 0.4, y - 0.4, 0, 0.8, 0.8, 0.5, STEEL);
+      b += `<g class="n${id}">${box(p, x - 0.4, y - 0.4, 0, 0.8, 0.8, 0.5, LV[lv])}${text(tx, ty + 4, lv, { size: 11, weight: 800, fill: "#0F172A" })}</g>`;
+      css += litAt(`n${id}`, DUR, at(lv));
+    });
+    const midX = (BB.x0 + BB.x1) / 2, topY = BB.y0 - 14;
+    const lab = stackedText(midX, topY, ["Level 0: start at S", "Level 1: the neighbours of S", "Level 2: their neighbours", "Level 3: ring by ring, like ripples"], [[0, at(1)], [at(1), at(2)], [at(2), at(3)], [at(3), 94]], DUR, HEAD, "t");
+    css += lab.css;
+    const stat = text(midX, topY, "BFS visits the graph level by level", HEAD);
+    files["bfs"] = svg("BFS: start at S, then light up its neighbours (level 1), then theirs (level 2), ring by ring", b + (STATIC ? stat : lab.s), css);
   }
 }
 

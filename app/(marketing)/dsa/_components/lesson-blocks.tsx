@@ -57,7 +57,9 @@ export function Illustration({ src, alt, className = "", maxW = "max-w-[360px]" 
 }
 
 // A small table, e.g. "n → steps". The first column is the row label; `hot` highlights one column.
-export function DataTable({ caption, head, rows, hot }: { caption?: string; head: string[]; rows: React.ReactNode[][]; hot?: number }) {
+// `plain` uses the normal text font instead of the code font (for tables of words, not numbers).
+export function DataTable({ caption, head, rows, hot, plain = false }: { caption?: string; head: string[]; rows: React.ReactNode[][]; hot?: number; plain?: boolean }) {
+  const font = plain ? "" : "font-mono";
   return (
     <div className="mt-6 overflow-x-auto rounded-2xl border">
       <table className="w-full border-collapse text-left text-[15px]">
@@ -76,11 +78,11 @@ export function DataTable({ caption, head, rows, hot }: { caption?: string; head
             <tr key={ri} className="border-b last:border-b-0">
               {r.map((c, ci) =>
                 ci === 0 ? (
-                  <th key={ci} scope="row" className="whitespace-nowrap px-4 py-2.5 font-mono font-bold text-slate-900 dark:text-slate-100">
+                  <th key={ci} scope="row" className={`px-4 py-2.5 font-bold text-slate-900 dark:text-slate-100 ${plain ? "" : "whitespace-nowrap"} ${font}`}>
                     {c}
                   </th>
                 ) : (
-                  <td key={ci} className={`whitespace-nowrap px-4 py-2.5 font-mono ${ci === hot ? "font-bold text-blue-700 dark:text-blue-300" : "text-slate-700 dark:text-slate-300"}`}>
+                  <td key={ci} className={`px-4 py-2.5 ${plain ? "" : "whitespace-nowrap"} ${font} ${ci === hot ? "font-bold text-blue-700 dark:text-blue-300" : "text-slate-700 dark:text-slate-300"}`}>
                     {c}
                   </td>
                 ),
