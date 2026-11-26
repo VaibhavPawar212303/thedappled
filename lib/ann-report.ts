@@ -13,6 +13,7 @@ type Annotation = { type: string; description?: string };
 export type FlatTest = {
   title: string;
   file: string;
+  group: string; // the describe blocks around the test, outermost first ("" = top level)
   project: string;
   tags: string[]; // without the leading "@", lower case
   annotations: Annotation[];
@@ -42,7 +43,8 @@ const normTag = (t: string) => t.trim().replace(/^@/, "").toLowerCase();
 // Flattens the report's nested suites into one entry per test per project.
 export function flattenReport(report: unknown): FlatTest[] {
   const out: FlatTest[] = [];
-  const walk = (suite: Record<string, unknown>, file: string) => {
+  // Top-level suites are files; deeper suites are describe blocks.
+  const walk = (suite: Record<string, unknown>, file: string, path: string[]) => {
     const f = str(suite.file) || file;
     for (const sp of arr(suite.specs).map(obj)) {
       const title = str(sp.title);
@@ -55,6 +57,7 @@ export function flattenReport(report: unknown): FlatTest[] {
         out.push({
           title,
           file: str(sp.file) || f,
+          group: path.join(" › "),
           project: str(t.projectName),
           tags: [...new Set([...specTags, ...titleTags])],
           annotations: anns.filter((a) => {
@@ -70,9 +73,9 @@ export function flattenReport(report: unknown): FlatTest[] {
         });
       }
     }
-    for (const child of arr(suite.suites).map(obj)) walk(child, f);
+    for (const child of arr(suite.suites).map(obj)) walk(child, f, [...path, str(child.title)]);
   };
-  for (const s of arr(obj(report).suites).map(obj)) walk(s, "");
+  for (const s of arr(obj(report).suites).map(obj)) walk(s, "", []);
   return out;
 }
 
@@ -166,4 +169,83 @@ export function reportMatchesLab(startTime: Date | null, lastLab: Date | null, n
     return { ok: false, message: "This report doesn't match your latest lab run. Run the whole suite again and upload the new results.json." };
   }
   return { ok: true, message: "" };
+}
+
+// ---- Stage 6: advanced annotations --------------------------------------------------------------
+
+export type AdvancedReportStep = "adv-group-skip" | "adv-hook-fixme" | "adv-multi" | "adv-title-tag" | "adv-hidden";
+export type AdvancedReportResult = { checks: Record<AdvancedReportStep, ReportCheck>; tests: number; startTime: Date | null };
+
+// A describe group that is fully skipped (by `type`, with a reason) in one project and runs in another.
+function groupSwitchedOff(tests: FlatTest[], type: "skip" | "fixme"): { ok: true; group: string; off: string; on: string } | { ok: false; hint: string } {
+  const byGroup = new Map<string, FlatTest[]>();
+  for (const t of tests) if (t.group) byGroup.set(`${t.file}\u0000${t.group}`, [...(byGroup.get(`${t.file}\u0000${t.group}`) ?? []), t]);
+  let hint = "";
+  for (const list of byGroup.values()) {
+    const projects = [...new Set(list.map((t) => t.project))];
+    const offIn = projects.filter((p) => {
+      const ts = list.filter((t) => t.project === p);
+      return ts.length > 0 && ts.every((t) => t.status === "skipped" && t.annotations.some((a) => a.type === type && a.description?.trim()));
+    });
+    const onIn = projects.filter((p) => list.some((t) => t.project === p && t.status !== "skipped"));
+    if (offIn.length && onIn.length) return { ok: true, group: list[0].group, off: offIn[0], on: onIn[0] };
+    if (offIn.length && !hint) hint = `“${list[0].group}” is ${type === "skip" ? "skipped" : "fixme"} in ${offIn.join(", ")} but doesn't run in any other project.`;
+  }
+  return { ok: false, hint };
+}
+
+export function evaluateAdvancedReport(report: unknown): AdvancedReportResult {
+  const tests = flattenReport(report);
+  const start = str(obj(obj(report).stats).startTime);
+  const startTime = start && !Number.isNaN(Date.parse(start)) ? new Date(start) : null;
+  const projects = new Set(tests.map((t) => t.project));
+  const fewProjects = projects.size < 2 ? " Run at least two projects (chromium, firefox and a mobile device)." : "";
+
+  const gs = groupSwitchedOff(tests, "skip");
+  const groupSkip: ReportCheck = gs.ok
+    ? { ok: true, message: `“${gs.group}” is skipped in ${gs.off} and runs in ${gs.on}.` }
+    : { ok: false, message: (gs.hint || "No describe group is skipped in one project. Inside the Charts describe, add test.skip(({ browserName }) => browserName !== 'chromium', 'Chromium only').") + fewProjects };
+
+  const gf = groupSwitchedOff(tests, "fixme");
+  const hookFixme: ReportCheck = gf.ok
+    ? { ok: true, message: `“${gf.group}” is fixme in ${gf.off} and runs in ${gf.on}.` }
+    : { ok: false, message: (gf.hint || "No describe group is fixme in one project. In the Settings beforeEach, add test.fixme(isMobile, 'Not on mobile yet').") + fewProjects };
+
+  // Count a test's own notes: not built-in, not hidden, and not inherited from its describe block
+  // (an annotation every test in the group carries came from the group).
+  const groupKey = (t: FlatTest) => `${t.file}|${t.group}|${t.project}`;
+  const inherited = new Map<string, Set<string>>();
+  const groupSize = new Map<string, number>();
+  for (const t of tests) {
+    if (!t.group) continue;
+    groupSize.set(groupKey(t), (groupSize.get(groupKey(t)) ?? 0) + 1);
+    const mine = new Set(t.annotations.map((a) => `${a.type}|${a.description ?? ""}`));
+    const prev = inherited.get(groupKey(t));
+    inherited.set(groupKey(t), prev ? new Set([...prev].filter((k) => mine.has(k))) : mine);
+  }
+  const custom = (t: FlatTest) => {
+    const shared = t.group && (groupSize.get(groupKey(t)) ?? 0) > 1 ? inherited.get(groupKey(t)) : undefined;
+    return t.annotations.filter((a) => !BUILT_IN.has(a.type) && !a.type.startsWith("_") && !shared?.has(`${a.type}|${a.description ?? ""}`));
+  };
+  const multiT = tests.find((t) => custom(t).length >= 2);
+  const most = tests.reduce<FlatTest | null>((m, t) => (!m || custom(t).length > custom(m).length ? t : m), null);
+  const multi: ReportCheck = multiT
+    ? { ok: true, message: `${name(multiT)} has ${custom(multiT).length} annotations: ${custom(multiT).map((a) => a.type).join(", ")}.` }
+    : { ok: false, message: most && custom(most).length === 1 ? `${name(most)} has 1 annotation. Pass an array: annotation: [{ … }, { … }].` : "No test has two annotations. Pass an array: annotation: [{ type: 'issue', … }, { type: 'performance', … }]." };
+
+  const titled = tests.find((t) => /(^|\s)@[\w-]+/.test(t.title));
+  const titleTag: ReportCheck = titled
+    ? { ok: true, message: `${name(titled)} has a tag in its title.` }
+    : { ok: false, message: "No test has a tag in its title. Write it in the name, like test('full year report @slow', …)." };
+
+  const hiddenT = tests.find((t) => t.annotations.some((a) => a.type.length > 1 && a.type.startsWith("_") && a.description?.trim()));
+  const hidden: ReportCheck = hiddenT
+    ? { ok: true, message: `${name(hiddenT)} has a hidden annotation: “${hiddenT.annotations.find((a) => a.type.startsWith("_"))?.type}”.` }
+    : { ok: false, message: "No hidden annotation. Add one whose type starts with _, e.g. test.info().annotations.push({ type: '_runId', description: '…' })." };
+
+  return {
+    checks: { "adv-group-skip": groupSkip, "adv-hook-fixme": hookFixme, "adv-multi": multi, "adv-title-tag": titleTag, "adv-hidden": hidden },
+    tests: tests.length,
+    startTime,
+  };
 }

@@ -5,6 +5,7 @@ import { evaluateRepo, loadRepo, parseRepoUrl, RepoError, type RepoResult } from
 import { evaluatePomRepo, type PomRepoResult } from "@/lib/pom-repo-scan";
 import { evaluateCrossBrowserRepo, type CrossBrowserRepoResult } from "@/lib/xb-repo-scan";
 import { evaluateAnnotationsRepo, type AnnotationsRepoResult } from "@/lib/ann-repo-scan";
+import { evaluateAdvancedRepo, type AdvancedRepoResult } from "@/lib/ann-adv-repo-scan";
 
 export type RepoCheckOutcome = { repo: string; branch: string; checks: RepoResult; assignment: AssignmentStatus | null };
 
@@ -77,6 +78,26 @@ export async function checkAnnotationsRepoForAssignment(token: string, repoUrl: 
     "repo-forbid-only": checks["repo-forbid-only"].ok,
     "repo-grep-smoke": checks["repo-grep-smoke"].ok,
     "repo-describe-runtime": checks["repo-describe-runtime"].ok,
+  });
+  return { repo, branch, checks, assignment };
+}
+
+export type AdvancedRepoCheckOutcome = { repo: string; branch: string; checks: AdvancedRepoResult; assignment: AssignmentStatus | null };
+
+// Stage 6 (Playwright only): scans for a callback skip, a hook fixme, a declared skip with an annotated describe,
+// and a run that combines tags, and records the passing checks.
+export async function checkAdvancedRepoForAssignment(token: string, repoUrl: string): Promise<AdvancedRepoCheckOutcome> {
+  const parsed = parseRepoUrl(repoUrl);
+  if (!parsed) throw new RepoError("Enter a public GitHub repository URL, like https://github.com/you/your-repo.", 400);
+
+  const { snapshot, branch } = await loadRepo(parsed);
+  const checks = await evaluateAdvancedRepo(snapshot);
+  const repo = `${parsed.owner}/${parsed.repo}`;
+  const assignment = await recordRepoChecks(token, repo, {
+    "repo-skip-callback": checks["repo-skip-callback"].ok,
+    "repo-fixme-hook": checks["repo-fixme-hook"].ok,
+    "repo-declared-skip": checks["repo-declared-skip"].ok,
+    "repo-grep-combine": checks["repo-grep-combine"].ok,
   });
   return { repo, branch, checks, assignment };
 }

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getStatusByToken, isStepId, recordEvent, toolOfToken, touchLabVisit } from "@/lib/assignments";
+import { getStatusByToken, isLabStep, isStepId, recordEvent, toolOfToken, touchLabVisit } from "@/lib/assignments";
 import { describeSignals, sanitizeSignals, verdictFromSignals } from "@/lib/verification";
 import { engineFromUserAgent, engineOfStep } from "@/lib/browser-engine";
 import { isTool, TOOL_LABEL, toolFromSignals } from "@/lib/tools";
@@ -48,8 +48,8 @@ export async function POST(req: NextRequest) {
 
   const result = await recordEvent(token, step, verdict, signals);
   if (!result) return NextResponse.json({ error: "Unknown assignment" }, { status: 404 });
-  // Stage 5: an uploaded report must come from a run around the latest automated lab visit.
-  if (step === "ann-lab" && verdict.verified && result.verified) await touchLabVisit(token).catch(() => {});
+  // Stages 5 and 6: an uploaded report must come from a run around the latest automated lab visit.
+  if (isLabStep(step) && verdict.verified && result.verified) await touchLabVisit(token).catch(() => {});
 
   const { status } = result;
   return NextResponse.json({

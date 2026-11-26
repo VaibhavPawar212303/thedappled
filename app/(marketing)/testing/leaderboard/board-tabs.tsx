@@ -14,6 +14,7 @@ export const BOARDS: { id: BoardId; label: string }[] = [
   { id: "page-objects", label: "Page objects" },
   { id: "cross-browser", label: "Cross-browser" },
   { id: "annotations", label: "Annotations" },
+  { id: "annotations-advanced", label: "Advanced annotations" },
 ];
 
 // Every board link keeps the chosen tool, so switching boards stays on Playwright or Cypress.
@@ -26,7 +27,7 @@ export function BoardTabs({ current, tool }: { current: BoardId; tool: Tool }) {
         <span className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Tool</span>
         <ToolSwitch current={tool} hrefs={{ playwright: boardHref(current, "playwright"), cypress: boardHref(current, "cypress") }} size="sm" />
         <span data-testid="tool-note" className="text-[13px] text-muted-foreground">
-          {current === "manual-testing" ? "Manual testing has one board for both tools." : current === "annotations" ? "Annotations is a Playwright-only stage." : "Playwright and Cypress are ranked separately."}
+          {current === "manual-testing" ? "Manual testing has one board for both tools." : current === "annotations" || current === "annotations-advanced" ? "This is a Playwright-only stage." : "Playwright and Cypress are ranked separately."}
         </span>
       </div>
       <div role="navigation" aria-label="Choose a board" className="mt-4 flex flex-wrap items-center gap-3">

@@ -113,7 +113,9 @@ const TRACKS: Track[] = [
     Icon: Play,
     blurb: "Automate real pages with Playwright, set up the framework the way teams do, add page objects, run on every browser engine, then master annotations.",
     stepTestId: (n) => `step-card-${n}`, // unchanged ids for the existing automation steps
-    extra: [{ n: 5, title: "Playwright annotations", blurb: "skip, fixme, fail, slow, only, tags and custom annotations.", href: "/testing/annotations", isNew: true, progressKey: "playwright:annotations" }],
+    extra: [{ n: 5, title: "Playwright annotations", blurb: "skip, fixme, fail, slow, only, tags and custom annotations.", href: "/testing/annotations", progressKey: "playwright:annotations" },
+      { n: 6, title: "Advanced annotations", blurb: "Group skip, fixme in hooks, several annotations, --grep OR and AND.", href: "/testing/annotations-advanced", isNew: true, progressKey: "playwright:annotations-advanced" },
+    ],
   }),
   automationTrack("cypress", {
     title: "Cypress",

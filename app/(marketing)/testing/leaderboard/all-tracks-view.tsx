@@ -28,6 +28,7 @@ const CONTINUE: Record<string, string> = {
   "page-objects": "/testing/page-objects/assignment",
   "cross-browser": "/testing/cross-browser/assignment",
   annotations: "/testing/annotations/assignment",
+  "annotations-advanced": "/testing/annotations-advanced/assignment",
 };
 
 function initials(name: string) {

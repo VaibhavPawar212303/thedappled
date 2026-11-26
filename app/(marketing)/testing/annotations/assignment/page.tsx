@@ -22,5 +22,5 @@ export default async function AnnotationsAssignmentPage() {
   if (!assignment) redirect("/testing/annotations");
 
   const rank = await getRankFor(userId, ANNOTATIONS, PLAYWRIGHT).catch(() => null);
-  return <AnnView initial={assignment} env={{ BASE_URL: SITE_URL, ASSIGNMENT_TOKEN: assignment.token }} rank={rank} />;
+  return <AnnView slug="annotations" initial={assignment} env={{ BASE_URL: SITE_URL, ASSIGNMENT_TOKEN: assignment.token }} rank={rank} />;
 }

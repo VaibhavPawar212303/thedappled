@@ -8,11 +8,12 @@ export const FRAMEWORK_SETUP = "framework-setup";
 export const PAGE_OBJECTS = "page-objects";
 export const CROSS_BROWSER = "cross-browser";
 export const ANNOTATIONS = "annotations";
+export const ANNOTATIONS_ADVANCED = "annotations-advanced";
 export const MANUAL_TESTING = "manual-testing";
-export type AssignmentSlug = typeof UI_AUTOMATION | typeof FRAMEWORK_SETUP | typeof PAGE_OBJECTS | typeof CROSS_BROWSER | typeof ANNOTATIONS | typeof MANUAL_TESTING;
-export const AUTOMATION_SLUGS = [UI_AUTOMATION, FRAMEWORK_SETUP, PAGE_OBJECTS, CROSS_BROWSER, ANNOTATIONS] as const;
-// Stages that exist for one tool only (stage 5 teaches Playwright's own annotations).
-export const PLAYWRIGHT_ONLY_SLUGS = new Set<string>([ANNOTATIONS]);
+export type AssignmentSlug = typeof UI_AUTOMATION | typeof FRAMEWORK_SETUP | typeof PAGE_OBJECTS | typeof CROSS_BROWSER | typeof ANNOTATIONS | typeof ANNOTATIONS_ADVANCED | typeof MANUAL_TESTING;
+export const AUTOMATION_SLUGS = [UI_AUTOMATION, FRAMEWORK_SETUP, PAGE_OBJECTS, CROSS_BROWSER, ANNOTATIONS, ANNOTATIONS_ADVANCED] as const;
+// Stages that exist for one tool only (stages 5 and 6 teach Playwright's own annotations).
+export const PLAYWRIGHT_ONLY_SLUGS = new Set<string>([ANNOTATIONS, ANNOTATIONS_ADVANCED]);
 // The automation stages a tool's learners can take, in learning order.
 export const automationSlugsFor = (tool: Tool) => AUTOMATION_SLUGS.filter((s) => tool === PLAYWRIGHT || !PLAYWRIGHT_ONLY_SLUGS.has(s));
 export const ASSIGNMENT_SLUGS: AssignmentSlug[] = [MANUAL_TESTING, ...AUTOMATION_SLUGS];
@@ -51,6 +52,16 @@ export type StepId =
   | "repo-forbid-only"
   | "repo-grep-smoke"
   | "repo-describe-runtime"
+  | "adv-lab"
+  | "adv-group-skip"
+  | "adv-hook-fixme"
+  | "adv-multi"
+  | "adv-title-tag"
+  | "adv-hidden"
+  | "repo-skip-callback"
+  | "repo-fixme-hook"
+  | "repo-declared-skip"
+  | "repo-grep-combine"
   | "manual-fundamentals"
   | "manual-test-design"
   | "manual-test-cases"
@@ -112,11 +123,33 @@ export const ANNOTATION_STEPS: Step[] = [
   { id: "repo-grep-smoke", group: "Configure it on GitHub", label: "CI or a project runs only @smoke (--grep or grep:)" },
   { id: "repo-describe-runtime", group: "Configure it on GitHub", label: "A tagged describe block and a runtime test.info().annotations" },
 ];
-export const REPORT_STEPS = new Set<StepId>(["ann-skip", "ann-fixme", "ann-fail", "ann-slow", "ann-tags", "ann-custom"]);
+// Stage 6 (Playwright only): the same three kinds of check as stage 5, for group-level annotations.
+// The two group checks compare projects, so learners run chromium, firefox and a mobile device.
+export const ADVANCED_STEPS: Step[] = [
+  { id: "adv-lab", group: "Run the lab", label: "Your tests opened the advanced lab (automated browser)" },
+  { id: "adv-group-skip", group: "From your test report", label: "A describe group is skipped in one project and runs in another (Charts)" },
+  { id: "adv-hook-fixme", group: "From your test report", label: "A group is fixme in one project and runs in another (Settings on mobile)" },
+  { id: "adv-multi", group: "From your test report", label: "A test with two or more annotations" },
+  { id: "adv-title-tag", group: "From your test report", label: "A tag written in a test title (e.g. 'full report @slow')" },
+  { id: "adv-hidden", group: "From your test report", label: "A hidden annotation (its type starts with _)" },
+  { id: "repo-skip-callback", group: "Configure it on GitHub", label: "test.skip(({ browserName }) => …) inside a describe block" },
+  { id: "repo-fixme-hook", group: "Configure it on GitHub", label: "test.fixme(condition, 'why') in a beforeEach hook" },
+  { id: "repo-declared-skip", group: "Configure it on GitHub", label: "A declared skip, test.skip('title', …), and an annotated describe" },
+  { id: "repo-grep-combine", group: "Configure it on GitHub", label: "CI combines tags: --grep \"@a|@b\" or \"(?=.*@a)(?=.*@b)\"" },
+];
+
+export const REPORT_STEPS = new Set<StepId>([
+  "ann-skip", "ann-fixme", "ann-fail", "ann-slow", "ann-tags", "ann-custom",
+  "adv-group-skip", "adv-hook-fixme", "adv-multi", "adv-title-tag", "adv-hidden",
+]);
+// Stages checked from an uploaded report, and the step that records the learner's lab runs.
+export const LAB_STEP: Partial<Record<AssignmentSlug, StepId>> = { [ANNOTATIONS]: "ann-lab", [ANNOTATIONS_ADVANCED]: "adv-lab" };
+export const isLabStep = (step: string) => Object.values(LAB_STEP).includes(step as StepId);
 
 export const REPO_STEPS = new Set<StepId>([
   "repo-config", "repo-ignore", "repo-ci", "repo-pages", "repo-fixture", "repo-specs", "repo-browsers", "repo-ci-matrix",
   "repo-forbid-only", "repo-grep-smoke", "repo-describe-runtime",
+  "repo-skip-callback", "repo-fixme-hook", "repo-declared-skip", "repo-grep-combine",
 ]);
 
 // Manual testing track: one step per lesson, done when a signed-in learner scores 5/5 on its quiz
@@ -135,11 +168,12 @@ const STEPS_BY_SLUG: Record<string, Step[]> = {
   [PAGE_OBJECTS]: POM_STEPS,
   [CROSS_BROWSER]: CROSS_BROWSER_STEPS,
   [ANNOTATIONS]: ANNOTATION_STEPS,
+  [ANNOTATIONS_ADVANCED]: ADVANCED_STEPS,
   [MANUAL_TESTING]: MANUAL_STEPS,
 };
 export const stepsFor = (slug: string): Step[] => STEPS_BY_SLUG[slug] ?? STEPS;
 
-const STEP_IDS = new Set<string>([...STEPS, ...FRAMEWORK_STEPS, ...POM_STEPS, ...CROSS_BROWSER_STEPS, ...ANNOTATION_STEPS, ...MANUAL_STEPS].map((s) => s.id));
+const STEP_IDS = new Set<string>([...STEPS, ...FRAMEWORK_STEPS, ...POM_STEPS, ...CROSS_BROWSER_STEPS, ...ANNOTATION_STEPS, ...ADVANCED_STEPS, ...MANUAL_STEPS].map((s) => s.id));
 export const isStepId = (v: unknown): v is StepId => typeof v === "string" && STEP_IDS.has(v);
 
 export type AssignmentStatus = {
@@ -354,12 +388,13 @@ export async function recordRepoChecks(
   return getStatusByToken(token);
 }
 
-// Stage 5: records the checks that passed in an uploaded test report (never downgrades a verified step).
+// Stages 5 and 6: records the checks that passed in an uploaded test report (never downgrades a verified step).
 export async function recordReportChecks(token: string, passed: Partial<Record<StepId, boolean>>, detail: Record<string, string | number>): Promise<AssignmentStatus | null> {
   const a = await prisma.assignment.findUnique({ where: { token }, select: { id: true, slug: true } });
-  if (!a || a.slug !== ANNOTATIONS) return null;
+  if (!a || !LAB_STEP[a.slug as AssignmentSlug]) return null;
+  const list = stepsFor(a.slug);
   for (const [name, ok] of Object.entries(passed)) {
-    if (!ok || !REPORT_STEPS.has(name as StepId)) continue;
+    if (!ok || !REPORT_STEPS.has(name as StepId) || !list.some((st) => st.id === name)) continue;
     const signals = { source: "report", ...detail };
     const existing = await prisma.assignmentEvent.findUnique({ where: { assignmentId_name: { assignmentId: a.id, name } } });
     if (!existing) {
@@ -373,18 +408,19 @@ export async function recordReportChecks(token: string, passed: Partial<Record<S
     select: { createdAt: true },
     orderBy: { createdAt: "desc" },
   });
-  if (verifiedEvents.length >= ANNOTATION_STEPS.length) {
+  if (verifiedEvents.length >= list.length) {
     await prisma.assignment.update({ where: { id: a.id }, data: { completedAt: verifiedEvents[0].createdAt } });
   }
   return getStatusByToken(token);
 }
 
-// Stage 5: when the learner's tests last drove the annotations lab. An uploaded report must come from a
-// run around that time. Kept in the verified lab step's signals.
+// Stages 5 and 6: when the learner's tests last drove the lab. An uploaded report must come from a run
+// around that time. Kept in the verified lab step's signals.
 export async function touchLabVisit(token: string): Promise<void> {
-  const a = await prisma.assignment.findUnique({ where: { token }, select: { id: true } });
-  if (!a) return;
-  const e = await prisma.assignmentEvent.findUnique({ where: { assignmentId_name: { assignmentId: a.id, name: "ann-lab" } } });
+  const a = await prisma.assignment.findUnique({ where: { token }, select: { id: true, slug: true } });
+  const lab = a && LAB_STEP[a.slug as AssignmentSlug];
+  if (!a || !lab) return;
+  const e = await prisma.assignmentEvent.findUnique({ where: { assignmentId_name: { assignmentId: a.id, name: lab } } });
   if (!e?.verified) return;
   const prev = e.signals && typeof e.signals === "object" && !Array.isArray(e.signals) ? (e.signals as Record<string, unknown>) : {};
   await prisma.assignmentEvent.update({ where: { id: e.id }, data: { signals: { ...prev, lastSeenAt: new Date().toISOString() } as object } });
@@ -392,9 +428,10 @@ export async function touchLabVisit(token: string): Promise<void> {
 
 // The last time the learner's tests drove the lab (null = no verified lab run yet).
 export async function lastLabVisit(token: string): Promise<Date | null> {
-  const a = await prisma.assignment.findUnique({ where: { token }, select: { id: true } });
-  if (!a) return null;
-  const e = await prisma.assignmentEvent.findUnique({ where: { assignmentId_name: { assignmentId: a.id, name: "ann-lab" } } });
+  const a = await prisma.assignment.findUnique({ where: { token }, select: { id: true, slug: true } });
+  const lab = a && LAB_STEP[a.slug as AssignmentSlug];
+  if (!a || !lab) return null;
+  const e = await prisma.assignmentEvent.findUnique({ where: { assignmentId_name: { assignmentId: a.id, name: lab } } });
   if (!e?.verified) return null;
   const seen = (e.signals as { lastSeenAt?: unknown } | null)?.lastSeenAt;
   return typeof seen === "string" && !Number.isNaN(Date.parse(seen)) ? new Date(seen) : e.createdAt;

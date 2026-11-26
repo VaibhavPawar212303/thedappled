@@ -254,6 +254,7 @@ export const STAGE_LABEL: Record<AssignmentSlug, string> = {
   "page-objects": "Page objects",
   "cross-browser": "Cross-browser",
   annotations: "Annotations",
+  "annotations-advanced": "Advanced annotations",
 };
 
 // The most checks a learner can verify on a tool's board: Manual testing plus that tool's automation

@@ -4,6 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 import { ANNOTATIONS, getAssignmentForUser } from "@/lib/assignments";
 import { PLAYWRIGHT } from "@/lib/tools";
 import { AnnCard } from "./_components/ann-card";
+import { Code, type Piece } from "./_components/code-lines";
 
 export const metadata: Metadata = {
   title: "Playwright annotations – skip, fixme, fail, slow, only, tags and custom annotations",
@@ -16,9 +17,6 @@ export const dynamic = "force-dynamic";
 
 // Design: Penpot "26 - Testing Learning Path", page "Stage 5 – Annotations", board B.
 
-// A code line is a list of [text, kind] pieces: k = keyword, s = string, c = comment, plain otherwise.
-type Piece = [string, ("k" | "s" | "c")?];
-const TONE = { k: "text-blue-300", s: "text-emerald-300", c: "text-slate-400" } as const;
 
 type Kind = { t: string; tone: string; when: string; code: Piece[][] };
 
@@ -133,20 +131,6 @@ const HOW = [
   ["3. Push and check CI", "forbidOnly, a @smoke run in CI, and a tagged describe block with a runtime annotation, checked on GitHub."],
 ];
 
-function Code({ lines }: { lines: Piece[][] }) {
-  return (
-    <pre className="mt-4 overflow-x-auto rounded-xl bg-slate-900 p-4 font-mono text-[12.5px] leading-6 text-slate-100">
-      {lines.map((l, i) => (
-        <span key={i} className="block whitespace-pre">
-          {l.map(([t, k], j) => (
-            <span key={j} className={k ? TONE[k] : undefined}>{t}</span>
-          ))}
-        </span>
-      ))}
-    </pre>
-  );
-}
-
 export default async function AnnotationsPage() {
   const { userId } = await auth();
   const assignment = userId ? await getAssignmentForUser(userId, ANNOTATIONS, PLAYWRIGHT).catch(() => null) : null;
@@ -181,7 +165,7 @@ export default async function AnnotationsPage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-4 pt-12 md:px-8">
-        <AnnCard signedIn={Boolean(userId)} assignment={assignment} />
+        <AnnCard slug="annotations" signedIn={Boolean(userId)} assignment={assignment} />
       </section>
 
       <section className="mx-auto max-w-6xl px-4 pt-14 md:px-8" aria-labelledby="every-kind">
