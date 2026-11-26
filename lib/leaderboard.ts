@@ -2,7 +2,7 @@ import { createHash } from "crypto";
 import { unstable_cache } from "next/cache";
 import { clerkClient } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db";
-import { ASSIGNMENT_SLUGS, AUTOMATION_SLUGS, countsOnBoard, MANUAL_TESTING, stepsFor, toolKeyFor, UI_AUTOMATION, type AssignmentSlug } from "@/lib/assignments";
+import { AUTOMATION_SLUGS, automationSlugsFor, countsOnBoard, MANUAL_TESTING, stepsFor, toolKeyFor, UI_AUTOMATION, type AssignmentSlug } from "@/lib/assignments";
 import { minutesBetween } from "@/lib/leaderboard-utils";
 import { DEFAULT_TOOL, NO_TOOL, type Tool } from "@/lib/tools";
 
@@ -245,7 +245,7 @@ export async function getBoard(currentUserId: string | null, slug: AssignmentSlu
 
 // ---- All tracks board ------------------------------------------------------------------------
 // One board per tool. A row per learner who has started that tool: Manual testing (4 steps) + the
-// four Automation stages on that tool. Ranked by total verified checks, then by who got there first.
+// Automation stages on that tool (stage 5 is Playwright only). Ranked by total verified checks, then by who got there first.
 
 export const STAGE_LABEL: Record<AssignmentSlug, string> = {
   [MANUAL_TESTING]: "Manual testing",
@@ -253,9 +253,12 @@ export const STAGE_LABEL: Record<AssignmentSlug, string> = {
   "framework-setup": "Framework setup",
   "page-objects": "Page objects",
   "cross-browser": "Cross-browser",
+  annotations: "Annotations",
 };
 
-export const ALL_TRACKS_MAX = ASSIGNMENT_SLUGS.reduce((n, s) => n + stepsFor(s).length, 0);
+// The most checks a learner can verify on a tool's board: Manual testing plus that tool's automation
+// stages (the Playwright-only stage 5 is not on the Cypress board).
+export const allTracksMax = (tool: Tool) => [MANUAL_TESTING, ...automationSlugsFor(tool)].reduce((n, s) => n + stepsFor(s).length, 0);
 
 type StageProgress = { slug: AssignmentSlug; done: number; total: number; complete: boolean };
 
@@ -334,16 +337,16 @@ async function buildAllTracks(tool: Tool, strict: boolean): Promise<{ rows: Cach
   return {
     rows: ranked.map((u) => {
       const m = u.stages.get(MANUAL_TESTING);
-      const autos = AUTOMATION_SLUGS.map((s) => u.stages.get(s)).filter((p): p is StageProgress => Boolean(p));
+      const autos = automationSlugsFor(tool).map((s) => u.stages.get(s)).filter((p): p is StageProgress => Boolean(p));
       return {
         key: learnerKey(u.userId),
         name: names.get(u.userId) ?? formatName(null, null, u.userId),
         total: u.total,
-        max: ALL_TRACKS_MAX,
+        max: allTracksMax(tool),
         manual: { started: Boolean(m), done: m?.done ?? 0, total: stepsFor(MANUAL_TESTING).length, complete: Boolean(m?.complete) },
-        automation: { started: autos.length > 0, stagesDone: autos.filter((p) => p.complete).length, stages: AUTOMATION_SLUGS.length },
+        automation: { started: autos.length > 0, stagesDone: autos.filter((p) => p.complete).length, stages: automationSlugsFor(tool).length },
         current: u.current ? { ...u.current, label: STAGE_LABEL[u.current.slug] } : null,
-        allDone: u.total >= ALL_TRACKS_MAX,
+        allDone: u.total >= allTracksMax(tool),
       };
     }),
   };
@@ -373,7 +376,7 @@ export async function getAllTracksBoard(currentUserId: string | null, tool: Tool
     finishedAll: rows.filter((r) => r.allDone).length,
     checksVerified: rows.reduce((n, r) => n + r.total, 0),
     mostChecks: rows[0]?.total ?? 0,
-    max: ALL_TRACKS_MAX,
+    max: allTracksMax(tool),
   };
 }
 

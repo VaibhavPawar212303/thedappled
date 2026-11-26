@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import { getAllTracksBoard, getBoard } from "@/lib/leaderboard";
-import { getAssignmentForUser, isAssignmentSlug } from "@/lib/assignments";
+import { getAssignmentForUser, isAssignmentSlug, PLAYWRIGHT_ONLY_SLUGS } from "@/lib/assignments";
+import { PLAYWRIGHT } from "@/lib/tools";
 import { chosenTool } from "@/lib/tool-choice";
 import { LeaderboardView } from "./leaderboard-view";
 import { AllTracksView } from "./all-tracks-view";
@@ -26,6 +28,9 @@ export default async function LeaderboardPage({ searchParams }: { searchParams: 
     const board = await getAllTracksBoard(userId, tool);
     return <AllTracksView board={board} signedIn={Boolean(userId)} tool={tool} />;
   }
+
+  // A Playwright-only stage has one board, whatever tool was chosen.
+  if (PLAYWRIGHT_ONLY_SLUGS.has(raw) && tool !== PLAYWRIGHT) redirect(`/testing/leaderboard?stage=${raw}&tool=${PLAYWRIGHT}`);
 
   const [board, mine] = await Promise.all([
     getBoard(userId, raw, tool),

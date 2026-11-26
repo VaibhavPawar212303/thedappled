@@ -1,15 +1,20 @@
 import { randomBytes } from "crypto";
 import { prisma } from "@/lib/db";
 import type { Reason, Signals, Verdict } from "@/lib/verification";
-import { DEFAULT_TOOL, NO_TOOL, type Tool, type ToolKey } from "@/lib/tools";
+import { DEFAULT_TOOL, NO_TOOL, PLAYWRIGHT, type Tool, type ToolKey } from "@/lib/tools";
 
 export const UI_AUTOMATION = "ui-automation";
 export const FRAMEWORK_SETUP = "framework-setup";
 export const PAGE_OBJECTS = "page-objects";
 export const CROSS_BROWSER = "cross-browser";
+export const ANNOTATIONS = "annotations";
 export const MANUAL_TESTING = "manual-testing";
-export type AssignmentSlug = typeof UI_AUTOMATION | typeof FRAMEWORK_SETUP | typeof PAGE_OBJECTS | typeof CROSS_BROWSER | typeof MANUAL_TESTING;
-export const AUTOMATION_SLUGS = [UI_AUTOMATION, FRAMEWORK_SETUP, PAGE_OBJECTS, CROSS_BROWSER] as const;
+export type AssignmentSlug = typeof UI_AUTOMATION | typeof FRAMEWORK_SETUP | typeof PAGE_OBJECTS | typeof CROSS_BROWSER | typeof ANNOTATIONS | typeof MANUAL_TESTING;
+export const AUTOMATION_SLUGS = [UI_AUTOMATION, FRAMEWORK_SETUP, PAGE_OBJECTS, CROSS_BROWSER, ANNOTATIONS] as const;
+// Stages that exist for one tool only (stage 5 teaches Playwright's own annotations).
+export const PLAYWRIGHT_ONLY_SLUGS = new Set<string>([ANNOTATIONS]);
+// The automation stages a tool's learners can take, in learning order.
+export const automationSlugsFor = (tool: Tool) => AUTOMATION_SLUGS.filter((s) => tool === PLAYWRIGHT || !PLAYWRIGHT_ONLY_SLUGS.has(s));
 export const ASSIGNMENT_SLUGS: AssignmentSlug[] = [MANUAL_TESTING, ...AUTOMATION_SLUGS];
 export const isAssignmentSlug = (v: unknown): v is AssignmentSlug => ASSIGNMENT_SLUGS.includes(v as AssignmentSlug);
 
@@ -36,6 +41,16 @@ export type StepId =
   | "xb-webkit"
   | "repo-browsers"
   | "repo-ci-matrix"
+  | "ann-lab"
+  | "ann-skip"
+  | "ann-fixme"
+  | "ann-fail"
+  | "ann-slow"
+  | "ann-tags"
+  | "ann-custom"
+  | "repo-forbid-only"
+  | "repo-grep-smoke"
+  | "repo-describe-runtime"
   | "manual-fundamentals"
   | "manual-test-design"
   | "manual-test-cases"
@@ -83,7 +98,26 @@ export const CROSS_BROWSER_STEPS: Step[] = [
   { id: "repo-ci-matrix", group: "Configure it on GitHub", label: "GitHub Actions runs all three browsers" },
 ];
 
-export const REPO_STEPS = new Set<StepId>(["repo-config", "repo-ignore", "repo-ci", "repo-pages", "repo-fixture", "repo-specs", "repo-browsers", "repo-ci-matrix"]);
+// Stage 5 (Playwright only). The lab step comes from the learner's run on the annotations lab; the next
+// six from the JSON report of that run (lib/ann-report.ts); the last three from a repo scan (lib/ann-repo-scan.ts).
+export const ANNOTATION_STEPS: Step[] = [
+  { id: "ann-lab", group: "Run the lab", label: "Your tests opened the annotations lab (automated browser)" },
+  { id: "ann-skip", group: "From your test report", label: "Conditional skip with a reason (Copy link on WebKit)" },
+  { id: "ann-fixme", group: "From your test report", label: "fixme on the unfinished dark-mode export" },
+  { id: "ann-fail", group: "From your test report", label: "fail on the SAVE10 coupon bug, with the outcome “expected”" },
+  { id: "ann-slow", group: "From your test report", label: "slow: the 40-second export passes" },
+  { id: "ann-tags", group: "From your test report", label: "Tests tagged @smoke and @regression" },
+  { id: "ann-custom", group: "From your test report", label: "A custom annotation, e.g. { type: 'issue', description }" },
+  { id: "repo-forbid-only", group: "Configure it on GitHub", label: "forbidOnly: !!process.env.CI, and no test.only left in specs" },
+  { id: "repo-grep-smoke", group: "Configure it on GitHub", label: "CI or a project runs only @smoke (--grep or grep:)" },
+  { id: "repo-describe-runtime", group: "Configure it on GitHub", label: "A tagged describe block and a runtime test.info().annotations" },
+];
+export const REPORT_STEPS = new Set<StepId>(["ann-skip", "ann-fixme", "ann-fail", "ann-slow", "ann-tags", "ann-custom"]);
+
+export const REPO_STEPS = new Set<StepId>([
+  "repo-config", "repo-ignore", "repo-ci", "repo-pages", "repo-fixture", "repo-specs", "repo-browsers", "repo-ci-matrix",
+  "repo-forbid-only", "repo-grep-smoke", "repo-describe-runtime",
+]);
 
 // Manual testing track: one step per lesson, done when a signed-in learner scores 5/5 on its quiz
 // (graded on the server, see lib/manual-quizzes.ts). Not reported through the automation event API.
@@ -100,11 +134,12 @@ const STEPS_BY_SLUG: Record<string, Step[]> = {
   [FRAMEWORK_SETUP]: FRAMEWORK_STEPS,
   [PAGE_OBJECTS]: POM_STEPS,
   [CROSS_BROWSER]: CROSS_BROWSER_STEPS,
+  [ANNOTATIONS]: ANNOTATION_STEPS,
   [MANUAL_TESTING]: MANUAL_STEPS,
 };
 export const stepsFor = (slug: string): Step[] => STEPS_BY_SLUG[slug] ?? STEPS;
 
-const STEP_IDS = new Set<string>([...STEPS, ...FRAMEWORK_STEPS, ...POM_STEPS, ...CROSS_BROWSER_STEPS, ...MANUAL_STEPS].map((s) => s.id));
+const STEP_IDS = new Set<string>([...STEPS, ...FRAMEWORK_STEPS, ...POM_STEPS, ...CROSS_BROWSER_STEPS, ...ANNOTATION_STEPS, ...MANUAL_STEPS].map((s) => s.id));
 export const isStepId = (v: unknown): v is StepId => typeof v === "string" && STEP_IDS.has(v);
 
 export type AssignmentStatus = {
@@ -155,8 +190,10 @@ export function toStatus(a: AssignmentWithEvents): AssignmentStatus {
   };
 }
 
-// Manual testing has one assignment per learner; each automation stage has one per tool.
-export const toolKeyFor = (slug: string, tool: Tool = DEFAULT_TOOL): ToolKey => (slug === MANUAL_TESTING ? NO_TOOL : tool);
+// Manual testing has one assignment per learner; each automation stage has one per tool, except the
+// Playwright-only stages, which are always stored (and ranked) as Playwright.
+export const toolKeyFor = (slug: string, tool: Tool = DEFAULT_TOOL): ToolKey =>
+  slug === MANUAL_TESTING ? NO_TOOL : PLAYWRIGHT_ONLY_SLUGS.has(slug) ? PLAYWRIGHT : tool;
 
 export async function getAssignmentForUser(userId: string, slug: AssignmentSlug = UI_AUTOMATION, tool: Tool = DEFAULT_TOOL): Promise<AssignmentStatus | null> {
   const a = await prisma.assignment.findUnique({
@@ -315,4 +352,50 @@ export async function recordRepoChecks(
     await prisma.assignment.update({ where: { id: a.id }, data: { completedAt: verifiedEvents[0].createdAt } });
   }
   return getStatusByToken(token);
+}
+
+// Stage 5: records the checks that passed in an uploaded test report (never downgrades a verified step).
+export async function recordReportChecks(token: string, passed: Partial<Record<StepId, boolean>>, detail: Record<string, string | number>): Promise<AssignmentStatus | null> {
+  const a = await prisma.assignment.findUnique({ where: { token }, select: { id: true, slug: true } });
+  if (!a || a.slug !== ANNOTATIONS) return null;
+  for (const [name, ok] of Object.entries(passed)) {
+    if (!ok || !REPORT_STEPS.has(name as StepId)) continue;
+    const signals = { source: "report", ...detail };
+    const existing = await prisma.assignmentEvent.findUnique({ where: { assignmentId_name: { assignmentId: a.id, name } } });
+    if (!existing) {
+      await prisma.assignmentEvent.create({ data: { assignmentId: a.id, name, verified: true, signals } }).catch(() => {});
+    } else if (!existing.verified) {
+      await prisma.assignmentEvent.update({ where: { id: existing.id }, data: { verified: true, reason: null, signals, createdAt: new Date() } });
+    }
+  }
+  const verifiedEvents = await prisma.assignmentEvent.findMany({
+    where: { assignmentId: a.id, verified: true },
+    select: { createdAt: true },
+    orderBy: { createdAt: "desc" },
+  });
+  if (verifiedEvents.length >= ANNOTATION_STEPS.length) {
+    await prisma.assignment.update({ where: { id: a.id }, data: { completedAt: verifiedEvents[0].createdAt } });
+  }
+  return getStatusByToken(token);
+}
+
+// Stage 5: when the learner's tests last drove the annotations lab. An uploaded report must come from a
+// run around that time. Kept in the verified lab step's signals.
+export async function touchLabVisit(token: string): Promise<void> {
+  const a = await prisma.assignment.findUnique({ where: { token }, select: { id: true } });
+  if (!a) return;
+  const e = await prisma.assignmentEvent.findUnique({ where: { assignmentId_name: { assignmentId: a.id, name: "ann-lab" } } });
+  if (!e?.verified) return;
+  const prev = e.signals && typeof e.signals === "object" && !Array.isArray(e.signals) ? (e.signals as Record<string, unknown>) : {};
+  await prisma.assignmentEvent.update({ where: { id: e.id }, data: { signals: { ...prev, lastSeenAt: new Date().toISOString() } as object } });
+}
+
+// The last time the learner's tests drove the lab (null = no verified lab run yet).
+export async function lastLabVisit(token: string): Promise<Date | null> {
+  const a = await prisma.assignment.findUnique({ where: { token }, select: { id: true } });
+  if (!a) return null;
+  const e = await prisma.assignmentEvent.findUnique({ where: { assignmentId_name: { assignmentId: a.id, name: "ann-lab" } } });
+  if (!e?.verified) return null;
+  const seen = (e.signals as { lastSeenAt?: unknown } | null)?.lastSeenAt;
+  return typeof seen === "string" && !Number.isNaN(Date.parse(seen)) ? new Date(seen) : e.createdAt;
 }

@@ -4,6 +4,7 @@ import { demoCredentials } from "@/lib/framework-creds";
 import { evaluateRepo, loadRepo, parseRepoUrl, RepoError, type RepoResult } from "@/lib/repo-scan";
 import { evaluatePomRepo, type PomRepoResult } from "@/lib/pom-repo-scan";
 import { evaluateCrossBrowserRepo, type CrossBrowserRepoResult } from "@/lib/xb-repo-scan";
+import { evaluateAnnotationsRepo, type AnnotationsRepoResult } from "@/lib/ann-repo-scan";
 
 export type RepoCheckOutcome = { repo: string; branch: string; checks: RepoResult; assignment: AssignmentStatus | null };
 
@@ -58,6 +59,24 @@ export async function checkCrossBrowserRepoForAssignment(token: string, repoUrl:
   const assignment = await recordRepoChecks(token, repo, {
     "repo-browsers": checks["repo-browsers"].ok,
     "repo-ci-matrix": checks["repo-ci-matrix"].ok,
+  });
+  return { repo, branch, checks, assignment };
+}
+
+export type AnnotationsRepoCheckOutcome = { repo: string; branch: string; checks: AnnotationsRepoResult; assignment: AssignmentStatus | null };
+
+// Stage 5 (Playwright only): scans for forbidOnly, a @smoke run and describe/runtime annotations, and records the passing checks.
+export async function checkAnnotationsRepoForAssignment(token: string, repoUrl: string): Promise<AnnotationsRepoCheckOutcome> {
+  const parsed = parseRepoUrl(repoUrl);
+  if (!parsed) throw new RepoError("Enter a public GitHub repository URL, like https://github.com/you/your-repo.", 400);
+
+  const { snapshot, branch } = await loadRepo(parsed);
+  const checks = await evaluateAnnotationsRepo(snapshot);
+  const repo = `${parsed.owner}/${parsed.repo}`;
+  const assignment = await recordRepoChecks(token, repo, {
+    "repo-forbid-only": checks["repo-forbid-only"].ok,
+    "repo-grep-smoke": checks["repo-grep-smoke"].ok,
+    "repo-describe-runtime": checks["repo-describe-runtime"].ok,
   });
   return { repo, branch, checks, assignment };
 }

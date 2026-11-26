@@ -27,6 +27,7 @@ const CONTINUE: Record<string, string> = {
   "framework-setup": "/testing/framework-setup/assignment",
   "page-objects": "/testing/page-objects/assignment",
   "cross-browser": "/testing/cross-browser/assignment",
+  annotations: "/testing/annotations/assignment",
 };
 
 function initials(name: string) {
