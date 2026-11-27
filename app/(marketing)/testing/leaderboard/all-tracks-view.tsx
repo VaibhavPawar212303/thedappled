@@ -30,6 +30,7 @@ const CONTINUE: Record<string, string> = {
   annotations: "/testing/annotations/assignment",
   "annotations-advanced": "/testing/annotations-advanced/assignment",
   "fixtures-advanced": "/testing/fixtures-advanced/assignment",
+  "parallel-runs": "/testing/parallel-runs/assignment",
 };
 
 function initials(name: string) {

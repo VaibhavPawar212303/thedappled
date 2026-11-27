@@ -23,6 +23,9 @@ export type FlatTest = {
   maxDurationMs: number;
   attachments: string[]; // names of the final attempt's attachments
   workerIndex: number | null; // the worker that ran the final attempt
+  id: string; // the test's id (the same value as testInfo.testId)
+  startMs: number | null; // when the final attempt started (epoch ms)
+  durationMs: number; // how long the final attempt ran
 };
 
 // Built-in annotation types. Anything else (not starting with "_", which Playwright uses internally) is custom.
@@ -74,6 +77,12 @@ export function flattenReport(report: unknown): FlatTest[] {
           maxDurationMs: results.reduce((m, r) => Math.max(m, typeof r.duration === "number" ? r.duration : 0), 0),
           attachments: results.length ? arr(results[results.length - 1].attachments).map(obj).map((a) => str(a.name)).filter(Boolean) : [],
           workerIndex: results.length && typeof results[results.length - 1].workerIndex === "number" ? (results[results.length - 1].workerIndex as number) : null,
+          id: str(sp.id),
+          startMs: (() => {
+            const st = results.length ? str(results[results.length - 1].startTime) : "";
+            return st && !Number.isNaN(Date.parse(st)) ? Date.parse(st) : null;
+          })(),
+          durationMs: results.length && typeof results[results.length - 1].duration === "number" ? (results[results.length - 1].duration as number) : 0,
         });
       }
     }

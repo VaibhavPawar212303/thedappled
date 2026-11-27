@@ -111,11 +111,12 @@ const TRACKS: Track[] = [
     title: "Playwright",
     tone: "purple",
     Icon: Play,
-    blurb: "Automate real pages with Playwright, set up the framework the way teams do, add page objects, run on every browser engine, then master annotations and fixtures.",
+    blurb: "Automate real pages with Playwright, set up the framework the way teams do, add page objects, run on every browser engine, then master annotations, fixtures and parallel runs.",
     stepTestId: (n) => `step-card-${n}`, // unchanged ids for the existing automation steps
     extra: [{ n: 5, title: "Playwright annotations", blurb: "skip, fixme, fail, slow, only, tags and custom annotations.", href: "/testing/annotations", progressKey: "playwright:annotations" },
       { n: 6, title: "Advanced annotations", blurb: "Group skip, fixme in hooks, several annotations, --grep OR and AND.", href: "/testing/annotations-advanced", progressKey: "playwright:annotations-advanced" },
-      { n: 7, title: "Advanced fixtures", blurb: "Teardown, worker, auto and option fixtures, overrides and mergeTests.", href: "/testing/fixtures-advanced", isNew: true, progressKey: "playwright:fixtures-advanced" },
+      { n: 7, title: "Advanced fixtures", blurb: "Teardown, worker, auto and option fixtures, overrides and mergeTests.", href: "/testing/fixtures-advanced", progressKey: "playwright:fixtures-advanced" },
+      { n: 8, title: "Parallel runs & workers", blurb: "Workers, parallel and serial modes, maxFailures and sharding.", href: "/testing/parallel-runs", isNew: true, progressKey: "playwright:parallel-runs" },
     ],
   }),
   automationTrack("cypress", {

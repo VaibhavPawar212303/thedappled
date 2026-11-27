@@ -9,7 +9,7 @@ import { ANN_STAGES, type AnnSlug } from "./stages";
 import { REASON_TEXT } from "@/lib/verification";
 import { ToolBadge } from "../../_components/card-tool";
 
-// Design: Penpot "26 - Testing Learning Path", pages "Stage 5 – Annotations", "Stage 6 – Advanced annotations" and "Stage 7 – Advanced fixtures", board C.
+// Design: Penpot "26 - Testing Learning Path", pages "Stage 5 – Annotations" to "Stage 8 – Parallel runs & workers", board C.
 
 type Env = { BASE_URL: string; ASSIGNMENT_TOKEN: string };
 type Check = { ok: boolean; message: string };
@@ -269,7 +269,7 @@ export function AnnView({ slug, initial, env, rank }: { slug: AnnSlug; initial: 
 
             {stage.projects && (
               <section data-testid="projects" className="min-w-0 rounded-2xl border bg-card p-6 shadow-sm sm:p-8">
-                <h2 className="text-xl font-extrabold">Projects to run</h2>
+                <h2 className="text-xl font-extrabold">{stage.projects.title ?? "Projects to run"}</h2>
                 <p className="mt-1 text-[13px] text-muted-foreground">{stage.projects.note}</p>
                 <pre className="mt-4 overflow-x-auto rounded-xl bg-slate-900 p-4 font-mono text-xs leading-5 text-slate-100">{stage.projects.code}</pre>
               </section>

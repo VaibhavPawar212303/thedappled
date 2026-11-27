@@ -1,6 +1,6 @@
-// Copy for the Playwright-only stages 5-7 (annotations and fixtures), shared by their card and assignment view.
-// Design: Penpot "26 - Testing Learning Path", pages "Stage 5 – Annotations", "Stage 6 – Advanced annotations", "Stage 7 – Advanced fixtures".
-import { ADVANCED_STEPS, ANNOTATION_STEPS, FIXTURE_STEPS, type StepId } from "@/lib/assignments";
+// Copy for the Playwright-only stages 5-8 (annotations, fixtures, parallel runs), shared by their card and assignment view.
+// Design: Penpot "26 - Testing Learning Path", pages "Stage 5 – Annotations", "Stage 6 – Advanced annotations", "Stage 7 – Advanced fixtures", "Stage 8 – Parallel runs & workers".
+import { ADVANCED_STEPS, ANNOTATION_STEPS, FIXTURE_STEPS, PARALLEL_STEPS, type StepId } from "@/lib/assignments";
 
 export const ANN_EXAMPLE = `// tests/lab.spec.ts
 import { test, expect } from '@playwright/test';
@@ -187,7 +187,64 @@ projects: [
 # run, then upload results.json
 npx playwright test --reporter=json > results.json`;
 
-export type AnnSlug = "annotations" | "annotations-advanced" | "fixtures-advanced";
+export const PAR_EXAMPLE = `// tests/lab.ts — every spec opens the lab the same way
+export const lab = () => \`/testing/parallel-runs/lab?a=\${process.env.ASSIGNMENT_TOKEN}\`;
+
+// tests/reports.spec.ts — four independent tests, run side by side
+import { test, expect } from '@playwright/test';
+import { lab } from './lab';
+test.describe.configure({ mode: 'parallel' });
+
+for (const name of ['daily', 'weekly', 'monthly', 'yearly']) {
+  test(\`\${name} report\`, async ({ page }) => {
+    await page.goto(lab());
+    await page.getByTestId(\`report-\${name}-generate\`).click();
+    await expect(page.getByTestId(\`report-\${name}-status\`)).toHaveText('Ready');
+  });
+}
+
+// tests/orders.spec.ts — unique data per test, from testInfo.testId
+test('create an order', async ({ page }, testInfo) => {
+  const id = \`order-\${testInfo.testId}\`;
+  testInfo.annotations.push({ type: 'order', description: id });
+  await page.goto(lab());
+  await page.getByTestId('order-id').fill(id);
+  await page.getByTestId('order-create').click();
+  await expect(page.getByTestId('order-result')).toHaveText(\`Order \${id} created\`);
+});
+
+// tests/checkout.spec.ts — steps that depend on each other
+test.describe('checkout', () => {
+  test.describe.configure({ mode: 'serial' });
+  test('cart is ready', async ({ page }) => {
+    await page.goto(lab());
+    await expect(page.getByTestId('checkout-cart')).toHaveText('Ready');
+  });
+  test('payment goes through', async ({ page }) => {   // fails: the service is down
+    await page.goto(lab());
+    await page.getByTestId('checkout-pay').click();
+    await expect(page.getByTestId('checkout-payment')).toHaveText('Paid');
+  });
+  test('order is confirmed', async ({ page }) => {      // skipped after the failure
+    await page.goto(lab());
+    await expect(page.getByTestId('checkout-confirm')).toHaveText('Confirmed');
+  });
+});
+
+// playwright.config.ts
+fullyParallel: true,
+workers: process.env.CI ? 2 : undefined,
+maxFailures: process.env.CI ? 10 : undefined,
+
+# .github/workflows/tests.yml
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
+    steps:
+      - run: npx playwright test --shard=\${{ matrix.shard }}/2`;
+
+export type AnnSlug = "annotations" | "annotations-advanced" | "fixtures-advanced" | "parallel-runs";
 
 type StageCopy = {
   name: string; // breadcrumb label
@@ -198,7 +255,7 @@ type StageCopy = {
   reportChecks: number;
   how: string[];
   example: string;
-  projects?: { note: string; code: string };
+  projects?: { title?: string; note: string; code: string };
   card: { title: string; blurb: string; points: string[]; checksLine: string; minutes: string };
 };
 
@@ -283,6 +340,39 @@ projects: [
       points: ["Auto, worker and option fixtures prove themselves in your report", "Your report shows one account per worker", "Teardown, mergeTests and overrides checked on GitHub"],
       checksLine: "1 lab run · 3 from your report · 4 GitHub checks",
       minutes: "Takes about 60 minutes · finish stage 3 first",
+    },
+  },
+  "parallel-runs": {
+    name: "Parallel runs & workers",
+    title: "Assignment: parallel runs & workers",
+    completeTitle: "Parallel runs complete!",
+    completeText: "Your suite runs side by side, keeps its data apart, stops early and shards in CI.",
+    steps: PARALLEL_STEPS,
+    reportChecks: 5,
+    how: [
+      "Open the lab link: a parallel reports file and unique order IDs",
+      "A serial checkout that hits the broken payment step",
+      "Upload a normal run, a --max-failures=1 run and a --shard=1/2 run",
+      "Push a CI shard matrix and the config, then check the repo",
+    ],
+    example: PAR_EXAMPLE,
+    projects: {
+      title: "Runs to upload",
+      note: "Upload as many reports as you need. Each one adds the checks it passes.",
+      code: `# 1. normal run
+npx playwright test --reporter=json > run.json
+# 2. stop after the payment failure
+npx playwright test --max-failures=1 \
+  --reporter=json > stop.json
+# 3. one shard
+npx playwright test --shard=1/2 --reporter=json > shard.json`,
+    },
+    card: {
+      title: "Run it fast, keep it stable",
+      blurb: "The order desk lab has orders to create, a checkout in three steps and a payment step that is broken. Run in parallel and in order, stop early, shard, and upload your reports.",
+      points: ["Your reports show parallel, serial and sharded runs", "Each test's data comes from its own testId", "CI shards the suite; the config sets workers and maxFailures"],
+      checksLine: "1 lab run · 5 from your reports · 3 GitHub checks",
+      minutes: "Takes about 60 minutes · finish stage 7 first",
     },
   },
 };

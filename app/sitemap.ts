@@ -57,6 +57,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/testing/annotations`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE_URL}/testing/annotations-advanced`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE_URL}/testing/fixtures-advanced`, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${SITE_URL}/testing/parallel-runs`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE_URL}/testing/manual-testing/fundamentals`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE_URL}/testing/manual-testing/test-design`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE_URL}/testing/manual-testing/test-cases`, changeFrequency: "monthly", priority: 0.7 },

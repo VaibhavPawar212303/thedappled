@@ -10,11 +10,12 @@ export const CROSS_BROWSER = "cross-browser";
 export const ANNOTATIONS = "annotations";
 export const ANNOTATIONS_ADVANCED = "annotations-advanced";
 export const FIXTURES_ADVANCED = "fixtures-advanced";
+export const PARALLEL_RUNS = "parallel-runs";
 export const MANUAL_TESTING = "manual-testing";
-export type AssignmentSlug = typeof UI_AUTOMATION | typeof FRAMEWORK_SETUP | typeof PAGE_OBJECTS | typeof CROSS_BROWSER | typeof ANNOTATIONS | typeof ANNOTATIONS_ADVANCED | typeof FIXTURES_ADVANCED | typeof MANUAL_TESTING;
-export const AUTOMATION_SLUGS = [UI_AUTOMATION, FRAMEWORK_SETUP, PAGE_OBJECTS, CROSS_BROWSER, ANNOTATIONS, ANNOTATIONS_ADVANCED, FIXTURES_ADVANCED] as const;
-// Stages that exist for one tool only (stages 5-7 teach Playwright's own annotations and fixtures).
-export const PLAYWRIGHT_ONLY_SLUGS = new Set<string>([ANNOTATIONS, ANNOTATIONS_ADVANCED, FIXTURES_ADVANCED]);
+export type AssignmentSlug = typeof UI_AUTOMATION | typeof FRAMEWORK_SETUP | typeof PAGE_OBJECTS | typeof CROSS_BROWSER | typeof ANNOTATIONS | typeof ANNOTATIONS_ADVANCED | typeof FIXTURES_ADVANCED | typeof PARALLEL_RUNS | typeof MANUAL_TESTING;
+export const AUTOMATION_SLUGS = [UI_AUTOMATION, FRAMEWORK_SETUP, PAGE_OBJECTS, CROSS_BROWSER, ANNOTATIONS, ANNOTATIONS_ADVANCED, FIXTURES_ADVANCED, PARALLEL_RUNS] as const;
+// Stages that exist for one tool only (stages 5-8 teach Playwright's annotations, fixtures and parallel runs).
+export const PLAYWRIGHT_ONLY_SLUGS = new Set<string>([ANNOTATIONS, ANNOTATIONS_ADVANCED, FIXTURES_ADVANCED, PARALLEL_RUNS]);
 // The automation stages a tool's learners can take, in learning order.
 export const automationSlugsFor = (tool: Tool) => AUTOMATION_SLUGS.filter((s) => tool === PLAYWRIGHT || !PLAYWRIGHT_ONLY_SLUGS.has(s));
 export const ASSIGNMENT_SLUGS: AssignmentSlug[] = [MANUAL_TESTING, ...AUTOMATION_SLUGS];
@@ -71,6 +72,15 @@ export type StepId =
   | "repo-fx-merge"
   | "repo-fx-override"
   | "repo-fx-global"
+  | "par-lab"
+  | "par-file-parallel"
+  | "par-serial"
+  | "par-unique-data"
+  | "par-max-failures"
+  | "par-shard"
+  | "repo-par-shard-ci"
+  | "repo-par-modes"
+  | "repo-par-config"
   | "manual-fundamentals"
   | "manual-test-design"
   | "manual-test-cases"
@@ -160,13 +170,28 @@ export const FIXTURE_STEPS: Step[] = [
   { id: "repo-fx-global", group: "Configure it on GitHub", label: "A worker auto fixture, and { box: true } or a title" },
 ];
 
+// Stage 8 (Playwright only): parallel runs and workers. Learners may upload several reports (a normal run,
+// a run stopped by maxFailures, a shard); each upload records the checks it passes (lib/par-report.ts).
+export const PARALLEL_STEPS: Step[] = [
+  { id: "par-lab", group: "Run the lab", label: "Your tests opened the order desk lab (automated browser)" },
+  { id: "par-file-parallel", group: "From your test reports", label: "Tests from one file ran at the same time in two workers" },
+  { id: "par-serial", group: "From your test reports", label: "A serial group skipped its later tests after a failure" },
+  { id: "par-unique-data", group: "From your test reports", label: "Each test's order ID comes from its own testId" },
+  { id: "par-max-failures", group: "From your test reports", label: "A maxFailures run stopped early and skipped the rest" },
+  { id: "par-shard", group: "From your test reports", label: "A report from a sharded run (--shard=1/2)" },
+  { id: "repo-par-shard-ci", group: "Configure it on GitHub", label: "GitHub Actions shards the suite with a matrix" },
+  { id: "repo-par-modes", group: "Configure it on GitHub", label: "describe.configure with serial, and parallel or default" },
+  { id: "repo-par-config", group: "Configure it on GitHub", label: "Config: fullyParallel, CI-based workers and maxFailures" },
+];
+
 export const REPORT_STEPS = new Set<StepId>([
   "ann-skip", "ann-fixme", "ann-fail", "ann-slow", "ann-tags", "ann-custom",
   "adv-group-skip", "adv-hook-fixme", "adv-multi", "adv-title-tag", "adv-hidden",
   "fx-auto", "fx-worker", "fx-option",
+  "par-file-parallel", "par-serial", "par-unique-data", "par-max-failures", "par-shard",
 ]);
 // Stages checked from an uploaded report, and the step that records the learner's lab runs.
-export const LAB_STEP: Partial<Record<AssignmentSlug, StepId>> = { [ANNOTATIONS]: "ann-lab", [ANNOTATIONS_ADVANCED]: "adv-lab", [FIXTURES_ADVANCED]: "fx-lab" };
+export const LAB_STEP: Partial<Record<AssignmentSlug, StepId>> = { [ANNOTATIONS]: "ann-lab", [ANNOTATIONS_ADVANCED]: "adv-lab", [FIXTURES_ADVANCED]: "fx-lab", [PARALLEL_RUNS]: "par-lab" };
 export const isLabStep = (step: string) => Object.values(LAB_STEP).includes(step as StepId);
 
 export const REPO_STEPS = new Set<StepId>([
@@ -174,6 +199,7 @@ export const REPO_STEPS = new Set<StepId>([
   "repo-forbid-only", "repo-grep-smoke", "repo-describe-runtime",
   "repo-skip-callback", "repo-fixme-hook", "repo-declared-skip", "repo-grep-combine",
   "repo-fx-teardown", "repo-fx-merge", "repo-fx-override", "repo-fx-global",
+  "repo-par-shard-ci", "repo-par-modes", "repo-par-config",
 ]);
 
 // Manual testing track: one step per lesson, done when a signed-in learner scores 5/5 on its quiz
@@ -194,11 +220,12 @@ const STEPS_BY_SLUG: Record<string, Step[]> = {
   [ANNOTATIONS]: ANNOTATION_STEPS,
   [ANNOTATIONS_ADVANCED]: ADVANCED_STEPS,
   [FIXTURES_ADVANCED]: FIXTURE_STEPS,
+  [PARALLEL_RUNS]: PARALLEL_STEPS,
   [MANUAL_TESTING]: MANUAL_STEPS,
 };
 export const stepsFor = (slug: string): Step[] => STEPS_BY_SLUG[slug] ?? STEPS;
 
-const STEP_IDS = new Set<string>([...STEPS, ...FRAMEWORK_STEPS, ...POM_STEPS, ...CROSS_BROWSER_STEPS, ...ANNOTATION_STEPS, ...ADVANCED_STEPS, ...FIXTURE_STEPS, ...MANUAL_STEPS].map((s) => s.id));
+const STEP_IDS = new Set<string>([...STEPS, ...FRAMEWORK_STEPS, ...POM_STEPS, ...CROSS_BROWSER_STEPS, ...ANNOTATION_STEPS, ...ADVANCED_STEPS, ...FIXTURE_STEPS, ...PARALLEL_STEPS, ...MANUAL_STEPS].map((s) => s.id));
 export const isStepId = (v: unknown): v is StepId => typeof v === "string" && STEP_IDS.has(v);
 
 export type AssignmentStatus = {
@@ -413,7 +440,7 @@ export async function recordRepoChecks(
   return getStatusByToken(token);
 }
 
-// Stages 5-7: records the checks that passed in an uploaded test report (never downgrades a verified step).
+// Stages 5-8: records the checks that passed in an uploaded test report (never downgrades a verified step).
 export async function recordReportChecks(token: string, passed: Partial<Record<StepId, boolean>>, detail: Record<string, string | number>): Promise<AssignmentStatus | null> {
   const a = await prisma.assignment.findUnique({ where: { token }, select: { id: true, slug: true } });
   if (!a || !LAB_STEP[a.slug as AssignmentSlug]) return null;
@@ -439,7 +466,7 @@ export async function recordReportChecks(token: string, passed: Partial<Record<S
   return getStatusByToken(token);
 }
 
-// Stages 5-7: when the learner's tests last drove the lab. An uploaded report must come from a run
+// Stages 5-8: when the learner's tests last drove the lab. An uploaded report must come from a run
 // around that time. Kept in the verified lab step's signals.
 export async function touchLabVisit(token: string): Promise<void> {
   const a = await prisma.assignment.findUnique({ where: { token }, select: { id: true, slug: true } });

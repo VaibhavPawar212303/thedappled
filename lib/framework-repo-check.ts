@@ -7,6 +7,7 @@ import { evaluateCrossBrowserRepo, type CrossBrowserRepoResult } from "@/lib/xb-
 import { evaluateAnnotationsRepo, type AnnotationsRepoResult } from "@/lib/ann-repo-scan";
 import { evaluateAdvancedRepo, type AdvancedRepoResult } from "@/lib/ann-adv-repo-scan";
 import { evaluateFixturesRepo, type FixturesRepoResult } from "@/lib/fx-repo-scan";
+import { evaluateParallelRepo, type ParallelRepoResult } from "@/lib/par-repo-scan";
 
 export type RepoCheckOutcome = { repo: string; branch: string; checks: RepoResult; assignment: AssignmentStatus | null };
 
@@ -118,6 +119,24 @@ export async function checkFixturesRepoForAssignment(token: string, repoUrl: str
     "repo-fx-merge": checks["repo-fx-merge"].ok,
     "repo-fx-override": checks["repo-fx-override"].ok,
     "repo-fx-global": checks["repo-fx-global"].ok,
+  });
+  return { repo, branch, checks, assignment };
+}
+
+export type ParallelRepoCheckOutcome = { repo: string; branch: string; checks: ParallelRepoResult; assignment: AssignmentStatus | null };
+
+// Stage 8 (Playwright only): scans for a CI shard matrix, describe modes and the parallel config.
+export async function checkParallelRepoForAssignment(token: string, repoUrl: string): Promise<ParallelRepoCheckOutcome> {
+  const parsed = parseRepoUrl(repoUrl);
+  if (!parsed) throw new RepoError("Enter a public GitHub repository URL, like https://github.com/you/your-repo.", 400);
+
+  const { snapshot, branch } = await loadRepo(parsed);
+  const checks = await evaluateParallelRepo(snapshot);
+  const repo = `${parsed.owner}/${parsed.repo}`;
+  const assignment = await recordRepoChecks(token, repo, {
+    "repo-par-shard-ci": checks["repo-par-shard-ci"].ok,
+    "repo-par-modes": checks["repo-par-modes"].ok,
+    "repo-par-config": checks["repo-par-config"].ok,
   });
   return { repo, branch, checks, assignment };
 }
