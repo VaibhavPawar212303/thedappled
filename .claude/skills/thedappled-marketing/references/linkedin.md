@@ -19,8 +19,9 @@ Notion page "LinkedIn Posting Rules" (https://app.notion.com/p/422a425ec07381659
 
 ## Schedule rules
 
-- Weekdays only; prefer Tue–Thu; never Sat/Sun.
-- At least one empty day between two posts; no two Ready rows on one date; 3–4 posts a week at most.
+- Weekdays only; never Sat/Sun.
+- Two empty days between two posts: the next post is at least 3 days after the previous one, and if
+  that lands on Sat/Sun it moves to Monday (a Monday/Thursday rhythm). No two Ready rows on one date.
 - Query existing rows first and pick the next free date that fits. Avoid public holidays where
   reach is low (e.g. Dec 24–26, Dec 31, Jan 1) and say why you skipped them.
 

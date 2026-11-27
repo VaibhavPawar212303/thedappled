@@ -22,7 +22,7 @@ Before pushing, check `git config user.name` / `git config user.email` and `gh a
 
 Posts are rows in the Notion database **LinkedIn Insta Drafts**. The Make scenario **Notion to LinkedIn - Auto Post** runs daily at 7:00 PM IST and posts only the row with Status = Ready and Publish On = today (IST); a row whose day was missed never posts later and needs a new date. Full rules: the Notion page [LinkedIn Posting Rules](https://app.notion.com/p/422a425ec07381659f9bce19566ccb9f). Follow these when scheduling, writing, or making images for a post:
 
-1. **Schedule:** weekdays only (prefer Tue–Thu, never Sat/Sun). Leave at least one day with no post between two posts. 3–4 posts a week. No two Ready rows on the same date.
+1. **Schedule:** weekdays only, never Sat/Sun. Leave two days with no post between two posts (next post at least 3 days later; if that lands on a weekend, use Monday). That gives a Monday/Thursday rhythm. No two Ready rows on the same date.
 2. **Text:** 1,300–2,000 characters. Hook in the first two lines (about 200 characters). Short paragraphs with blank lines between them. End with one question.
 3. **Hashtags:** 3–5, at the end of the post.
 4. **Links:** never in the post text. Put one link in the row's **First Comment** field; the post says "The link is in the first comment." The Make scenario posts that comment right after the post (LinkedIn API call) and sets **Comment Status** to Posted or Failed.

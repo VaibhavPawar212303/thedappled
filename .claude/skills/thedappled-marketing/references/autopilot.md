@@ -37,7 +37,7 @@ reports that Chrome is missing, run `npx -y playwright@1.49.1 install --with-dep
 ## 3. Keep the LinkedIn queue full (at most ONE new post per run)
 
 Target: every free valid slot in the next 14 days has a Ready post, following the schedule rules in
-`linkedin.md` (weekdays, Tue–Thu preferred, a gap day, max 3–4 a week, holidays skipped).
+`linkedin.md` (weekdays only, two empty days between posts, weekend dates move to Monday).
 
 If there is a free slot at least 2 days from today **and** something worth saying:
 1. Pick the story, in this order: an unannounced feature → a new angle on a feature whose post did well
