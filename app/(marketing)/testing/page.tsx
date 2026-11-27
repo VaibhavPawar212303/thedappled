@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Check, FlaskConical, Play, Search, X, type LucideIcon } from "lucide-react";
+import { ArrowRight, Check, FlaskConical, Search, Smartphone, X } from "lucide-react";
 import { SignedIn, SignedOut, SignUpButton } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 import { Button } from "@/components/ui/button";
-import { automationSlugsFor, getAssignmentForUser } from "@/lib/assignments";
-import { TOOLS as AUTOMATION_TOOLS, withTool, type Tool } from "@/lib/tools";
-import { getManualProgress } from "@/lib/manual-progress";
+import { TOOLS as AUTOMATION_TOOLS } from "@/lib/tools";
+import { doneCount, loadRoadmapProgress, MANUAL_STEPS, toolSteps } from "./_components/roadmap-data";
+import { TrackCard } from "./_components/track-card";
 import { ManualPendingSync } from "./manual-testing/_components/manual-pending-sync";
 
 export const metadata: Metadata = {
@@ -15,152 +15,6 @@ export const metadata: Metadata = {
     "A free software testing learning path with hands-on UI automation practice: write Playwright or Cypress scripts against real sign-in and sign-up demo pages.",
   alternates: { canonical: "/testing" },
 };
-
-type Tone = "blue" | "purple" | "green";
-
-const TONES: Record<Tone, { chip: string; text: string }> = {
-  blue: { chip: "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300", text: "text-blue-600 dark:text-blue-400" },
-  purple: { chip: "bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300", text: "text-purple-600 dark:text-purple-400" },
-  green: { chip: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300", text: "text-emerald-700 dark:text-emerald-400" },
-};
-
-// Design: Penpot "26 - Testing Learning Path", Roadmap page, board "Testing roadmap — manual + Playwright + Cypress tracks (new)".
-// Three tracks side by side: Manual testing, then one card per automation tool. Steps without an href have no page yet.
-// progressKey: the Manual testing step id, or "<tool>:<stage slug>" for an automation stage (progress is kept per tool).
-type Step = { n: number; title: string; blurb: string; href?: string; isNew?: boolean; progressKey: string };
-type Track = {
-  id: string;
-  title: string;
-  level: string;
-  tone: Tone;
-  Icon: LucideIcon;
-  tool?: Tool; // automation tracks: the tool every step link opens with
-  soon?: string; // a note under the steps for stages that aren't built yet
-  leaderboard: { href: string; label: string };
-  isNew?: boolean;
-  blurb: string;
-  steps: Step[];
-  stepTestId: (n: number) => string;
-  unit: string; // "done" / "stages done" in the progress summary
-  activeLabel: string; // label for the step the learner is on
-};
-
-const STAGE_BLURB: Record<Tool, string[]> = {
-  playwright: [
-    "Locators, waits, assertions and debugging on real sign-in and sign-up pages.",
-    "Config and credentials in .env, tests that read them, and the project on GitHub with secrets.",
-    "Move locators into page classes, share setup with fixtures, keep specs readable.",
-    "Run the same spec on Chromium, Firefox and WebKit, locally and in GitHub Actions.",
-  ],
-  cypress: [
-    "cy commands, retries and assertions on real sign-in and sign-up pages.",
-    "cypress.config and env values, tests that read them, and the project on GitHub with secrets.",
-    "Page classes and custom commands, so specs stay short and readable.",
-    "Run the same spec on Chrome, Firefox and WebKit, locally and in GitHub Actions.",
-  ],
-};
-const STAGES = [
-  { title: "UI automation", href: "/testing/ui-automation", slug: "ui-automation" },
-  { title: "Framework setup", href: "/testing/framework-setup", slug: "framework-setup" },
-  { title: "Page objects & fixtures", href: "/testing/page-objects", slug: "page-objects" },
-  { title: "Cross-browser testing", href: "/testing/cross-browser", slug: "cross-browser" },
-];
-
-function automationTrack(
-  tool: Tool,
-  o: { title: string; tone: Tone; Icon: LucideIcon; blurb: string; stepTestId: (n: number) => string; extra?: Step[]; soon?: string },
-): Track {
-  const steps: Step[] = STAGES.map((st, i) => ({ n: i + 1, title: st.title, blurb: STAGE_BLURB[tool][i], href: st.href, progressKey: `${tool}:${st.slug}` }));
-  return {
-    id: `automation-${tool}`,
-    title: o.title,
-    level: "Intermediate",
-    tone: o.tone,
-    Icon: o.Icon,
-    tool,
-    blurb: o.blurb,
-    steps: [...steps, ...(o.extra ?? [])],
-    stepTestId: o.stepTestId,
-    unit: "stages done",
-    activeLabel: "In progress",
-    soon: o.soon,
-    leaderboard: { href: withTool("/testing/leaderboard", tool), label: `View ${o.title} leaderboard →` },
-  };
-}
-
-const TRACKS: Track[] = [
-  {
-    id: "manual-testing",
-    title: "Manual testing",
-    level: "Beginner",
-    tone: "blue",
-    Icon: Search,
-    blurb: "Learn how testers think before you automate: plan tests, design cases, report bugs clearly and explore an app to find what breaks.",
-    steps: [
-      { n: 1, title: "Testing fundamentals", blurb: "SDLC and STLC, test levels and types, and what makes a good tester.", href: "/testing/manual-testing/fundamentals", progressKey: "manual-fundamentals" },
-      { n: 2, title: "Test design techniques", blurb: "Equivalence partitioning, boundary values and decision tables.", href: "/testing/manual-testing/test-design", progressKey: "manual-test-design" },
-      { n: 3, title: "Test cases & bug reports", blurb: "Write clear test cases and defect reports with steps, severity and priority.", href: "/testing/manual-testing/test-cases", progressKey: "manual-test-cases" },
-      { n: 4, title: "Exploratory testing", blurb: "Charters, time-boxed sessions and notes that find real bugs.", href: "/testing/manual-testing/exploratory", progressKey: "manual-exploratory" },
-    ],
-    stepTestId: (n) => `manual-step-card-${n}`,
-    leaderboard: { href: "/testing/leaderboard", label: "View the all-tracks leaderboard →" },
-    unit: "done",
-    activeLabel: "Up next",
-  },
-  automationTrack("playwright", {
-    title: "Playwright",
-    tone: "purple",
-    Icon: Play,
-    blurb: "Automate real pages with Playwright, set up the framework the way teams do, add page objects, run on every browser engine, then master annotations, fixtures and parallel runs.",
-    stepTestId: (n) => `step-card-${n}`, // unchanged ids for the existing automation steps
-    extra: [{ n: 5, title: "Playwright annotations", blurb: "skip, fixme, fail, slow, only, tags and custom annotations.", href: "/testing/annotations", progressKey: "playwright:annotations" },
-      { n: 6, title: "Advanced annotations", blurb: "Group skip, fixme in hooks, several annotations, --grep OR and AND.", href: "/testing/annotations-advanced", progressKey: "playwright:annotations-advanced" },
-      { n: 7, title: "Advanced fixtures", blurb: "Teardown, worker, auto and option fixtures, overrides and mergeTests.", href: "/testing/fixtures-advanced", progressKey: "playwright:fixtures-advanced" },
-      { n: 8, title: "Parallel runs & workers", blurb: "Workers, parallel and serial modes, maxFailures and sharding.", href: "/testing/parallel-runs", isNew: true, progressKey: "playwright:parallel-runs" },
-    ],
-  }),
-  automationTrack("cypress", {
-    title: "Cypress",
-    tone: "green",
-    Icon: FlaskConical,
-    blurb: "The same practice pages with Cypress: commands and retries, the framework, page objects, and running on Chrome, Firefox and WebKit.",
-    stepTestId: (n) => `cypress-step-card-${n}`,
-    soon: "More Cypress stages coming soon",
-  }),
-];
-
-// A signed-in learner's state for each roadmap step. "active" = in progress (Automation: started,
-// not complete) or up next (Manual: the first step not yet done).
-type StepState = { state: "done" | "active" | "todo"; done: number; total: number };
-
-async function loadRoadmapProgress(userId: string | null): Promise<Map<string, StepState> | null> {
-  if (!userId) return null;
-  try {
-    // Automation progress is per tool, and each tool has its own card.
-    const keys = AUTOMATION_TOOLS.flatMap((tool) => automationSlugsFor(tool).map((slug) => ({ tool, slug })));
-    const [manual, ...autos] = await Promise.all([getManualProgress(userId), ...keys.map((k) => getAssignmentForUser(userId, k.slug, k.tool))]);
-    const map = new Map<string, StepState>();
-    const manualDone = new Set<string>(manual?.done ?? []);
-    let upNextSet = false;
-    for (const st of TRACKS[0].steps) {
-      const done = manualDone.has(st.progressKey);
-      const active = !done && !upNextSet;
-      if (active) upNextSet = true;
-      map.set(st.progressKey, { state: done ? "done" : active ? "active" : "todo", done: done ? 1 : 0, total: 1 });
-    }
-    keys.forEach(({ tool, slug }, i) => {
-      const a = autos[i];
-      map.set(`${tool}:${slug}`, !a ? { state: "todo", done: 0, total: 0 } : a.completedAt ? { state: "done", done: a.total, total: a.total } : { state: "active", done: a.done, total: a.total });
-    });
-    return map;
-  } catch {
-    return null; // database unavailable: show the roadmap without progress
-  }
-}
-
-const BAR: Record<Tone, string> = { blue: "bg-blue-600", purple: "bg-purple-600", green: "bg-emerald-600" };
-const TRACK_SOFT: Record<Tone, string> = { blue: "bg-blue-200 dark:bg-blue-900", purple: "bg-purple-200 dark:bg-purple-900", green: "bg-emerald-200 dark:bg-emerald-900" };
-const ACTIVE_BORDER: Record<Tone, string> = { blue: "border-blue-600", purple: "border-purple-600", green: "border-emerald-600" };
 
 const TOOLS = ["Playwright", "Cypress", "Selenium", "Postman", "Jest", "k6", "GitHub Actions", "TypeScript"];
 
@@ -175,6 +29,8 @@ const RUN = [
 export default async function TestingPage() {
   const { userId } = await auth();
   const progress = await loadRoadmapProgress(userId);
+  const automationTotal = AUTOMATION_TOOLS.reduce((n, t) => n + toolSteps(t).length, 0);
+  const automationDone = AUTOMATION_TOOLS.reduce((n, t) => n + doneCount(toolSteps(t), progress), 0);
 
   return (
     <div className="bg-background text-foreground">
@@ -233,127 +89,55 @@ export default async function TestingPage() {
         </div>
       </section>
 
-      {/* ROADMAP */}
+      {/* ROADMAP: three tracks. Design: Penpot "26 - Testing Learning Path", page "Roadmap – tracks", board A. */}
       <section id="roadmap" className="mx-auto max-w-[90rem] scroll-mt-24 px-4 py-16 md:px-8 lg:py-24">
         <h2 className="text-center text-3xl font-extrabold tracking-tight sm:text-4xl">Your testing roadmap</h2>
-        <p className="mt-3 text-center text-lg text-muted-foreground">Three tracks: start with manual testing if you&apos;re new, or pick your automation tool.</p>
+        <p className="mt-3 text-center text-lg text-muted-foreground">Pick a track. Start with manual testing if you&apos;re new.</p>
 
         <div className="mt-12 grid items-stretch gap-6 lg:grid-cols-3">
-          {TRACKS.map((track) => {
-            const tone = TONES[track.tone];
-            const doneCount = progress ? track.steps.filter((s) => progress.get(s.progressKey)?.state === "done").length : 0;
-            const activeBorder = ACTIVE_BORDER[track.tone];
-            return (
-              <article key={track.id} data-testid={`track-${track.id}`} className="flex flex-col overflow-hidden rounded-3xl border bg-card shadow-sm">
-                <div className={`h-2 ${BAR[track.tone]}`} />
-                <div className="flex flex-1 flex-col p-6">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex items-center gap-4">
-                      <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${tone.chip}`}>
-                        <track.Icon className="h-6 w-6" />
-                      </span>
-                      <div>
-                        <h3 className="text-2xl font-extrabold tracking-tight">{track.title}</h3>
-                        <p className="text-sm text-muted-foreground">{track.steps.length} steps</p>
-                      </div>
-                    </div>
-                    <span className="flex shrink-0 flex-wrap justify-end gap-2">
-                      {track.isNew && <span className={`rounded-full px-3 py-1 text-xs font-semibold ${TONES.green.chip}`}>New</span>}
-                      <span className={`rounded-full px-3 py-1 text-xs font-semibold ${tone.chip}`}>{track.level}</span>
-                    </span>
-                  </div>
-                  <p className="mt-5 text-[15px] leading-relaxed text-muted-foreground">{track.blurb}</p>
-
-                  {progress && (
-                    <div data-testid={`track-progress-${track.id}`} className="mt-5">
-                      <p className={`text-right text-sm font-extrabold ${tone.text}`}>
-                        {doneCount} of {track.steps.length} {track.unit}
-                      </p>
-                      <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700" aria-hidden="true">
-                        <div className={`h-full rounded-full ${BAR[track.tone]}`} style={{ width: `${(doneCount / track.steps.length) * 100}%` }} />
-                      </div>
-                    </div>
-                  )}
-
-                  <ol className="m-0 mt-6 grid list-none gap-3 p-0">
-                    {track.steps.map((st) => {
-                      const ps = progress?.get(st.progressKey);
-                      const state = ps?.state ?? "todo";
-                      const base = st.href && state === "active" && track.tool ? `${st.href}/assignment` : st.href;
-                      const href = base && track.tool ? withTool(base, track.tool) : base;
-                      const body = (
-                        <>
-                          {state === "done" ? (
-                            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white" aria-label="Done">
-                              <Check className="h-5 w-5" />
-                            </span>
-                          ) : (
-                            <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-lg font-extrabold ${tone.chip}`}>{st.n}</span>
-                          )}
-                          <span className="min-w-0 flex-1">
-                            <span className="flex items-start justify-between gap-2">
-                              <span className="flex flex-wrap items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
-                                Step {st.n}
-                                {state === "active" && <> · {track.activeLabel}</>}
-                                {st.isNew && <span className={`rounded-full px-2 py-0.5 text-[11px] normal-case tracking-normal ${TONES.green.chip}`}>New</span>}
-                              </span>
-                              {state === "done" ? (
-                                <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-extrabold text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
-                                  <Check className="h-3 w-3" /> Done
-                                </span>
-                              ) : st.href ? (
-                                <span className={`inline-flex shrink-0 items-center gap-1 text-[13px] font-semibold ${tone.text}`}>
-                                  {state === "active" ? "Continue" : "Start step"} <ArrowRight className="h-3.5 w-3.5" />
-                                </span>
-                              ) : (
-                                <span className="shrink-0 rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-500 dark:bg-slate-800 dark:text-slate-400">Coming soon</span>
-                              )}
-                            </span>
-                            <span className="mt-0.5 block text-[17px] font-bold">{st.title}</span>
-                            <span className="mt-1 block text-sm leading-relaxed text-muted-foreground">{st.blurb}</span>
-                            {state === "active" && ps && ps.total > 1 && (
-                              <span className="mt-2 flex items-center gap-2">
-                                <span className={`h-1.5 w-28 overflow-hidden rounded-full ${TRACK_SOFT[track.tone]}`} aria-hidden="true">
-                                  <span className={`block h-full rounded-full ${BAR[track.tone]}`} style={{ width: `${(ps.done / ps.total) * 100}%` }} />
-                                </span>
-                                <span className={`text-xs font-bold ${tone.text}`}>
-                                  {ps.done}/{ps.total} checks
-                                </span>
-                              </span>
-                            )}
-                          </span>
-                        </>
-                      );
-                      const cls = `flex items-start gap-3.5 rounded-2xl p-4 ${
-                        state === "done"
-                          ? "border border-emerald-200 bg-emerald-50 dark:border-emerald-900 dark:bg-emerald-950/30"
-                          : state === "active"
-                            ? `border-[1.5px] ${activeBorder} bg-slate-50 dark:bg-slate-900/40`
-                            : "border bg-slate-50 dark:bg-slate-900/40"
-                      }`;
-                      return (
-                        <li key={st.title} data-testid={track.stepTestId(st.n)} data-state={progress ? state : undefined}>
-                          {href ? (
-                            <Link href={href} className={`${cls} transition hover:shadow-md`}>{body}</Link>
-                          ) : (
-                            <div className={cls} aria-disabled="true">{body}</div>
-                          )}
-                        </li>
-                      );
-                    })}
-                  </ol>
-                  {track.soon && (
-                    <p className="mt-3 rounded-2xl border border-dashed px-4 py-3 text-center text-sm font-semibold text-muted-foreground">{track.soon}</p>
-                  )}
-                  <Link href={track.leaderboard.href} data-testid={`track-leaderboard-${track.id}`} className={`mt-auto inline-block pt-6 text-sm font-bold hover:underline ${tone.text}`}>
-                    {track.leaderboard.label}
-                  </Link>
-                </div>
-              </article>
-            );
-          })}
+          <TrackCard
+            href="/testing/manual"
+            testid="track-manual-testing"
+            tone="blue"
+            Icon={Search}
+            title="Manual testing"
+            meta={`${MANUAL_STEPS.length} steps · quizzes`}
+            pills={[{ label: "Beginner" }]}
+            blurb="Learn how testers think before you automate: plan tests, design cases, report bugs and explore an app to find what breaks."
+            chips={["Fundamentals", "Test design", "Bug reports", "Exploratory"]}
+            progress={progress && { done: doneCount(MANUAL_STEPS, progress), total: MANUAL_STEPS.length, unit: "steps done" }}
+            cta="Open manual testing"
+          />
+          <TrackCard
+            href="/testing/automation"
+            testid="track-automation"
+            tone="purple"
+            Icon={FlaskConical}
+            title="Automation"
+            meta={`${AUTOMATION_TOOLS.length} tools · ${automationTotal} stages`}
+            pills={[{ label: "Intermediate" }]}
+            blurb="Automate real web pages with Playwright or Cypress: the framework, page objects, every browser, then the advanced tools teams rely on."
+            chips={AUTOMATION_TOOLS.map((t) => `${t === "playwright" ? "Playwright" : "Cypress"} · ${toolSteps(t).length}`)}
+            progress={progress && { done: automationDone, total: automationTotal, unit: "stages done" }}
+            cta="Choose a tool"
+          />
+          <TrackCard
+            href="/testing/mobile"
+            testid="track-mobile"
+            tone="green"
+            Icon={Smartphone}
+            title="Mobile testing"
+            meta="1 tool · coming soon"
+            pills={[{ label: "New" }]}
+            blurb="Test Android and iOS apps: install the app on an emulator, find elements, tap, swipe and type, and run it in CI."
+            chips={["Appium"]}
+            cta="See what's coming"
+          />
         </div>
-        <p className="mt-8 text-center text-sm font-medium text-muted-foreground">Each automation track keeps its own progress and leaderboard.</p>
+        <p className="mt-8 text-center text-sm font-medium text-muted-foreground">
+          Each track keeps its own progress. Automation tools each have their own leaderboard.{" "}
+          <Link href="/testing/leaderboard" className="font-semibold text-blue-600 hover:underline dark:text-blue-400">View the all-tracks leaderboard →</Link>
+        </p>
       </section>
 
       {/* TOOLS */}
