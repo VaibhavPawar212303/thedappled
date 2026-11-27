@@ -54,14 +54,63 @@ const SUM = `#include <stdio.h>
 
 int sum(int a[], int n) {      // inputs: the array and its size
   int total = 0;
-  for (int i = 0; i < n; i++)
+  for (int i = 0; i < n; i++) {
     total = total + a[i];
+  }
   return total;                // output: one number
 }
 
 int main(void) {
   int a[] = {5, 2, 9, 1};
-  printf("%d\\n", sum(a, 4));    // 17
+  int total = sum(a, 4);        // runs sum, keeps its answer
+  printf("%d\\n", total);        // 17
+  return 0;
+}`;
+
+// Full programs for "Run in Compiler": each snippet above wrapped in main(). Every one was run in the
+// Compiler step by step and prints what the lesson says.
+const RUN_VARS = `#include <stdio.h>
+
+int main(void) {
+  int count = 0;
+  count = count + 1;
+  printf("%d\\n", count);
+  int n = 5;
+  double price = 9.5;
+  char grade = 'A';
+  printf("%d %f %c\\n", n, price, grade);
+  return 0;
+}`;
+
+const RUN_IF = `#include <stdio.h>
+
+int main(void) {
+  int score = 72;
+  if (score >= 50) {
+    printf("pass\\n");
+  } else {
+    printf("try again\\n");
+  }
+  return 0;
+}`;
+
+const RUN_FOR = `#include <stdio.h>
+
+int main(void) {
+  for (int i = 0; i < 3; i++) {
+    printf("%d\\n", i);
+  }
+  return 0;
+}`;
+
+const RUN_ARRAY = `#include <stdio.h>
+
+int main(void) {
+  int a[] = {5, 2, 9, 1};
+  int n = sizeof a / sizeof a[0];
+  for (int i = 0; i < n; i++) {
+    printf("%d\\n", a[i]);
+  }
   return 0;
 }`;
 
@@ -77,9 +126,12 @@ export default function CodingBasicsLessonPage() {
     >
       <section>
         <SectionHead n={1} id="first-program" title="Your first program" />
-        <P>A program is a list of instructions the computer follows from top to bottom. Every C program starts in main. This one prints one line:</P>
+        <P>
+          A program is a list of instructions the computer follows from top to bottom. Every C program starts in main. This one prints one line. Press Run in
+          Compiler on any program in this chapter to step through it line by line.
+        </P>
         <div className="mt-6">
-          <CodeBlock file="hello.c · C" code={HELLO} copy />
+          <CodeBlock file="hello.c · C" code={HELLO} copy run={HELLO} />
         </div>
         <Cards
           items={[
@@ -103,7 +155,7 @@ export default function CodingBasicsLessonPage() {
           ]}
         />
         <div className="mt-6">
-          <CodeBlock file="variables.c · C" code={VARS} />
+          <CodeBlock file="variables.c · C" code={VARS} run={RUN_VARS} />
         </div>
         <Tip>
           <code className="font-mono">=</code> means &ldquo;store this value&rdquo;. <code className="font-mono">==</code> means &ldquo;are these equal?&rdquo;.
@@ -114,7 +166,7 @@ export default function CodingBasicsLessonPage() {
         <SectionHead n={3} id="decisions" title="Making decisions: if / else" />
         <P>if runs a block only when its condition is true; else runs when it is false.</P>
         <div className="mt-6">
-          <CodeBlock file="if_else.c · C" code={IF_ELSE} />
+          <CodeBlock file="if_else.c · C" code={IF_ELSE} run={RUN_IF} />
         </div>
         <DataTable
           head={["Sign", "Means"]}
@@ -130,7 +182,7 @@ export default function CodingBasicsLessonPage() {
         <SectionHead n={4} id="loops" title="Loops: doing something again and again" />
         <P>A for loop has three parts: where to start, when to keep going, and how to move on.</P>
         <div className="mt-6">
-          <CodeBlock file="for_loop.c · C" code={FOR} />
+          <CodeBlock file="for_loop.c · C" code={FOR} run={RUN_FOR} />
         </div>
         <DataTable
           caption="Trace it: what happens each time round"
@@ -167,7 +219,7 @@ export default function CodingBasicsLessonPage() {
           </p>
         </div>
         <div className="mt-4">
-          <CodeBlock file="array.c · C" code={ARRAY} />
+          <CodeBlock file="array.c · C" code={ARRAY} run={RUN_ARRAY} />
         </div>
       </section>
 
@@ -175,13 +227,13 @@ export default function CodingBasicsLessonPage() {
         <SectionHead n={6} id="functions" title="Functions: name a piece of work" />
         <P>A function takes inputs, does the work, and returns a result. Write it once, use it many times.</P>
         <div className="mt-6">
-          <CodeBlock file="sum.c · C" code={SUM} copy />
+          <CodeBlock file="sum.c · C" code={SUM} copy run={SUM} />
         </div>
         <div className="mt-6 rounded-2xl border border-blue-200 bg-blue-50 p-6 dark:border-blue-900 dark:bg-blue-950/30">
           <p className="text-lg font-bold">Your turn: find the largest number</p>
           <ol className="m-0 mt-4 list-none space-y-3 p-0">
             {[
-              "Copy sum.c above into any C compiler (gcc, clang or an online one).",
+              "Open sum.c with Run in Compiler, or copy it into any C compiler.",
               "Add a function largest(a, n) that keeps the biggest value it has seen so far.",
               "For {5, 2, 9, 1} it should print 9.",
             ].map((s, i) => (
@@ -191,7 +243,7 @@ export default function CodingBasicsLessonPage() {
               </li>
             ))}
           </ol>
-          <p className="mt-4 text-[13px] text-muted-foreground">Coming soon: run it right here in the Thedappled Compiler.</p>
+          <p className="mt-4 text-[13px] text-muted-foreground">In the Compiler, press Next to run one line at a time and watch each variable change on the stack.</p>
         </div>
       </section>
     </DsaLessonLayout>
