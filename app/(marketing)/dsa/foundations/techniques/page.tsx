@@ -50,18 +50,6 @@ export default function TechniquesLessonPage() {
             { t: "Algorithm", d: "The exact steps for one task. In a kitchen: the recipe for pancakes." },
           ]}
         />
-        <DataTable
-          caption="Example: Concatenation of Array (nums followed by nums again)"
-          head={["Part", "In this question"]}
-          rows={[
-            ["Data structure", "An array"],
-            ["Technique", "Traversal: visit each item once"],
-            ["Algorithm", "For each i, write nums[i] at ans[i] and at ans[i + n]"],
-            ["Big-O", "O(n) time: one loop"],
-          ]}
-          hot={1}
-          plain
-        />
         <KeyIdea>Questions look different on the surface, but most use one of about 20 techniques. Spot the technique and the question is half solved.</KeyIdea>
       </section>
 
