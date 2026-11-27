@@ -14,13 +14,14 @@ export const DSA_FOUNDATIONS = "dsa-foundations";
 // Steps 1-4 replace the earlier single "Complexity & Big-O" lesson (id "dsa-complexity"), split
 // into short beginner lessons. Design: Penpot "27 - DSA Learning Path", pages "Foundations 1-4".
 // Step 0 ("Start here") was added before step 1 so the existing step numbers stay the same.
-// Step 3 ("DSA techniques") was added after Reading loops and the later steps moved down one. Step
-// ids (the progress keys) did not change, so saved progress is kept.
+// Step 3 ("DSA techniques") was added after Reading loops and the later steps moved down one; later
+// DSA techniques moved to step 2 and Reading loops to step 3. Step ids (the progress keys) did not
+// change, so saved progress is kept.
 export const FOUNDATIONS_STEPS: DsaStep[] = [
   { n: 0, id: "dsa-intro", title: "What is DSA?", blurb: "Data structures and algorithms in plain words, with everyday examples.", href: "/dsa/foundations/what-is-dsa", isNew: true },
   { n: 1, id: "dsa-algorithms", title: "What is an algorithm?", blurb: "Recipes, the phone-book search, and counting steps instead of seconds.", href: "/dsa/foundations/algorithms", isNew: true },
-  { n: 2, id: "dsa-reading-loops", title: "Reading loops", blurb: "No loop O(1), one loop O(n), loop in a loop O(n²), halving O(log n).", href: "/dsa/foundations/reading-loops", isNew: true },
-  { n: 3, id: "dsa-techniques", title: "DSA techniques", blurb: "20 techniques with real-world pictures, and how to spot them in a question.", href: "/dsa/foundations/techniques", isNew: true },
+  { n: 2, id: "dsa-techniques", title: "DSA techniques", blurb: "20 techniques with real-world pictures, and how to spot them in a question.", href: "/dsa/foundations/techniques", isNew: true },
+  { n: 3, id: "dsa-reading-loops", title: "Reading loops", blurb: "No loop O(1), one loop O(n), loop in a loop O(n²), halving O(log n).", href: "/dsa/foundations/reading-loops", isNew: true },
   { n: 4, id: "dsa-comparing", title: "Comparing two solutions", blurb: "Best and worst case, brute force vs better, and O, Ω and Θ.", href: "/dsa/foundations/comparing-solutions", isNew: true },
   { n: 5, id: "dsa-growth-memory", title: "Growth rates & memory", blurb: "Nine growth rates from O(1) to O(n!), and space complexity.", href: "/dsa/foundations/growth-rates", isNew: true },
   { n: 6, id: "dsa-arrays", title: "Arrays & strings", blurb: "Indexing, in-place updates, prefix sums and string building." },

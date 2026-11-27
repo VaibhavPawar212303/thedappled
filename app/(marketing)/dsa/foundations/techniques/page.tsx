@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import { DsaLessonLayout, SectionHead } from "../../_components/dsa-lesson-layout";
 import { Cards, DataTable, Figure, KeyIdea, P, Tip } from "../../_components/lesson-blocks";
 
-// Design: Penpot "27 - DSA Learning Path", page "Foundations 3 – DSA techniques".
+// Design: Penpot "27 - DSA Learning Path", page "Foundations 2 – DSA techniques".
 // Animated isometric illustrations: public/dsa/techniques/*.svg, made by scripts/gen-dsa-illustrations.mjs.
 
 export const metadata: Metadata = {
-  title: "DSA techniques: 20 problem-solving patterns with real-world examples – DSA step 3",
+  title: "DSA techniques: 20 problem-solving patterns with real-world examples – DSA step 2",
   description:
-    "DSA Foundations step 3: what a technique is, then 20 core techniques in five families, from traversal, two pointers and sliding window to hashing, binary search, recursion, greedy, dynamic programming, BFS and DFS. Each with a real-world picture and the clues that point to it in a question.",
+    "DSA Foundations step 2: what a technique is, then 20 core techniques in five families, from traversal, two pointers and sliding window to hashing, binary search, recursion, greedy, dynamic programming, BFS and DFS. Each with a real-world picture and the clues that point to it in a question.",
   alternates: { canonical: "/dsa/foundations/techniques" },
 };
 
