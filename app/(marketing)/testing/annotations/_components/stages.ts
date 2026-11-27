@@ -256,6 +256,7 @@ type StageCopy = {
   how: string[];
   example: string;
   projects?: { title?: string; note: string; code: string };
+  multiReport?: boolean; // several reports, each adding the checks it passes (the commands are in `projects`)
   card: { title: string; blurb: string; points: string[]; checksLine: string; minutes: string };
 };
 
@@ -356,16 +357,18 @@ projects: [
       "Push a CI shard matrix and the config, then check the repo",
     ],
     example: PAR_EXAMPLE,
+    multiReport: true,
     projects: {
       title: "Runs to upload",
       note: "Upload as many reports as you need. Each one adds the checks it passes.",
       code: `# 1. normal run
 npx playwright test --reporter=json > run.json
 # 2. stop after the payment failure
-npx playwright test --max-failures=1 \
+npx playwright test --max-failures=1 \\
   --reporter=json > stop.json
 # 3. one shard
-npx playwright test --shard=1/2 --reporter=json > shard.json`,
+npx playwright test --shard=1/2 \\
+  --reporter=json > shard.json`,
     },
     card: {
       title: "Run it fast, keep it stable",

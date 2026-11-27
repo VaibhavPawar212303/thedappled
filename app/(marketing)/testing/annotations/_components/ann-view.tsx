@@ -16,7 +16,8 @@ type Check = { ok: boolean; message: string };
 type RepoScan = { repo: string; branch: string; checks: Record<string, Check> };
 type ReportUpload = { checks: Record<string, Check>; tests: number; at: number };
 
-const GROUPS = ["Run the lab", "From your test report", "Configure it on GitHub"] as const;
+// Requirement groups come from the stage's own steps, in order, so every step is always shown.
+const groupsOf = (steps: { group: string }[]) => [...new Set(steps.map((s) => s.group))];
 
 function CopyButton({ text, testid, className = "bg-slate-700 text-white hover:bg-slate-600" }: { text: string; testid?: string; className?: string }) {
   const [copied, setCopied] = React.useState(false);
@@ -169,7 +170,7 @@ export function AnnView({ slug, initial, env, rank }: { slug: AnnSlug; initial: 
               <div className="mt-3 flex flex-wrap items-center gap-3 text-sm">
                 <ToolBadge tool="playwright" label="Playwright track" />
                 <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-950 dark:text-amber-300">● In progress</span>
-                <span className="text-muted-foreground">Lab runs update live · report and GitHub checks run when you submit</span>
+                <span className="text-muted-foreground">{stage.multiReport ? "Upload as many reports as you need · each one adds the checks it passes" : "Lab runs update live · report and GitHub checks run when you submit"}</span>
               </div>
             </div>
             {rankChip}
@@ -189,7 +190,7 @@ export function AnnView({ slug, initial, env, rank }: { slug: AnnSlug; initial: 
               <div className="h-full rounded-full bg-purple-600 transition-all" style={{ width: `${pct}%` }} />
             </div>
 
-            {GROUPS.map((g) => (
+            {groupsOf(stage.steps).map((g) => (
               <div key={g} className="mt-6">
                 <h3 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{g}</h3>
                 <ul className="m-0 mt-3 list-none space-y-3 p-0">
@@ -276,9 +277,15 @@ export function AnnView({ slug, initial, env, rank }: { slug: AnnSlug; initial: 
             )}
 
             <section className="min-w-0 rounded-2xl border bg-card p-6 shadow-sm sm:p-8">
-              <h2 className="text-xl font-extrabold">Upload your test report</h2>
-              <p className="mt-1 text-[13px] text-muted-foreground">Run the whole suite on all projects, then upload results.json.</p>
-              <pre className="mt-4 overflow-x-auto rounded-xl bg-slate-900 p-4 font-mono text-xs text-slate-100">npx playwright test --reporter=json &gt; results.json</pre>
+              <h2 className="text-xl font-extrabold">{stage.multiReport ? "Upload a report" : "Upload your test report"}</h2>
+              {stage.multiReport ? (
+                <p className="mt-1 text-[13px] text-muted-foreground">Upload each run from “Runs to upload” above, one file at a time.</p>
+              ) : (
+                <>
+                  <p className="mt-1 text-[13px] text-muted-foreground">Run the whole suite on all projects, then upload results.json.</p>
+                  <pre className="mt-4 overflow-x-auto rounded-xl bg-slate-900 p-4 font-mono text-xs text-slate-100">npx playwright test --reporter=json &gt; results.json</pre>
+                </>
+              )}
               <label
                 data-testid="report-drop"
                 onDragOver={(e) => {
@@ -295,7 +302,7 @@ export function AnnView({ slug, initial, env, rank }: { slug: AnnSlug; initial: 
                 className={`mt-4 flex cursor-pointer flex-col items-center rounded-xl border-2 border-dashed p-6 text-center transition ${dragging ? "border-purple-600 bg-purple-100 dark:bg-purple-900/40" : "border-purple-300 bg-purple-50 hover:bg-purple-100 dark:border-purple-800 dark:bg-purple-950/30 dark:hover:bg-purple-950/60"}`}
               >
                 <Upload className="h-5 w-5 text-purple-600 dark:text-purple-400" aria-hidden="true" />
-                <span className="mt-2 text-sm font-bold text-purple-700 dark:text-purple-300">{uploading ? "Checking your report…" : "Drop results.json here or choose a file"}</span>
+                <span className="mt-2 text-sm font-bold text-purple-700 dark:text-purple-300">{uploading ? "Checking your report…" : stage.multiReport ? "Drop a .json report here or choose a file" : "Drop results.json here or choose a file"}</span>
                 <span className="mt-1 text-xs text-muted-foreground">Checked against your lab runs from the last 2 hours. Only the results are kept, not the file.</span>
                 <input
                   ref={fileRef}
