@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import { DsaLessonLayout, SectionHead } from "../../_components/dsa-lesson-layout";
 import { PairStepThrough } from "../../_components/pair-step-through";
 import { CodeBlock } from "../../_components/code-block";
-import { Cards, P, PlainSteps, Tip } from "../../_components/lesson-blocks";
+import { Cards, DataTable, KeyIdea, P, PlainSteps, Tip } from "../../_components/lesson-blocks";
 
-// Design: Penpot "27 - DSA Learning Path", page "Foundations 3 – Comparing two solutions".
+// Design: Penpot "27 - DSA Learning Path", page "Foundations 4 – Comparing two solutions"
+// (section 4 "Same Big-O, different code": board "NEW section 4 — Same Big-O, different code").
 
 export const metadata: Metadata = {
   title: "Comparing two solutions: best case, worst case, O, Ω and Θ – DSA step 4",
@@ -17,6 +18,7 @@ const TOC = [
   { id: "best-worst", label: "Best case and worst case" },
   { id: "step-through", label: "Step through it" },
   { id: "brute-force", label: "Brute force → better" },
+  { id: "same-big-o", label: "Same Big-O, different code" },
   { id: "bounds", label: "O, Ω and Θ" },
   { id: "code-it", label: "Code it yourself" },
 ];
@@ -38,6 +40,20 @@ int has_duplicate(int a[], int n) {
   for (int i = 1; i < n; i++)
     if (a[i] == a[i - 1]) return 1;
   return 0;
+}`;
+
+const CONCAT_TWO = `void concat(int nums[], int n, int ans[]) {
+  for (int i = 0; i < n; i++)
+    ans[i] = nums[i];
+  for (int i = 0; i < n; i++)
+    ans[i + n] = nums[i];
+}`;
+
+const CONCAT_ONE = `void concat(int nums[], int n, int ans[]) {
+  for (int i = 0; i < n; i++) {
+    ans[i] = nums[i];
+    ans[i + n] = nums[i];
+  }
 }`;
 
 const TASK = `#include <stdio.h>
@@ -146,7 +162,60 @@ export default function ComparingSolutionsLessonPage() {
       </section>
 
       <section>
-        <SectionHead n={4} id="bounds" title="O, Ω and Θ" />
+        <SectionHead n={4} id="same-big-o" title="Same Big-O, different code" />
+        <P>
+          Practice question: <strong>Concatenation of Array</strong>. Given <code className="font-mono">nums</code> with n numbers, return{" "}
+          <code className="font-mono">ans</code> with 2n numbers: <code className="font-mono">nums</code> followed by <code className="font-mono">nums</code> again. Example:
+          [1, 2, 1] → [1, 2, 1, 1, 2, 1].
+        </P>
+        <DataTable
+          caption="Concatenation of Array, part by part"
+          head={["Part", "In this question"]}
+          rows={[
+            ["Data structure", "An array"],
+            ["Technique", "Traversal: visit each item once"],
+            ["Algorithm", "For each i, write nums[i] at ans[i] and at ans[i + n]"],
+            ["Big-O", "O(n) time: one loop"],
+          ]}
+          hot={1}
+          plain
+        />
+        <P>Two correct ways to build ans:</P>
+        <div data-testid="concat-solutions" className="mt-6 grid gap-5 md:grid-cols-2">
+          <div className="min-w-0">
+            <p className="font-bold">Two loops: copy, then copy again</p>
+            <span className="mt-2 inline-flex rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
+              O(n) time · 2 passes over nums
+            </span>
+            <div className="mt-3">
+              <CodeBlock file="concat.c · C" code={CONCAT_TWO} />
+            </div>
+          </div>
+          <div className="min-w-0">
+            <p className="font-bold">One loop: write both places at once</p>
+            <span className="mt-2 inline-flex rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
+              O(n) time · 1 pass over nums
+            </span>
+            <div className="mt-3">
+              <CodeBlock file="concat.c · C" code={CONCAT_ONE} />
+            </div>
+          </div>
+        </div>
+        <div className="mt-5 rounded-xl border bg-slate-50 px-5 py-4 dark:bg-slate-900/40">
+          <p className="text-sm font-bold text-muted-foreground">For n = 1,000</p>
+          <div className="mt-1 flex flex-wrap justify-between gap-x-6 gap-y-1 text-[15px] font-bold">
+            <span>Two loops: 2,000 loop steps · 2,000 writes</span>
+            <span className="text-emerald-700 dark:text-emerald-400">One loop: 1,000 loop steps · 2,000 writes</span>
+          </div>
+        </div>
+        <KeyIdea>
+          2n steps and n steps are both O(n): Big-O drops the constant ×2. Both versions also need O(n) space for ans. When the Big-O is the same, pick the code that is
+          easier to read.
+        </KeyIdea>
+      </section>
+
+      <section>
+        <SectionHead n={5} id="bounds" title="O, Ω and Θ" />
         <P>Big-O has two siblings. You&apos;ll see them in books and in interviews.</P>
         <div data-testid="bounds-card" className="mt-6 rounded-2xl border bg-card p-6">
           <p className="font-bold">Big-O has two siblings</p>
@@ -170,7 +239,7 @@ export default function ComparingSolutionsLessonPage() {
       </section>
 
       <section>
-        <SectionHead n={5} id="code-it" title="Code it yourself" />
+        <SectionHead n={6} id="code-it" title="Code it yourself" />
         <div className="mt-6 rounded-2xl border border-blue-200 bg-blue-50 p-6 dark:border-blue-900 dark:bg-blue-950/30">
           <p className="text-lg font-bold">Your turn: count the comparisons</p>
           <ol className="m-0 mt-4 list-none space-y-3 p-0">
