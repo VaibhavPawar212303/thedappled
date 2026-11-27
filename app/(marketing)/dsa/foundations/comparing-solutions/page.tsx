@@ -4,13 +4,13 @@ import { PairStepThrough } from "../../_components/pair-step-through";
 import { CodeBlock } from "../../_components/code-block";
 import { Cards, DataTable, KeyIdea, P, PlainSteps, Tip } from "../../_components/lesson-blocks";
 
-// Design: Penpot "27 - DSA Learning Path", page "Foundations 4 – Comparing two solutions"
+// Design: Penpot "27 - DSA Learning Path", page "Foundations 5 – Comparing two solutions"
 // (section 4 "Same Big-O, different code": board "NEW section 4 — Same Big-O, different code").
 
 export const metadata: Metadata = {
-  title: "Comparing two solutions: best case, worst case, O, Ω and Θ – DSA step 4",
+  title: "Comparing two solutions: best case, worst case, O, Ω and Θ – DSA step 5",
   description:
-    "DSA Foundations step 4: best and worst case, a step-by-step duplicate check, brute force O(n²) vs sort-then-scan O(n log n) in C, and Big-O's siblings Ω and Θ.",
+    "DSA Foundations step 5: best and worst case, a step-by-step duplicate check, brute force O(n²) vs sort-then-scan O(n log n) in C, and Big-O's siblings Ω and Θ.",
   alternates: { canonical: "/dsa/foundations/comparing-solutions" },
 };
 
@@ -156,7 +156,7 @@ export default function ComparingSolutionsLessonPage() {
           </div>
         </div>
         <Tip title="Coming up">
-          In step 7, Hashing: a hash set checks each number once, so this drops to O(n) on average. Note that <code className="font-mono">qsort</code> reorders the
+          In step 8, Hashing: a hash set checks each number once, so this drops to O(n) on average. Note that <code className="font-mono">qsort</code> reorders the
           caller&apos;s array.
         </Tip>
       </section>

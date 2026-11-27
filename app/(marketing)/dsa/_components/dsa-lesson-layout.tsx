@@ -2,7 +2,7 @@ import * as React from "react";
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { Check, Clock } from "lucide-react";
-import { DSA_QUIZZES, FOUNDATIONS_STEPS, dsaStep } from "@/lib/dsa-lessons";
+import { DSA_BRIDGES, DSA_QUIZZES, FOUNDATIONS_STEPS, dsaStep } from "@/lib/dsa-lessons";
 import { getDsaProgress } from "@/lib/dsa-progress";
 import { DsaQuiz } from "./dsa-quiz";
 import { DsaFooter } from "./dsa-footer";
@@ -10,6 +10,8 @@ import { DsaPendingSync } from "./dsa-pending-sync";
 
 // Shared frame for DSA Foundations lessons: hero (with "Completed" badge), the lesson sections,
 // the quiz, step navigation, and a sidebar ("Your progress", "On this page", next step).
+// The chapter bridge (last chapter / in this chapter) sits above section 1: Penpot page
+// "Foundations 3 – Coding basics in C", board "Chapter bridge".
 // Design: Penpot "27 - DSA Learning Path", page "Foundations 1 – Complexity & Big-O".
 
 export function SectionHead({ n, id, title }: { n: number; id: string; title: string }) {
@@ -46,6 +48,7 @@ export async function DsaLessonLayout({
   const upNext = FOUNDATIONS_STEPS.find((s) => !doneSet.has(s.id));
   const next = FOUNDATIONS_STEPS.find((s) => s.n === S.n + 1);
   const prev = FOUNDATIONS_STEPS.find((s) => s.n === S.n - 1);
+  const bridge = DSA_BRIDGES[S.id];
   const sections = toc.length;
   const allToc = [...toc, { id: "quiz", label: "Check your understanding" }];
 
@@ -85,6 +88,34 @@ export async function DsaLessonLayout({
 
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 md:px-8 lg:grid-cols-[1fr_300px]">
         <article className="min-w-0 space-y-16">
+          {bridge && (
+            <div data-testid="chapter-bridge" className="grid gap-4 sm:grid-cols-2">
+              <div className="rounded-2xl border bg-slate-50 p-5 dark:bg-slate-900/40">
+                <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Last chapter</span>
+                  {prev?.href ? (
+                    <Link href={prev.href} className="text-sm font-bold text-blue-600 hover:underline dark:text-blue-400">
+                      {prev.n}. {prev.title}
+                    </Link>
+                  ) : (
+                    <span className="text-sm font-bold text-blue-600 dark:text-blue-400">Start here</span>
+                  )}
+                </p>
+                <p className="mt-2 text-[15px] leading-relaxed text-slate-700 dark:text-slate-300">{bridge.recap}</p>
+              </div>
+              <div className="rounded-2xl border border-blue-200 bg-blue-50 p-5 dark:border-blue-900 dark:bg-blue-950/30">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-blue-700 dark:text-blue-300">In this chapter</p>
+                <ul className="m-0 mt-2 list-none space-y-1.5 p-0">
+                  {bridge.now.map((s) => (
+                    <li key={s} className="flex items-start gap-2.5 text-[15px] text-blue-950 dark:text-blue-100">
+                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-600 dark:bg-blue-400" aria-hidden="true" />
+                      {s}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          )}
           {children}
 
           <section>

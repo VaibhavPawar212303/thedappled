@@ -15,20 +15,68 @@ export const DSA_FOUNDATIONS = "dsa-foundations";
 // into short beginner lessons. Design: Penpot "27 - DSA Learning Path", pages "Foundations 1-4".
 // Step 0 ("Start here") was added before step 1 so the existing step numbers stay the same.
 // Step 3 ("DSA techniques") was added after Reading loops and the later steps moved down one; later
-// DSA techniques moved to step 2 and Reading loops to step 3. Step ids (the progress keys) did not
+// DSA techniques moved to step 2 and Reading loops to step 3. Step 3 ("Coding basics in C") was then
+// added before Reading loops and the later steps moved down one. Step ids (the progress keys) did not
 // change, so saved progress is kept.
 export const FOUNDATIONS_STEPS: DsaStep[] = [
   { n: 0, id: "dsa-intro", title: "What is DSA?", blurb: "Data structures and algorithms in plain words, with everyday examples.", href: "/dsa/foundations/what-is-dsa", isNew: true },
   { n: 1, id: "dsa-algorithms", title: "What is an algorithm?", blurb: "Recipes, the phone-book search, and counting steps instead of seconds.", href: "/dsa/foundations/algorithms", isNew: true },
   { n: 2, id: "dsa-techniques", title: "DSA techniques", blurb: "20 techniques with real-world pictures, and how to spot them in a question.", href: "/dsa/foundations/techniques", isNew: true },
-  { n: 3, id: "dsa-reading-loops", title: "Reading loops", blurb: "No loop O(1), one loop O(n), loop in a loop O(n²), halving O(log n).", href: "/dsa/foundations/reading-loops", isNew: true },
-  { n: 4, id: "dsa-comparing", title: "Comparing two solutions", blurb: "Best and worst case, brute force vs better, and O, Ω and Θ.", href: "/dsa/foundations/comparing-solutions", isNew: true },
-  { n: 5, id: "dsa-growth-memory", title: "Growth rates & memory", blurb: "Nine growth rates from O(1) to O(n!), and space complexity.", href: "/dsa/foundations/growth-rates", isNew: true },
-  { n: 6, id: "dsa-arrays", title: "Arrays & strings", blurb: "Indexing, in-place updates, prefix sums and string building." },
-  { n: 7, id: "dsa-hashing", title: "Hashing", blurb: "Hash maps and sets for counting, lookups and de-duplication." },
-  { n: 8, id: "dsa-linked-lists", title: "Linked lists", blurb: "Pointers, reversal, fast and slow runners, merging lists." },
-  { n: 9, id: "dsa-stacks-queues", title: "Stacks & queues", blurb: "LIFO and FIFO, balanced brackets, monotonic stacks." },
-  { n: 10, id: "dsa-recursion", title: "Recursion", blurb: "Base cases, the call stack, and thinking in smaller problems." },
+  { n: 3, id: "dsa-coding-basics", title: "Coding basics in C", blurb: "Your first program, variables, if / else, loops, arrays and functions.", href: "/dsa/foundations/coding-basics", isNew: true },
+  { n: 4, id: "dsa-reading-loops", title: "Reading loops", blurb: "No loop O(1), one loop O(n), loop in a loop O(n²), halving O(log n).", href: "/dsa/foundations/reading-loops", isNew: true },
+  { n: 5, id: "dsa-comparing", title: "Comparing two solutions", blurb: "Best and worst case, brute force vs better, and O, Ω and Θ.", href: "/dsa/foundations/comparing-solutions", isNew: true },
+  { n: 6, id: "dsa-growth-memory", title: "Growth rates & memory", blurb: "Nine growth rates from O(1) to O(n!), and space complexity.", href: "/dsa/foundations/growth-rates", isNew: true },
+  { n: 7, id: "dsa-arrays", title: "Arrays & strings", blurb: "Indexing, in-place updates, prefix sums and string building." },
+  { n: 8, id: "dsa-hashing", title: "Hashing", blurb: "Hash maps and sets for counting, lookups and de-duplication." },
+  { n: 9, id: "dsa-linked-lists", title: "Linked lists", blurb: "Pointers, reversal, fast and slow runners, merging lists." },
+  { n: 10, id: "dsa-stacks-queues", title: "Stacks & queues", blurb: "LIFO and FIFO, balanced brackets, monotonic stacks." },
+  { n: 11, id: "dsa-recursion", title: "Recursion", blurb: "Base cases, the call stack, and thinking in smaller problems." },
+];
+
+// The "chapter bridge" at the top of each lesson: what the last chapter covered, and what this one adds.
+// Design: Penpot "27 - DSA Learning Path", page "Foundations 3 – Coding basics in C", board "Chapter bridge".
+export type DsaBridge = { recap: string; now: string[] };
+export const DSA_BRIDGES: Record<string, DsaBridge> = {
+  "dsa-intro": { recap: "This is the first chapter. No coding needed yet.", now: ["What data structures are", "What algorithms are", "Everyday examples of both"] },
+  "dsa-algorithms": { recap: "DSA = where data lives (data structures) + the steps (algorithms).", now: ["What an algorithm is", "Two ways to search a phone book", "Counting steps, not seconds"] },
+  "dsa-techniques": { recap: "An algorithm is a list of steps, and we count steps to compare them.", now: ["20 reusable techniques", "A real-world picture for each", "Clues that point to each one"] },
+  "dsa-coding-basics": { recap: "Techniques like traversal and two pointers, described in plain English.", now: ["Just enough C to write them", "Variables, if / else, loops", "Arrays and functions"] },
+  "dsa-reading-loops": { recap: "Loops, arrays and functions in C. Each run of a loop body is one step.", now: ["Count those steps to get Big-O", "O(1), O(n), O(n²), O(log n)", "Simplify 3n² + 5n + 2"] },
+  "dsa-comparing": { recap: "Read Big-O straight from the loops: one loop O(n), nested O(n²).", now: ["Best case and worst case", "Brute force → better", "Same Big-O, different code; O, Ω, Θ"] },
+  "dsa-growth-memory": { recap: "Compare two correct solutions with best / worst case and O, Ω, Θ.", now: ["Nine growth rates, O(1) to O(n!)", "Space complexity: extra memory", "Rules of thumb for Big-O"] },
+};
+
+const CODING_BASICS: DsaQuestion[] = [
+  {
+    q: "Where does every C program start running?",
+    options: ["In main", "At the first #include", "In printf", "At the last line"],
+    answer: 0,
+    why: "The computer starts in main and follows its instructions from top to bottom.",
+  },
+  {
+    q: "After int count = 0; count = count + 1; what is in count?",
+    options: ["0", "1", "2", "count + 1"],
+    answer: 1,
+    why: "= stores a value: take what's in count (0), add 1, and put the result (1) back.",
+  },
+  {
+    q: "for (int i = 0; i < 4; i++) — how many times does the body run?",
+    options: ["3", "4", "5", "It never stops"],
+    answer: 1,
+    why: "i takes the values 0, 1, 2 and 3. When i becomes 4, i < 4 is false and the loop stops.",
+  },
+  {
+    q: "int a[] = {5, 2, 9, 1}; what is a[2]?",
+    options: ["2", "9", "1", "5"],
+    answer: 1,
+    why: "Indexes start at 0: a[0] is 5, a[1] is 2, a[2] is 9.",
+  },
+  {
+    q: "What does == mean in C?",
+    options: ["Store a value", "Are these two equal?", "Add one", "Not equal"],
+    answer: 1,
+    why: "= stores a value; == asks whether two values are equal. != means not equal.",
+  },
 ];
 
 const INTRO: DsaQuestion[] = [
@@ -232,6 +280,7 @@ const GROWTH_MEMORY: DsaQuestion[] = [
 export const DSA_QUIZZES: Record<string, DsaQuestion[]> = {
   "dsa-intro": INTRO,
   "dsa-algorithms": ALGORITHMS,
+  "dsa-coding-basics": CODING_BASICS,
   "dsa-reading-loops": READING_LOOPS,
   "dsa-techniques": TECHNIQUES,
   "dsa-comparing": COMPARING,

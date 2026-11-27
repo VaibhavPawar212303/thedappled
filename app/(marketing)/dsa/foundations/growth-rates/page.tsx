@@ -4,12 +4,12 @@ import { DsaLessonLayout, SectionHead } from "../../_components/dsa-lesson-layou
 import { CodeBlock } from "../../_components/code-block";
 import { Cards, P, Tip } from "../../_components/lesson-blocks";
 
-// Design: Penpot "27 - DSA Learning Path", page "Foundations 4 – Growth rates & memory".
+// Design: Penpot "27 - DSA Learning Path", page "Foundations 6 – Growth rates & memory".
 
 export const metadata: Metadata = {
-  title: "Growth rates & memory: O(1) to O(n!) and space complexity – DSA step 5",
+  title: "Growth rates & memory: O(1) to O(n!) and space complexity – DSA step 6",
   description:
-    "DSA Foundations step 5: the nine common growth rates from O(1) to O(n!) with step counts, space complexity (extra memory) in C, and simple rules of thumb for Big-O.",
+    "DSA Foundations step 6: the nine common growth rates from O(1) to O(n!) with step counts, space complexity (extra memory) in C, and simple rules of thumb for Big-O.",
   alternates: { canonical: "/dsa/foundations/growth-rates" },
 };
 
