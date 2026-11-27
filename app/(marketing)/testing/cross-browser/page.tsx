@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
-import { CROSS_BROWSER, getAssignmentForUser } from "@/lib/assignments";
+import { CROSS_BROWSER, getAssignmentForUser, stageNumber } from "@/lib/assignments";
 import { chosenTool } from "@/lib/tool-choice";
 import { otherTool, type Tool } from "@/lib/tools";
 import { XbCard } from "./_components/xb-card";
@@ -56,7 +56,7 @@ export default async function CrossBrowserPage({ searchParams }: { searchParams:
               <span aria-hidden="true">/</span>
               <span aria-current="page" className="font-semibold text-foreground">Cross-browser testing</span>
             </nav>
-            <span className="mt-5 inline-flex rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700 dark:bg-blue-950 dark:text-blue-300">Stage 4 · Intermediate</span>
+            <span className="mt-5 inline-flex rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700 dark:bg-blue-950 dark:text-blue-300">Stage {stageNumber(CROSS_BROWSER, tool)} · Intermediate</span>
             <h1 className="mt-4 text-4xl font-extrabold tracking-tight sm:text-5xl">Cross-browser testing</h1>
             <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
               Run one spec on Chrome, Firefox and WebKit (the engine behind Safari). Configure browser projects, fix what breaks in only one engine, and run

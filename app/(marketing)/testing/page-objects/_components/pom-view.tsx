@@ -284,7 +284,7 @@ export function PomView({ tool, initial, env, rank }: { tool: Tool; initial: Ass
           <div className="min-w-0 space-y-6">
             <section className="min-w-0 rounded-2xl border bg-card p-6 shadow-sm sm:p-8">
               <h2 className="text-xl font-extrabold">Your shop link</h2>
-              <p className="mt-1 text-[13px] text-muted-foreground">Add these to your <code>.env</code> (from stage 2). Never commit it.</p>
+              <p className="mt-1 text-[13px] text-muted-foreground">Add these to your <code>.env</code> (from stage 1, Framework setup). Never commit it.</p>
               <div className="mt-4 rounded-xl bg-slate-900 p-4 text-slate-100">
                 <pre data-testid="env-block" className="m-0 overflow-x-auto whitespace-pre text-xs leading-6">{shownEnv}</pre>
                 <div className="mt-3 flex gap-2">

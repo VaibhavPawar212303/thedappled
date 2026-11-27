@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
-import { getAssignmentForUser, PAGE_OBJECTS } from "@/lib/assignments";
+import { getAssignmentForUser, PAGE_OBJECTS, stageNumber } from "@/lib/assignments";
 import { chosenTool } from "@/lib/tool-choice";
 import { otherTool } from "@/lib/tools";
 import { PomCard } from "./_components/pom-card";
@@ -41,7 +41,7 @@ export default async function PageObjectsPage({ searchParams }: { searchParams: 
             <span aria-hidden="true">/</span>
             <span aria-current="page" className="font-semibold text-foreground">Page objects &amp; fixtures</span>
           </nav>
-          <span className="mt-5 inline-flex rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">Stage 3 · Intermediate</span>
+          <span className="mt-5 inline-flex rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">Stage {stageNumber(PAGE_OBJECTS, tool)} · Intermediate</span>
           <h1 className="mt-4 text-4xl font-extrabold tracking-tight sm:text-5xl">Page objects &amp; fixtures</h1>
           <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
             Structure your Playwright or Cypress tests the way teams do: locators live in page classes, setup lives in fixtures, and specs read like plain steps.

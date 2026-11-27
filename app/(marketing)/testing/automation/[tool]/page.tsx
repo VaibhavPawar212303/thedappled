@@ -12,8 +12,8 @@ import { TrackHero } from "../../_components/track-hero";
 export const dynamicParams = false;
 
 const BLURB: Record<Tool, string> = {
-  playwright: "Automate real pages with Playwright, set up the framework the way teams do, then master annotations, fixtures and parallel runs.",
-  cypress: "The same practice pages with Cypress: commands and retries, the framework, page objects, and running on Chrome, Firefox and WebKit.",
+  playwright: "Set up the framework the way teams do, automate real pages in it, then improve it step by step: page objects, annotations, cross-browser, fixtures and parallel runs.",
+  cypress: "The same practice pages with Cypress: the framework first, then commands and retries, page objects, and running on Chrome, Firefox and WebKit.",
 };
 
 export function generateStaticParams() {

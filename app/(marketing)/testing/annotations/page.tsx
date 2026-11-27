@@ -147,7 +147,7 @@ export default async function AnnotationsPage() {
               <span aria-current="page" className="font-semibold text-foreground">Playwright annotations</span>
             </nav>
             <span className="mt-5 inline-flex rounded-full bg-purple-100 px-3 py-1 text-xs font-semibold text-purple-700 dark:bg-purple-950 dark:text-purple-300">
-              Stage 5 · Intermediate · Playwright only
+              Stage 4 · Intermediate · Playwright only
             </span>
             <h1 className="mt-4 text-4xl font-extrabold tracking-tight sm:text-5xl">Playwright annotations</h1>
             <p className="mt-4 max-w-2xl text-lg text-muted-foreground">

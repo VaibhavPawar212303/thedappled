@@ -134,7 +134,7 @@ export default async function AdvancedAnnotationsPage() {
               <span aria-current="page" className="font-semibold text-foreground">Advanced annotations</span>
             </nav>
             <span className="mt-5 inline-flex rounded-full bg-purple-100 px-3 py-1 text-xs font-semibold text-purple-700 dark:bg-purple-950 dark:text-purple-300">
-              Stage 6 · Advanced · Playwright only
+              Stage 7 · Advanced · Playwright only
             </span>
             <h1 className="mt-4 text-4xl font-extrabold tracking-tight sm:text-5xl">Advanced annotations</h1>
             <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
@@ -145,7 +145,7 @@ export default async function AdvancedAnnotationsPage() {
               What you will practise: group skip · fixme in hooks · multiple annotations · title tags · --grep OR / AND · hidden annotations
             </p>
             <p className="mt-2 text-sm text-muted-foreground">
-              New to annotations? Start with <Link href="/testing/annotations" className="font-semibold text-purple-700 hover:underline dark:text-purple-300">stage 5, Playwright annotations</Link>.
+              New to annotations? Start with <Link href="/testing/annotations" className="font-semibold text-purple-700 hover:underline dark:text-purple-300">stage 4, Playwright annotations</Link>.
             </p>
           </div>
           <ul className="m-0 flex list-none flex-row flex-wrap gap-3 p-0 lg:mt-12 lg:flex-col" aria-label="Topics covered">
@@ -162,7 +162,7 @@ export default async function AdvancedAnnotationsPage() {
 
       <section className="mx-auto max-w-6xl px-4 pt-14 md:px-8" aria-labelledby="beyond">
         <h2 id="beyond" className="text-3xl font-extrabold tracking-tight">Beyond single tests</h2>
-        <p className="mt-2 text-muted-foreground">Everything on Playwright’s annotations page that stage 5 didn’t cover, with when to use it.</p>
+        <p className="mt-2 text-muted-foreground">Everything on Playwright’s annotations page that stage 4 didn’t cover, with when to use it.</p>
         <div className="mt-8 grid gap-6 md:grid-cols-2">
           {KINDS.map((k) => (
             <article key={k.t} data-testid="annotation-kind" className="min-w-0 rounded-2xl border bg-card p-6">

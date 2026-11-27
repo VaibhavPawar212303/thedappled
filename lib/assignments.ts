@@ -13,11 +13,16 @@ export const FIXTURES_ADVANCED = "fixtures-advanced";
 export const PARALLEL_RUNS = "parallel-runs";
 export const MANUAL_TESTING = "manual-testing";
 export type AssignmentSlug = typeof UI_AUTOMATION | typeof FRAMEWORK_SETUP | typeof PAGE_OBJECTS | typeof CROSS_BROWSER | typeof ANNOTATIONS | typeof ANNOTATIONS_ADVANCED | typeof FIXTURES_ADVANCED | typeof PARALLEL_RUNS | typeof MANUAL_TESTING;
-export const AUTOMATION_SLUGS = [UI_AUTOMATION, FRAMEWORK_SETUP, PAGE_OBJECTS, CROSS_BROWSER, ANNOTATIONS, ANNOTATIONS_ADVANCED, FIXTURES_ADVANCED, PARALLEL_RUNS] as const;
-// Stages that exist for one tool only (stages 5-8 teach Playwright's annotations, fixtures and parallel runs).
+// Learning order: set up the framework, automate pages in it, then improve it step by step.
+// Playwright: 1 framework, 2 UI automation, 3 page objects, 4 annotations, 5 cross-browser,
+// 6 advanced fixtures, 7 advanced annotations, 8 parallel runs. Cypress: the four shared stages.
+export const AUTOMATION_SLUGS = [FRAMEWORK_SETUP, UI_AUTOMATION, PAGE_OBJECTS, ANNOTATIONS, CROSS_BROWSER, FIXTURES_ADVANCED, ANNOTATIONS_ADVANCED, PARALLEL_RUNS] as const;
+// Stages that exist for one tool only (Playwright's annotations, fixtures and parallel runs).
 export const PLAYWRIGHT_ONLY_SLUGS = new Set<string>([ANNOTATIONS, ANNOTATIONS_ADVANCED, FIXTURES_ADVANCED, PARALLEL_RUNS]);
 // The automation stages a tool's learners can take, in learning order.
 export const automationSlugsFor = (tool: Tool) => AUTOMATION_SLUGS.filter((s) => tool === PLAYWRIGHT || !PLAYWRIGHT_ONLY_SLUGS.has(s));
+// A stage's number on a tool's track (1-based), e.g. stageNumber("cross-browser", "playwright") = 5.
+export const stageNumber = (slug: string, tool: Tool) => (automationSlugsFor(tool) as readonly string[]).indexOf(slug) + 1;
 export const ASSIGNMENT_SLUGS: AssignmentSlug[] = [MANUAL_TESTING, ...AUTOMATION_SLUGS];
 export const isAssignmentSlug = (v: unknown): v is AssignmentSlug => ASSIGNMENT_SLUGS.includes(v as AssignmentSlug);
 

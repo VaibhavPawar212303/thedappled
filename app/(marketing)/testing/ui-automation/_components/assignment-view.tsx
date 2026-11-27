@@ -315,14 +315,14 @@ export function AssignmentView({ tool, initial, siteUrl, rank }: { tool: Tool; i
                 </ul>
               </section>
               <section data-testid="next-stage" className="rounded-2xl bg-purple-100 p-6 dark:bg-purple-950/40 sm:p-8">
-                <span className="inline-flex rounded-full bg-white px-3 py-1 text-xs font-bold text-purple-700 dark:bg-purple-900 dark:text-purple-200">Stage 2 · Unlocked</span>
-                <h2 className="mt-3 text-xl font-extrabold text-purple-700 dark:text-purple-300">Next: Framework setup</h2>
+                <span className="inline-flex rounded-full bg-white px-3 py-1 text-xs font-bold text-purple-700 dark:bg-purple-900 dark:text-purple-200">Stage 3 · Unlocked</span>
+                <h2 className="mt-3 text-xl font-extrabold text-purple-700 dark:text-purple-300">Next: Page objects &amp; fixtures</h2>
                 <p className="mt-2 text-sm text-purple-800/80 dark:text-purple-200/80">
-                  Keep config and credentials in .env, call them from your tests, and save the project on GitHub with secrets.
+                  Move your locators into page classes and share setup with fixtures, so every spec stays short and readable.
                 </p>
                 <Button asChild size="lg" className="mt-5 w-full bg-purple-600 text-white hover:bg-purple-700">
-                  <Link href={withTool("/testing/framework-setup", tool)} data-testid="start-next-stage">
-                    Start stage 2 <ArrowRight className="ml-2 h-4 w-4" />
+                  <Link href={withTool("/testing/page-objects", tool)} data-testid="start-next-stage">
+                    Start stage 3 <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
               </section>

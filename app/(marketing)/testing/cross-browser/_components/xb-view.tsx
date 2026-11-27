@@ -49,7 +49,7 @@ export default defineConfig({
   ],
 });
 
-// pages/LoginPage.ts — point open() at your stage 4 shop
+// pages/LoginPage.ts — point open() at the cross-browser shop
 await this.page.goto(\`/testing/cross-browser/shop?a=\${process.env.ASSIGNMENT_TOKEN}\`);
 
 # run all three locally
@@ -93,7 +93,7 @@ export default defineConfig({
   },
 });
 
-// cypress/pages/LoginPage.ts — point open() at your stage 4 shop
+// cypress/pages/LoginPage.ts — point open() at the cross-browser shop
 cy.visit(\`/testing/cross-browser/shop?a=\${Cypress.env('ASSIGNMENT_TOKEN')}\`);
 
 # run all three locally (WebKit runs through playwright-webkit)

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
-import { FRAMEWORK_SETUP, getAssignmentForUser } from "@/lib/assignments";
+import { FRAMEWORK_SETUP, getAssignmentForUser, stageNumber } from "@/lib/assignments";
 import { chosenTool } from "@/lib/tool-choice";
 import { otherTool } from "@/lib/tools";
 import { FrameworkCard } from "./_components/framework-card";
@@ -41,7 +41,7 @@ export default async function FrameworkSetupPage({ searchParams }: { searchParam
             <span aria-hidden="true">/</span>
             <span aria-current="page" className="font-semibold text-foreground">Framework setup</span>
           </nav>
-          <span className="mt-5 inline-flex rounded-full bg-purple-100 px-3 py-1 text-xs font-semibold text-purple-700 dark:bg-purple-950 dark:text-purple-300">Stage 2 · Intermediate</span>
+          <span className="mt-5 inline-flex rounded-full bg-purple-100 px-3 py-1 text-xs font-semibold text-purple-700 dark:bg-purple-950 dark:text-purple-300">Stage {stageNumber(FRAMEWORK_SETUP, tool)} · Intermediate</span>
           <h1 className="mt-4 text-4xl font-extrabold tracking-tight sm:text-5xl">Framework setup</h1>
           <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
             Set up a Playwright or Cypress project the way teams do: config and credentials in .env, saved on GitHub.

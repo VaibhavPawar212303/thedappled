@@ -48,50 +48,67 @@ export const MANUAL_STEPS: Step[] = [
   { n: 4, title: "Exploratory testing", blurb: "Charters, time-boxed sessions and notes that find real bugs.", href: "/testing/manual-testing/exploratory", progressKey: "manual-exploratory" },
 ];
 
-const STAGE_BLURB: Record<Tool, string[]> = {
-  playwright: [
-    "Locators, waits, assertions and debugging on real sign-in and sign-up pages.",
-    "Config and credentials in .env, tests that read them, and the project on GitHub with secrets.",
-    "Move locators into page classes, share setup with fixtures, keep specs readable.",
-    "Run the same spec on Chromium, Firefox and WebKit, locally and in GitHub Actions.",
-  ],
-  cypress: [
-    "cy commands, retries and assertions on real sign-in and sign-up pages.",
-    "cypress.config and env values, tests that read them, and the project on GitHub with secrets.",
-    "Page classes and custom commands, so specs stay short and readable.",
-    "Run the same spec on Chrome, Firefox and WebKit, locally and in GitHub Actions.",
-  ],
+// Every automation stage. The order (and so each stage's number) comes from automationSlugsFor(tool)
+// in lib/assignments: framework setup first, then each stage improves on the last.
+// Design: Penpot "26 - Testing Learning Path", page "Roadmap – tracks", board D.
+const STAGES: Record<string, { title: string; href: string; blurb: string | Record<Tool, string>; isNew?: boolean }> = {
+  "framework-setup": {
+    title: "Framework setup",
+    href: "/testing/framework-setup",
+    blurb: {
+      playwright: "Config and credentials in .env, tests that read them, and the project on GitHub with secrets.",
+      cypress: "cypress.config and env values, tests that read them, and the project on GitHub with secrets.",
+    },
+  },
+  "ui-automation": {
+    title: "UI automation",
+    href: "/testing/ui-automation",
+    blurb: {
+      playwright: "Write tests in your framework: locators, waits, assertions and debugging on real sign-in and sign-up pages.",
+      cypress: "Write tests in your framework: cy commands, retries and assertions on real sign-in and sign-up pages.",
+    },
+  },
+  "page-objects": {
+    title: "Page objects & fixtures",
+    href: "/testing/page-objects",
+    blurb: {
+      playwright: "Move locators into page classes, share setup with fixtures, keep specs readable.",
+      cypress: "Page classes and custom commands, so specs stay short and readable.",
+    },
+  },
+  annotations: { title: "Playwright annotations", href: "/testing/annotations", blurb: "skip, fixme, fail, slow, only, tags and custom annotations." },
+  "cross-browser": {
+    title: "Cross-browser testing",
+    href: "/testing/cross-browser",
+    blurb: {
+      playwright: "Run the same spec on Chromium, Firefox and WebKit, locally and in GitHub Actions.",
+      cypress: "Run the same spec on Chrome, Firefox and WebKit, locally and in GitHub Actions.",
+    },
+  },
+  "fixtures-advanced": { title: "Advanced fixtures", href: "/testing/fixtures-advanced", blurb: "Teardown, worker, auto and option fixtures, overrides and mergeTests." },
+  "annotations-advanced": { title: "Advanced annotations", href: "/testing/annotations-advanced", blurb: "Group skip, fixme in hooks, several annotations, --grep OR and AND." },
+  "parallel-runs": { title: "Parallel runs & workers", href: "/testing/parallel-runs", blurb: "Workers, parallel and serial modes, maxFailures and sharding.", isNew: true },
 };
-const SHARED_STAGES = [
-  { title: "UI automation", href: "/testing/ui-automation", slug: "ui-automation" },
-  { title: "Framework setup", href: "/testing/framework-setup", slug: "framework-setup" },
-  { title: "Page objects & fixtures", href: "/testing/page-objects", slug: "page-objects" },
-  { title: "Cross-browser testing", href: "/testing/cross-browser", slug: "cross-browser" },
-];
-const PLAYWRIGHT_ONLY: Step[] = [
-  { n: 5, title: "Playwright annotations", blurb: "skip, fixme, fail, slow, only, tags and custom annotations.", href: "/testing/annotations", progressKey: "playwright:annotations" },
-  { n: 6, title: "Advanced annotations", blurb: "Group skip, fixme in hooks, several annotations, --grep OR and AND.", href: "/testing/annotations-advanced", progressKey: "playwright:annotations-advanced" },
-  { n: 7, title: "Advanced fixtures", blurb: "Teardown, worker, auto and option fixtures, overrides and mergeTests.", href: "/testing/fixtures-advanced", progressKey: "playwright:fixtures-advanced" },
-  { n: 8, title: "Parallel runs & workers", blurb: "Workers, parallel and serial modes, maxFailures and sharding.", href: "/testing/parallel-runs", isNew: true, progressKey: "playwright:parallel-runs" },
-];
 
 export function toolSteps(tool: Tool): Step[] {
-  const shared = SHARED_STAGES.map((st, i) => ({ n: i + 1, title: st.title, blurb: STAGE_BLURB[tool][i], href: st.href, progressKey: `${tool}:${st.slug}` }));
-  return tool === "playwright" ? [...shared, ...PLAYWRIGHT_ONLY] : shared;
+  return automationSlugsFor(tool).map((slug, i) => {
+    const st = STAGES[slug];
+    return { n: i + 1, title: st.title, blurb: typeof st.blurb === "string" ? st.blurb : st.blurb[tool], href: st.href, isNew: st.isNew, progressKey: `${tool}:${slug}` };
+  });
 }
 
 export const TOOL_INFO: Record<Tool, { title: string; tone: Tone; blurb: string; chips: string[]; soon?: string }> = {
   playwright: {
     title: "Playwright",
     tone: "purple",
-    blurb: "From your first locator to annotations, advanced fixtures and parallel runs. Playwright-only stages go deeper into its test runner.",
-    chips: ["UI automation", "Page objects", "Cross-browser", "Annotations", "Fixtures", "Parallel"],
+    blurb: "Set up the framework the way teams do, automate real pages in it, then improve it step by step: page objects, annotations, cross-browser, fixtures and parallel runs.",
+    chips: ["Framework", "UI automation", "Page objects", "Annotations", "Cross-browser", "Fixtures", "Parallel"],
   },
   cypress: {
     title: "Cypress",
     tone: "green",
-    blurb: "The same practice pages with Cypress: commands and retries, the framework, page objects, and Chrome, Firefox and WebKit in CI.",
-    chips: ["UI automation", "Framework", "Page objects", "Cross-browser"],
+    blurb: "The same practice pages with Cypress: the framework first, then commands and retries, page objects, and Chrome, Firefox and WebKit in CI.",
+    chips: ["Framework", "UI automation", "Page objects", "Cross-browser"],
     soon: "More Cypress stages coming soon",
   },
 };

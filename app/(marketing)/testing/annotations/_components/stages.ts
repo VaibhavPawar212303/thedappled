@@ -310,7 +310,7 @@ export const ANN_STAGES: Record<AnnSlug, StageCopy> = {
       blurb: "The advanced lab has Chromium-only charts, a settings page that doesn’t work on mobile yet and a reports list to tag. Run three projects, upload your report, and push the suite.",
       points: ["Group skip and hook fixme prove themselves per project", "Several annotations, title tags and a hidden one in your report", "CI combines tags with OR or AND in --grep"],
       checksLine: "1 lab run · 5 from your report · 4 GitHub checks",
-      minutes: "Takes about 45–60 minutes · finish stage 5 first",
+      minutes: "Takes about 45–60 minutes · finish stages 4 and 5 first",
     },
   },
   "fixtures-advanced": {
@@ -340,7 +340,7 @@ projects: [
       blurb: "The fixtures lab has sign-up, a store with prices per currency and a console that logs errors. Give each worker its own account, attach logs to every test, and set the currency per project.",
       points: ["Auto, worker and option fixtures prove themselves in your report", "Your report shows one account per worker", "Teardown, mergeTests and overrides checked on GitHub"],
       checksLine: "1 lab run · 3 from your report · 4 GitHub checks",
-      minutes: "Takes about 60 minutes · finish stage 3 first",
+      minutes: "Takes about 60 minutes · finish stage 5 first",
     },
   },
   "parallel-runs": {
