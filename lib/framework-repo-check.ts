@@ -6,6 +6,7 @@ import { evaluatePomRepo, type PomRepoResult } from "@/lib/pom-repo-scan";
 import { evaluateCrossBrowserRepo, type CrossBrowserRepoResult } from "@/lib/xb-repo-scan";
 import { evaluateAnnotationsRepo, type AnnotationsRepoResult } from "@/lib/ann-repo-scan";
 import { evaluateAdvancedRepo, type AdvancedRepoResult } from "@/lib/ann-adv-repo-scan";
+import { evaluateFixturesRepo, type FixturesRepoResult } from "@/lib/fx-repo-scan";
 
 export type RepoCheckOutcome = { repo: string; branch: string; checks: RepoResult; assignment: AssignmentStatus | null };
 
@@ -98,6 +99,25 @@ export async function checkAdvancedRepoForAssignment(token: string, repoUrl: str
     "repo-fixme-hook": checks["repo-fixme-hook"].ok,
     "repo-declared-skip": checks["repo-declared-skip"].ok,
     "repo-grep-combine": checks["repo-grep-combine"].ok,
+  });
+  return { repo, branch, checks, assignment };
+}
+
+export type FixturesRepoCheckOutcome = { repo: string; branch: string; checks: FixturesRepoResult; assignment: AssignmentStatus | null };
+
+// Stage 7 (Playwright only): scans fixture files for teardown, mergeTests, an override and a global worker hook.
+export async function checkFixturesRepoForAssignment(token: string, repoUrl: string): Promise<FixturesRepoCheckOutcome> {
+  const parsed = parseRepoUrl(repoUrl);
+  if (!parsed) throw new RepoError("Enter a public GitHub repository URL, like https://github.com/you/your-repo.", 400);
+
+  const { snapshot, branch } = await loadRepo(parsed);
+  const checks = await evaluateFixturesRepo(snapshot);
+  const repo = `${parsed.owner}/${parsed.repo}`;
+  const assignment = await recordRepoChecks(token, repo, {
+    "repo-fx-teardown": checks["repo-fx-teardown"].ok,
+    "repo-fx-merge": checks["repo-fx-merge"].ok,
+    "repo-fx-override": checks["repo-fx-override"].ok,
+    "repo-fx-global": checks["repo-fx-global"].ok,
   });
   return { repo, branch, checks, assignment };
 }

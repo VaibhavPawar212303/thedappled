@@ -17,6 +17,8 @@ export function AssignmentBanner() {
       ? "page-objects"
       : path.startsWith("/testing/cross-browser")
         ? "cross-browser"
+        : path.startsWith("/testing/fixtures-advanced")
+        ? "fixtures-advanced"
         : path.startsWith("/testing/annotations-advanced")
           ? "annotations-advanced"
           : path.startsWith("/testing/annotations")
@@ -59,7 +61,7 @@ export function AssignmentBanner() {
       data-testid="assignment-banner"
       data-mode={automated === null ? "checking" : manual ? "manual" : "automated"}
       role="status"
-      className={`${manual ? "bg-amber-700" : stage === "framework-setup" || stage === "annotations" || stage === "annotations-advanced" ? "bg-purple-700" : stage === "cross-browser" ? "bg-blue-700" : "bg-emerald-700"} text-white`}
+      className={`${manual ? "bg-amber-700" : stage === "framework-setup" || stage === "annotations" || stage === "annotations-advanced" || stage === "fixtures-advanced" ? "bg-purple-700" : stage === "cross-browser" ? "bg-blue-700" : "bg-emerald-700"} text-white`}
     >
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-1 px-4 py-3 text-sm font-semibold md:px-8">
         <span>
@@ -69,7 +71,7 @@ export function AssignmentBanner() {
               ? "⚠ No automation detected yet — steps done by hand won’t count. Run it with Playwright, Cypress or Selenium."
               : `● Automation detected — your steps are being recorded${tool ? ` on the ${TOOL_LABEL[tool]} track` : ""}.`}
         </span>
-        <span className={manual ? "text-amber-100" : stage === "framework-setup" || stage === "annotations" || stage === "annotations-advanced" ? "text-purple-100" : stage === "cross-browser" ? "text-blue-100" : "text-emerald-100"}>
+        <span className={manual ? "text-amber-100" : stage === "framework-setup" || stage === "annotations" || stage === "annotations-advanced" || stage === "fixtures-advanced" ? "text-purple-100" : stage === "cross-browser" ? "text-blue-100" : "text-emerald-100"}>
           {!manual && (p ? `${p.done} of ${p.total} verified · ` : "")}
           {link}
         </span>

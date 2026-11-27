@@ -21,6 +21,8 @@ export type FlatTest = {
   status: string; // "expected" | "unexpected" | "skipped" | "flaky"
   lastResult: string; // the final attempt's status: "passed" | "failed" | "timedOut" | "skipped" | ...
   maxDurationMs: number;
+  attachments: string[]; // names of the final attempt's attachments
+  workerIndex: number | null; // the worker that ran the final attempt
 };
 
 // Built-in annotation types. Anything else (not starting with "_", which Playwright uses internally) is custom.
@@ -70,6 +72,8 @@ export function flattenReport(report: unknown): FlatTest[] {
           status: str(t.status),
           lastResult: results.length ? str(results[results.length - 1].status) : "",
           maxDurationMs: results.reduce((m, r) => Math.max(m, typeof r.duration === "number" ? r.duration : 0), 0),
+          attachments: results.length ? arr(results[results.length - 1].attachments).map(obj).map((a) => str(a.name)).filter(Boolean) : [],
+          workerIndex: results.length && typeof results[results.length - 1].workerIndex === "number" ? (results[results.length - 1].workerIndex as number) : null,
         });
       }
     }

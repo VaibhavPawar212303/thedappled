@@ -1,6 +1,6 @@
-// Copy for the two Playwright-only annotation stages (5 and 6), shared by their card and assignment view.
-// Design: Penpot "26 - Testing Learning Path", pages "Stage 5 – Annotations" and "Stage 6 – Advanced annotations".
-import { ADVANCED_STEPS, ANNOTATION_STEPS, type StepId } from "@/lib/assignments";
+// Copy for the Playwright-only stages 5-7 (annotations and fixtures), shared by their card and assignment view.
+// Design: Penpot "26 - Testing Learning Path", pages "Stage 5 – Annotations", "Stage 6 – Advanced annotations", "Stage 7 – Advanced fixtures".
+import { ADVANCED_STEPS, ANNOTATION_STEPS, FIXTURE_STEPS, type StepId } from "@/lib/assignments";
 
 export const ANN_EXAMPLE = `// tests/lab.spec.ts
 import { test, expect } from '@playwright/test';
@@ -120,7 +120,74 @@ npx playwright test --reporter=json > results.json
       - run: npx playwright test --grep "@fast|@slow"
 # On Windows PowerShell: npx playwright test --grep --% "@fast^|@slow"`;
 
-export type AnnSlug = "annotations" | "annotations-advanced";
+export const FX_EXAMPLE = `// tests/fixtures/auth.ts — a worker account, shared by every test in that worker
+import { test as base } from '@playwright/test';
+
+export const authTest = base.extend<{ account: { email: string } }, { workerAccount: { email: string } }>({
+  workerAccount: [async ({}, use, workerInfo) => {
+    await use({ email: \`worker-\${workerInfo.workerIndex}@lab.test\` });
+  }, { scope: 'worker' }],
+  // test-scoped view of it, so the report shows which account each test used
+  account: async ({ workerAccount }, use, testInfo) => {
+    testInfo.annotations.push({ type: 'account', description: workerAccount.email });
+    await use(workerAccount);
+  },
+});
+
+// tests/fixtures/shop.ts — an option, auto logs, an override and a global worker hook
+import { test as base } from '@playwright/test';
+
+export const shopTest = base.extend<{ currency: string; saveLogs: void }, { forEachWorker: void }>({
+  currency: ['USD', { option: true }],
+
+  saveLogs: [async ({ page }, use, testInfo) => {
+    const logs: string[] = [];
+    page.on('console', (m) => logs.push(\`[\${m.type()}] \${m.text()}\`));
+    await use();
+    await testInfo.attach('console', { body: logs.join('\\n'), contentType: 'text/plain' });  // teardown
+  }, { auto: true, box: true }],
+
+  page: async ({ page, currency }, use, testInfo) => {
+    testInfo.annotations.push({ type: 'currency', description: currency });
+    await page.goto(\`/testing/fixtures-advanced/lab?a=\${process.env.ASSIGNMENT_TOKEN}&currency=\${currency}\`);
+    await use(page);
+  },
+
+  forEachWorker: [async ({}, use) => {
+    // runs once per worker, before any test: a global beforeAll
+    await use();
+  }, { scope: 'worker', auto: true, title: 'worker setup' }],
+});
+
+// tests/fixtures/index.ts
+import { mergeTests } from '@playwright/test';
+export const test = mergeTests(authTest, shopTest);
+export { expect } from '@playwright/test';
+
+// tests/lab.spec.ts
+import { test, expect } from './fixtures';
+
+test('sign up with the worker account', async ({ page, account }) => {
+  await page.getByTestId('signup-email').fill(account.email);
+  await page.getByTestId('signup-submit').click();
+  await expect(page.getByTestId('signed-in-as')).toHaveText(account.email);
+});
+
+test('prices use the project currency', async ({ page, currency }) => {
+  await expect(page.getByTestId('store-currency')).toHaveText(currency);
+});
+
+// playwright.config.ts
+workers: 2,
+projects: [
+  { name: 'usd', use: { currency: 'USD' } },
+  { name: 'eu',  use: { currency: 'EUR' } },
+],
+
+# run, then upload results.json
+npx playwright test --reporter=json > results.json`;
+
+export type AnnSlug = "annotations" | "annotations-advanced" | "fixtures-advanced";
 
 type StageCopy = {
   name: string; // breadcrumb label
@@ -186,6 +253,36 @@ export const ANN_STAGES: Record<AnnSlug, StageCopy> = {
       points: ["Group skip and hook fixme prove themselves per project", "Several annotations, title tags and a hidden one in your report", "CI combines tags with OR or AND in --grep"],
       checksLine: "1 lab run · 5 from your report · 4 GitHub checks",
       minutes: "Takes about 45–60 minutes · finish stage 5 first",
+    },
+  },
+  "fixtures-advanced": {
+    name: "Advanced fixtures",
+    title: "Assignment: advanced fixtures",
+    completeTitle: "Advanced fixtures complete!",
+    completeText: "Your fixture layer cleans up, shares accounts per worker and changes per project.",
+    steps: FIXTURE_STEPS,
+    reportChecks: 3,
+    how: [
+      "Open the lab link and build fixtures in two files you merge",
+      "A worker account, an auto log fixture and a currency option",
+      "Run two projects with 2+ workers and --reporter=json, upload the file",
+      "Push, then check the repo for teardown, mergeTests, an override and a global hook",
+    ],
+    example: FX_EXAMPLE,
+    projects: {
+      note: "The report compares workers (one account each) and projects (one currency each).",
+      code: `workers: 2,
+projects: [
+  { name: 'usd', use: { currency: 'USD' } },
+  { name: 'eu',  use: { currency: 'EUR' } },
+],`,
+    },
+    card: {
+      title: "Build a fixture layer",
+      blurb: "The fixtures lab has sign-up, a store with prices per currency and a console that logs errors. Give each worker its own account, attach logs to every test, and set the currency per project.",
+      points: ["Auto, worker and option fixtures prove themselves in your report", "Your report shows one account per worker", "Teardown, mergeTests and overrides checked on GitHub"],
+      checksLine: "1 lab run · 3 from your report · 4 GitHub checks",
+      minutes: "Takes about 60 minutes · finish stage 3 first",
     },
   },
 };

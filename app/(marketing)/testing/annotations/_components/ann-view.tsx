@@ -9,7 +9,7 @@ import { ANN_STAGES, type AnnSlug } from "./stages";
 import { REASON_TEXT } from "@/lib/verification";
 import { ToolBadge } from "../../_components/card-tool";
 
-// Design: Penpot "26 - Testing Learning Path", page "Stage 5 – Annotations", board C.
+// Design: Penpot "26 - Testing Learning Path", pages "Stage 5 – Annotations", "Stage 6 – Advanced annotations" and "Stage 7 – Advanced fixtures", board C.
 
 type Env = { BASE_URL: string; ASSIGNMENT_TOKEN: string };
 type Check = { ok: boolean; message: string };

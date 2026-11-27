@@ -9,11 +9,12 @@ export const PAGE_OBJECTS = "page-objects";
 export const CROSS_BROWSER = "cross-browser";
 export const ANNOTATIONS = "annotations";
 export const ANNOTATIONS_ADVANCED = "annotations-advanced";
+export const FIXTURES_ADVANCED = "fixtures-advanced";
 export const MANUAL_TESTING = "manual-testing";
-export type AssignmentSlug = typeof UI_AUTOMATION | typeof FRAMEWORK_SETUP | typeof PAGE_OBJECTS | typeof CROSS_BROWSER | typeof ANNOTATIONS | typeof ANNOTATIONS_ADVANCED | typeof MANUAL_TESTING;
-export const AUTOMATION_SLUGS = [UI_AUTOMATION, FRAMEWORK_SETUP, PAGE_OBJECTS, CROSS_BROWSER, ANNOTATIONS, ANNOTATIONS_ADVANCED] as const;
-// Stages that exist for one tool only (stages 5 and 6 teach Playwright's own annotations).
-export const PLAYWRIGHT_ONLY_SLUGS = new Set<string>([ANNOTATIONS, ANNOTATIONS_ADVANCED]);
+export type AssignmentSlug = typeof UI_AUTOMATION | typeof FRAMEWORK_SETUP | typeof PAGE_OBJECTS | typeof CROSS_BROWSER | typeof ANNOTATIONS | typeof ANNOTATIONS_ADVANCED | typeof FIXTURES_ADVANCED | typeof MANUAL_TESTING;
+export const AUTOMATION_SLUGS = [UI_AUTOMATION, FRAMEWORK_SETUP, PAGE_OBJECTS, CROSS_BROWSER, ANNOTATIONS, ANNOTATIONS_ADVANCED, FIXTURES_ADVANCED] as const;
+// Stages that exist for one tool only (stages 5-7 teach Playwright's own annotations and fixtures).
+export const PLAYWRIGHT_ONLY_SLUGS = new Set<string>([ANNOTATIONS, ANNOTATIONS_ADVANCED, FIXTURES_ADVANCED]);
 // The automation stages a tool's learners can take, in learning order.
 export const automationSlugsFor = (tool: Tool) => AUTOMATION_SLUGS.filter((s) => tool === PLAYWRIGHT || !PLAYWRIGHT_ONLY_SLUGS.has(s));
 export const ASSIGNMENT_SLUGS: AssignmentSlug[] = [MANUAL_TESTING, ...AUTOMATION_SLUGS];
@@ -62,6 +63,14 @@ export type StepId =
   | "repo-fixme-hook"
   | "repo-declared-skip"
   | "repo-grep-combine"
+  | "fx-lab"
+  | "fx-auto"
+  | "fx-worker"
+  | "fx-option"
+  | "repo-fx-teardown"
+  | "repo-fx-merge"
+  | "repo-fx-override"
+  | "repo-fx-global"
   | "manual-fundamentals"
   | "manual-test-design"
   | "manual-test-cases"
@@ -138,18 +147,33 @@ export const ADVANCED_STEPS: Step[] = [
   { id: "repo-grep-combine", group: "Configure it on GitHub", label: "CI combines tags: --grep \"@a|@b\" or \"(?=.*@a)(?=.*@b)\"" },
 ];
 
+// Stage 7 (Playwright only): advanced fixtures. The report checks compare tests, workers and projects
+// (lib/fx-report.ts); the repo checks look for teardown, mergeTests, overrides and a global worker hook.
+export const FIXTURE_STEPS: Step[] = [
+  { id: "fx-lab", group: "Run the lab", label: "Your tests opened the fixtures lab (automated browser)" },
+  { id: "fx-auto", group: "From your test report", label: "Every test has the same attachment, added by an auto fixture" },
+  { id: "fx-worker", group: "From your test report", label: "One account per worker: same worker, same account" },
+  { id: "fx-option", group: "From your test report", label: "The currency option differs between two projects" },
+  { id: "repo-fx-teardown", group: "Configure it on GitHub", label: "A fixture cleans up after await use()" },
+  { id: "repo-fx-merge", group: "Configure it on GitHub", label: "mergeTests combines two fixture files" },
+  { id: "repo-fx-override", group: "Configure it on GitHub", label: "An overridden built-in: page, baseURL or storageState" },
+  { id: "repo-fx-global", group: "Configure it on GitHub", label: "A worker auto fixture, and { box: true } or a title" },
+];
+
 export const REPORT_STEPS = new Set<StepId>([
   "ann-skip", "ann-fixme", "ann-fail", "ann-slow", "ann-tags", "ann-custom",
   "adv-group-skip", "adv-hook-fixme", "adv-multi", "adv-title-tag", "adv-hidden",
+  "fx-auto", "fx-worker", "fx-option",
 ]);
 // Stages checked from an uploaded report, and the step that records the learner's lab runs.
-export const LAB_STEP: Partial<Record<AssignmentSlug, StepId>> = { [ANNOTATIONS]: "ann-lab", [ANNOTATIONS_ADVANCED]: "adv-lab" };
+export const LAB_STEP: Partial<Record<AssignmentSlug, StepId>> = { [ANNOTATIONS]: "ann-lab", [ANNOTATIONS_ADVANCED]: "adv-lab", [FIXTURES_ADVANCED]: "fx-lab" };
 export const isLabStep = (step: string) => Object.values(LAB_STEP).includes(step as StepId);
 
 export const REPO_STEPS = new Set<StepId>([
   "repo-config", "repo-ignore", "repo-ci", "repo-pages", "repo-fixture", "repo-specs", "repo-browsers", "repo-ci-matrix",
   "repo-forbid-only", "repo-grep-smoke", "repo-describe-runtime",
   "repo-skip-callback", "repo-fixme-hook", "repo-declared-skip", "repo-grep-combine",
+  "repo-fx-teardown", "repo-fx-merge", "repo-fx-override", "repo-fx-global",
 ]);
 
 // Manual testing track: one step per lesson, done when a signed-in learner scores 5/5 on its quiz
@@ -169,11 +193,12 @@ const STEPS_BY_SLUG: Record<string, Step[]> = {
   [CROSS_BROWSER]: CROSS_BROWSER_STEPS,
   [ANNOTATIONS]: ANNOTATION_STEPS,
   [ANNOTATIONS_ADVANCED]: ADVANCED_STEPS,
+  [FIXTURES_ADVANCED]: FIXTURE_STEPS,
   [MANUAL_TESTING]: MANUAL_STEPS,
 };
 export const stepsFor = (slug: string): Step[] => STEPS_BY_SLUG[slug] ?? STEPS;
 
-const STEP_IDS = new Set<string>([...STEPS, ...FRAMEWORK_STEPS, ...POM_STEPS, ...CROSS_BROWSER_STEPS, ...ANNOTATION_STEPS, ...ADVANCED_STEPS, ...MANUAL_STEPS].map((s) => s.id));
+const STEP_IDS = new Set<string>([...STEPS, ...FRAMEWORK_STEPS, ...POM_STEPS, ...CROSS_BROWSER_STEPS, ...ANNOTATION_STEPS, ...ADVANCED_STEPS, ...FIXTURE_STEPS, ...MANUAL_STEPS].map((s) => s.id));
 export const isStepId = (v: unknown): v is StepId => typeof v === "string" && STEP_IDS.has(v);
 
 export type AssignmentStatus = {
@@ -388,7 +413,7 @@ export async function recordRepoChecks(
   return getStatusByToken(token);
 }
 
-// Stages 5 and 6: records the checks that passed in an uploaded test report (never downgrades a verified step).
+// Stages 5-7: records the checks that passed in an uploaded test report (never downgrades a verified step).
 export async function recordReportChecks(token: string, passed: Partial<Record<StepId, boolean>>, detail: Record<string, string | number>): Promise<AssignmentStatus | null> {
   const a = await prisma.assignment.findUnique({ where: { token }, select: { id: true, slug: true } });
   if (!a || !LAB_STEP[a.slug as AssignmentSlug]) return null;
@@ -414,7 +439,7 @@ export async function recordReportChecks(token: string, passed: Partial<Record<S
   return getStatusByToken(token);
 }
 
-// Stages 5 and 6: when the learner's tests last drove the lab. An uploaded report must come from a run
+// Stages 5-7: when the learner's tests last drove the lab. An uploaded report must come from a run
 // around that time. Kept in the verified lab step's signals.
 export async function touchLabVisit(token: string): Promise<void> {
   const a = await prisma.assignment.findUnique({ where: { token }, select: { id: true, slug: true } });
