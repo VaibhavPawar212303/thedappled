@@ -29,7 +29,7 @@ export default async function LandingPage() {
     playwrightStages: automationSlugsFor(PLAYWRIGHT).length,
     cypressStages: automationSlugsFor(CYPRESS).length,
     dsaLessons: FOUNDATIONS_STEPS.filter((s) => s.href).length,
-    dsaSteps: FOUNDATIONS_STEPS.filter((s) => s.href).map((s) => ({ n: s.n, title: s.title, href: s.href!, isNew: s.id === "dsa-coding-basics" })),
+    dsaSteps: FOUNDATIONS_STEPS.filter((s) => s.href).map((s) => ({ n: s.n, title: s.title, href: s.href!, isNew: s.id === "dsa-tracing" })),
   };
 
   return <LandingContent stats={stats} paths={paths} />;

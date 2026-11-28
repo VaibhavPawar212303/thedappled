@@ -47,6 +47,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/dsa/foundations/what-is-dsa`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE_URL}/dsa/foundations/algorithms`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE_URL}/dsa/foundations/coding-basics`, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${SITE_URL}/dsa/foundations/tracing`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE_URL}/dsa/foundations/reading-loops`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE_URL}/dsa/foundations/techniques`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE_URL}/dsa/foundations/comparing-solutions`, changeFrequency: "monthly", priority: 0.7 },

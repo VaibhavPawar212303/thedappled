@@ -195,7 +195,7 @@ export default function CodingBasicsLessonPage() {
           ]}
           hot={2}
         />
-        <KeyIdea>Each time the body runs is one step. In the next chapter you count those steps to get Big-O.</KeyIdea>
+        <KeyIdea>Each time the body runs is one step. Next you&apos;ll trace loops row by row, then count those steps to get Big-O.</KeyIdea>
       </section>
 
       <section>

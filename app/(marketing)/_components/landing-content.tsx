@@ -316,9 +316,9 @@ export default function LandingContent({ stats, paths }: LandingContentProps) {
         >
           <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
             <motion.div variants={fadeIn}>
-              <Link href="/dsa/foundations/coding-basics" className="mb-6 inline-flex items-center rounded-full border border-emerald-200 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950 px-4 py-1.5 text-sm font-semibold text-emerald-700 dark:text-emerald-300 shadow-sm hover:bg-emerald-100 dark:hover:bg-emerald-900 transition">
+              <Link href="/dsa/foundations/tracing" className="mb-6 inline-flex items-center rounded-full border border-emerald-200 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950 px-4 py-1.5 text-sm font-semibold text-emerald-700 dark:text-emerald-300 shadow-sm hover:bg-emerald-100 dark:hover:bg-emerald-900 transition">
                 <span className="flex h-2 w-2 rounded-full bg-emerald-600 mr-2 animate-pulse"></span>
-                New: DSA path · run every program in the Compiler
+                New in DSA: Tracing code · five first problems in C
               </Link>
             </motion.div>
 
