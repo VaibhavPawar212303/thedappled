@@ -7,16 +7,16 @@ import { TraceStepThrough } from "../../_components/trace-step-through";
 // Design: Penpot "27 - DSA Learning Path", page "Foundations 4 – Tracing code".
 
 export const metadata: Metadata = {
-  title: "Tracing code: trace tables and five first problems in C – DSA step 4",
+  title: "Tracing code: trace tables and three first problems in C – DSA step 4",
   description:
-    "DSA Foundations step 4: play the computer. Trace a loop line by line with a trace table, then solve five first array problems in C (largest, count, search, is it sorted, reverse) and spot the three bugs every beginner writes.",
+    "DSA Foundations step 4: play the computer. Trace a loop line by line with a trace table, then solve three first array problems in C (largest, count, search) and spot the three bugs every beginner writes.",
   alternates: { canonical: "/dsa/foundations/tracing" },
 };
 
 const TOC = [
   { id: "play-the-computer", label: "Play the computer" },
   { id: "trace-table", label: "Fill a trace table" },
-  { id: "first-problems", label: "Five first problems" },
+  { id: "first-problems", label: "Three first problems" },
   { id: "common-bugs", label: "Three common bugs" },
 ];
 
@@ -158,72 +158,6 @@ int main(void) {
 }`,
     example: "find 9  →  2     find 7  →  -1",
   },
-  {
-    id: "is-sorted",
-    file: "is_sorted.c",
-    title: "Is the array sorted?",
-    pattern: "Compare neighbours",
-    idea: "Look at each pair side by side. One pair in the wrong order means no (0). If every pair is fine, the answer is yes (1).",
-    code: `int isSorted(int a[], int n) {
-  for (int i = 1; i < n; i++) {
-    if (a[i - 1] > a[i]) {
-      return 0;
-    }
-  }
-  return 1;
-}`,
-    run: `#include <stdio.h>
-
-int isSorted(int a[], int n) {
-  for (int i = 1; i < n; i++) {
-    if (a[i - 1] > a[i]) {
-      return 0;
-    }
-  }
-  return 1;
-}
-
-int main(void) {
-  int a[] = {1, 3, 3, 8};
-  int b[] = {1, 5, 2};
-  int x = isSorted(a, 4);
-  int y = isSorted(b, 3);
-  printf("%d %d\\n", x, y);
-  return 0;
-}`,
-    example: "{1, 3, 3, 8}  →  1     {1, 5, 2}  →  0",
-  },
-  {
-    id: "reverse",
-    file: "reverse.c",
-    title: "Reverse an array in place",
-    pattern: "Two pointers + swap",
-    idea: "Swap the first and last, then move both inwards. Stop at the middle, or you would swap everything back. tmp holds one value while the other moves.",
-    code: `for (int i = 0; i < n / 2; i++) {
-  int j = n - 1 - i;     // the matching box from the end
-  int tmp = a[i];
-  a[i] = a[j];
-  a[j] = tmp;
-}`,
-    run: `#include <stdio.h>
-
-int main(void) {
-  int a[] = {1, 2, 3, 4, 5};
-  int n = 5;
-  for (int i = 0; i < n / 2; i++) {
-    int j = n - 1 - i;
-    int tmp = a[i];
-    a[i] = a[j];
-    a[j] = tmp;
-  }
-  for (int i = 0; i < n; i++) {
-    printf("%d ", a[i]);
-  }
-  printf("\\n");
-  return 0;
-}`,
-    example: "{1, 2, 3, 4, 5}  →  5 4 3 2 1",
-  },
 ];
 
 const BUGS = [
@@ -236,7 +170,7 @@ export default function TracingLessonPage() {
   return (
     <DsaLessonLayout
       step="dsa-tracing"
-      intro="Play the computer: follow a loop line by line with a trace table. Then solve five first problems in C and learn to spot the three bugs every beginner writes."
+      intro="Play the computer: follow a loop line by line with a trace table. Then solve three first problems in C and learn to spot the three bugs every beginner writes."
       minutes={25}
       toc={TOC}
     >
@@ -263,7 +197,7 @@ export default function TracingLessonPage() {
           ]}
         />
         <KeyIdea>
-          The loop body ran 4 times, once per row with &ldquo;yes&rdquo;. Counting those rows is exactly how you will measure an algorithm in the next chapter.
+          The loop body ran 4 times, once per row with &ldquo;yes&rdquo;. Counting those rows is exactly how you will measure an algorithm in Reading loops.
         </KeyIdea>
       </section>
 
@@ -303,7 +237,7 @@ export default function TracingLessonPage() {
       </section>
 
       <section>
-        <SectionHead n={3} id="first-problems" title="Five first problems" />
+        <SectionHead n={3} id="first-problems" title="Three first problems" />
         <P>
           Each problem is a short loop over an array. Read the idea, trace it on the example, then press Run in Compiler and step through it. Each one is a pattern
           you will use again and again.

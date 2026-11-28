@@ -130,7 +130,7 @@ export default function AlgorithmsLessonPage() {
           alt="As n goes from 4 to 8 to 16, a row of n blocks doubles while a log n tower grows by one block"
           caption="n = 4, 8, 16: the n-step row doubles each time, the log n tower adds just one block."
         />
-        <KeyIdea title="Coming up">Big-O is a short label for how the number of steps grows as n grows. Next you&apos;ll meet the core DSA techniques and the C you need to write them; in step 5 you&apos;ll learn to read Big-O straight from a loop.</KeyIdea>
+        <KeyIdea title="Coming up">Big-O is a short label for how the number of steps grows as n grows. Next you&apos;ll meet the core DSA techniques and the C you need to write them; in step 6 you&apos;ll learn to read Big-O straight from a loop.</KeyIdea>
       </section>
     </DsaLessonLayout>
   );

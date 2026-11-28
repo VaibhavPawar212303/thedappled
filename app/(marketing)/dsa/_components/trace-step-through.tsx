@@ -4,9 +4,22 @@ import * as React from "react";
 import { ChevronLeft, ChevronRight, RotateCcw } from "lucide-react";
 
 // A trace table filled in one row at a time (Prev / Next). Rows after the current one stay empty,
-// so the learner can guess the next row before revealing it. `hot` highlights one column.
-// Design: Penpot "27 - DSA Learning Path", page "Foundations 4 – Tracing code", section "Play the computer".
-export function TraceStepThrough({ title, head, rows, hot }: { title: string; head: string[]; rows: string[][]; hot?: number }) {
+// so the learner can guess the next row before revealing it. `hot` highlights one column; `doneNote`
+// replaces the caption shown once every row is revealed.
+// Design: Penpot "27 - DSA Learning Path", pages "Foundations 4 – Tracing code" and "Foundations 5 – Neighbours & swaps".
+export function TraceStepThrough({
+  title,
+  head,
+  rows,
+  hot,
+  doneNote = "Done. Count the rows that say yes: that is how many times the loop body ran.",
+}: {
+  title: string;
+  head: string[];
+  rows: string[][];
+  hot?: number;
+  doneNote?: string;
+}) {
   const [k, setK] = React.useState(1); // rows shown so far
   const last = k === rows.length;
   const note = head.length - 1; // the last column is a plain-English note
@@ -72,7 +85,7 @@ export function TraceStepThrough({ title, head, rows, hot }: { title: string; he
         </table>
       </div>
       <figcaption className="border-t px-5 py-3 text-[13px] text-muted-foreground">
-        {last ? "Done. Count the rows that say yes: that is how many times the loop body ran." : "Guess the next row first, then press Next to check."}
+        {last ? doneNote :"Guess the next row first, then press Next to check."}
       </figcaption>
     </figure>
   );

@@ -8,9 +8,9 @@ import { Cards, DataTable, Figure, KeyIdea, P, PlainSteps, Tip } from "../../_co
 // Animated isometric illustrations: public/dsa/reading-loops/*.svg, made by scripts/gen-dsa-illustrations.mjs.
 
 export const metadata: Metadata = {
-  title: "Reading loops: Big-O basics – DSA for beginners, step 5",
+  title: "Reading loops: Big-O basics – DSA for beginners, step 6",
   description:
-    "DSA Foundations step 5: read Big-O straight from code, step by step. What O(n) really means, how to simplify 3n² + 5n + 2, and the four patterns: no loop O(1), one loop O(n), a loop inside a loop O(n²), and halving O(log n) — with animations, tables and C.",
+    "DSA Foundations step 6: read Big-O straight from code, step by step. What O(n) really means, how to simplify 3n² + 5n + 2, and the four patterns: no loop O(1), one loop O(n), a loop inside a loop O(n²), and halving O(log n) — with animations, tables and C.",
   alternates: { canonical: "/dsa/foundations/reading-loops" },
 };
 

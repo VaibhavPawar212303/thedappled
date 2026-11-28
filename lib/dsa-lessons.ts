@@ -18,21 +18,23 @@ export const DSA_FOUNDATIONS = "dsa-foundations";
 // DSA techniques moved to step 2 and Reading loops to step 3. Step 3 ("Coding basics in C") was then
 // added before Reading loops and the later steps moved down one. Step ids (the progress keys) did not
 // change, so saved progress is kept. Step 4 ("Tracing code") was then added after Coding basics and the
-// later steps moved down one again (Penpot page "Foundations 4 – Tracing code").
+// later steps moved down one again (Penpot page "Foundations 4 – Tracing code"). Step 5 ("Neighbours &
+// swaps") then took two problems out of Tracing code, and the later steps moved down one once more.
 export const FOUNDATIONS_STEPS: DsaStep[] = [
   { n: 0, id: "dsa-intro", title: "What is DSA?", blurb: "Data structures and algorithms in plain words, with everyday examples.", href: "/dsa/foundations/what-is-dsa", isNew: true },
   { n: 1, id: "dsa-algorithms", title: "What is an algorithm?", blurb: "Recipes, the phone-book search, and counting steps instead of seconds.", href: "/dsa/foundations/algorithms", isNew: true },
   { n: 2, id: "dsa-techniques", title: "DSA techniques", blurb: "20 techniques with real-world pictures, and how to spot them in a question.", href: "/dsa/foundations/techniques", isNew: true },
   { n: 3, id: "dsa-coding-basics", title: "Coding basics in C", blurb: "Your first program, variables, if / else, loops, arrays and functions.", href: "/dsa/foundations/coding-basics", isNew: true },
-  { n: 4, id: "dsa-tracing", title: "Tracing code", blurb: "Follow a loop line by line, solve five first problems, spot common bugs.", href: "/dsa/foundations/tracing", isNew: true },
-  { n: 5, id: "dsa-reading-loops", title: "Reading loops", blurb: "No loop O(1), one loop O(n), loop in a loop O(n²), halving O(log n).", href: "/dsa/foundations/reading-loops", isNew: true },
-  { n: 6, id: "dsa-comparing", title: "Comparing two solutions", blurb: "Best and worst case, brute force vs better, and O, Ω and Θ.", href: "/dsa/foundations/comparing-solutions", isNew: true },
-  { n: 7, id: "dsa-growth-memory", title: "Growth rates & memory", blurb: "Nine growth rates from O(1) to O(n!), and space complexity.", href: "/dsa/foundations/growth-rates", isNew: true },
-  { n: 8, id: "dsa-arrays", title: "Arrays & strings", blurb: "Indexing, in-place updates, prefix sums and string building." },
-  { n: 9, id: "dsa-hashing", title: "Hashing", blurb: "Hash maps and sets for counting, lookups and de-duplication." },
-  { n: 10, id: "dsa-linked-lists", title: "Linked lists", blurb: "Pointers, reversal, fast and slow runners, merging lists." },
-  { n: 11, id: "dsa-stacks-queues", title: "Stacks & queues", blurb: "LIFO and FIFO, balanced brackets, monotonic stacks." },
-  { n: 12, id: "dsa-recursion", title: "Recursion", blurb: "Base cases, the call stack, and thinking in smaller problems." },
+  { n: 4, id: "dsa-tracing", title: "Tracing code", blurb: "Follow a loop line by line, solve three first problems, spot common bugs.", href: "/dsa/foundations/tracing", isNew: true },
+  { n: 5, id: "dsa-neighbours-swaps", title: "Neighbours & swaps", blurb: "Compare each item with its neighbour, swap safely, reverse with two pointers.", href: "/dsa/foundations/neighbours-and-swaps", isNew: true },
+  { n: 6, id: "dsa-reading-loops", title: "Reading loops", blurb: "No loop O(1), one loop O(n), loop in a loop O(n²), halving O(log n).", href: "/dsa/foundations/reading-loops", isNew: true },
+  { n: 7, id: "dsa-comparing", title: "Comparing two solutions", blurb: "Best and worst case, brute force vs better, and O, Ω and Θ.", href: "/dsa/foundations/comparing-solutions", isNew: true },
+  { n: 8, id: "dsa-growth-memory", title: "Growth rates & memory", blurb: "Nine growth rates from O(1) to O(n!), and space complexity.", href: "/dsa/foundations/growth-rates", isNew: true },
+  { n: 9, id: "dsa-arrays", title: "Arrays & strings", blurb: "Indexing, in-place updates, prefix sums and string building." },
+  { n: 10, id: "dsa-hashing", title: "Hashing", blurb: "Hash maps and sets for counting, lookups and de-duplication." },
+  { n: 11, id: "dsa-linked-lists", title: "Linked lists", blurb: "Pointers, reversal, fast and slow runners, merging lists." },
+  { n: 12, id: "dsa-stacks-queues", title: "Stacks & queues", blurb: "LIFO and FIFO, balanced brackets, monotonic stacks." },
+  { n: 13, id: "dsa-recursion", title: "Recursion", blurb: "Base cases, the call stack, and thinking in smaller problems." },
 ];
 
 // The "chapter bridge" at the top of each lesson: what the last chapter covered, and what this one adds.
@@ -43,8 +45,9 @@ export const DSA_BRIDGES: Record<string, DsaBridge> = {
   "dsa-algorithms": { recap: "DSA = where data lives (data structures) + the steps (algorithms).", now: ["What an algorithm is", "Two ways to search a phone book", "Counting steps, not seconds"] },
   "dsa-techniques": { recap: "An algorithm is a list of steps, and we count steps to compare them.", now: ["20 reusable techniques", "A real-world picture for each", "Clues that point to each one"] },
   "dsa-coding-basics": { recap: "Techniques like traversal and two pointers, described in plain English.", now: ["Just enough C to write them", "Variables, if / else, loops", "Arrays and functions"] },
-  "dsa-tracing": { recap: "Variables, if / else, loops, arrays and functions in C.", now: ["Trace a loop by hand", "Solve 5 first problems", "Spot 3 common bugs"] },
-  "dsa-reading-loops": { recap: "Trace a loop by hand: each row of the trace table is one run of the loop body, one step.", now: ["Count those steps to get Big-O", "O(1), O(n), O(n²), O(log n)", "Simplify 3n² + 5n + 2"] },
+  "dsa-tracing": { recap: "Variables, if / else, loops, arrays and functions in C.", now: ["Trace a loop by hand", "Solve 3 first problems", "Spot 3 common bugs"] },
+  "dsa-neighbours-swaps": { recap: "Trace a loop by hand, row by row, and three first problems in C.", now: ["Compare each item with its neighbour", "Swap two boxes safely with tmp", "Two pointers: reverse in place"] },
+  "dsa-reading-loops": { recap: "Loops you can trace row by row; each run of a loop body is one step. Two pointers ran only about n ÷ 2 times.", now: ["Count those steps to get Big-O", "O(1), O(n), O(n²), O(log n)", "Simplify 3n² + 5n + 2"] },
   "dsa-comparing": { recap: "Read Big-O straight from the loops: one loop O(n), nested O(n²).", now: ["Best case and worst case", "Brute force → better", "Same Big-O, different code; O, Ω, Θ"] },
   "dsa-growth-memory": { recap: "Compare two correct solutions with best / worst case and O, Ω, Θ.", now: ["Nine growth rates, O(1) to O(n!)", "Space complexity: extra memory", "Rules of thumb for Big-O"] },
 };
@@ -112,6 +115,39 @@ const TRACING: DsaQuestion[] = [
     options: ["It reads a[n], one box past the end", "It skips a[0]", "It never starts", "Nothing, it's the same as i < n"],
     answer: 0,
     why: "The last box is a[n - 1]. With <= the loop runs once more and reads a[n], which is not part of the array.",
+  },
+];
+
+const NEIGHBOURS_SWAPS: DsaQuestion[] = [
+  {
+    q: "An array has 6 items. How many neighbour pairs does it have?",
+    options: ["6", "5", "3", "12"],
+    answer: 1,
+    why: "Pairs sit between items: (a[0], a[1]) up to (a[4], a[5]). That's n − 1 = 5.",
+  },
+  {
+    q: "Why does isSorted start its loop at i = 1?",
+    options: ["So a[i - 1] is always a real box", "Because a[0] is never checked", "To make the loop faster", "Arrays start at 1 in C"],
+    answer: 0,
+    why: "The loop reads a[i - 1]. With i = 0 that would be a[-1], a box before the array.",
+  },
+  {
+    q: "a = {7, 4}. You run a[0] = a[1]; then a[1] = a[0]; What is a now?",
+    options: ["{4, 7}", "{7, 4}", "{4, 4}", "{7, 7}"],
+    answer: 2,
+    why: "The first line overwrites the 7 with 4, so the second line copies 4 back. That's why a swap needs tmp.",
+  },
+  {
+    q: "Reversing {1, 2, 3, 4, 5} with two pointers: how many swaps happen?",
+    options: ["5", "2", "4", "1"],
+    answer: 1,
+    why: "Swap a[0] and a[4], then a[1] and a[3]. Then i and j meet at the middle item, which stays put.",
+  },
+  {
+    q: "In the two-pointer reverse, when does the loop stop?",
+    options: ["When i reaches n", "When the pointers meet (i < j is false)", "After one swap", "When a[i] equals a[j]"],
+    answer: 1,
+    why: "Going on past the middle would swap every pair back again, so it stops as soon as i is no longer less than j.",
   },
 ];
 
@@ -318,6 +354,7 @@ export const DSA_QUIZZES: Record<string, DsaQuestion[]> = {
   "dsa-algorithms": ALGORITHMS,
   "dsa-coding-basics": CODING_BASICS,
   "dsa-tracing": TRACING,
+  "dsa-neighbours-swaps": NEIGHBOURS_SWAPS,
   "dsa-reading-loops": READING_LOOPS,
   "dsa-techniques": TECHNIQUES,
   "dsa-comparing": COMPARING,
