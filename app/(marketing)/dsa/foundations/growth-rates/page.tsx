@@ -7,9 +7,9 @@ import { Cards, P, Tip } from "../../_components/lesson-blocks";
 // Design: Penpot "27 - DSA Learning Path", page "Foundations 6 – Growth rates & memory".
 
 export const metadata: Metadata = {
-  title: "Growth rates & memory: O(1) to O(n!) and space complexity – DSA step 9",
+  title: "Growth rates & memory: O(1) to O(n!) and space complexity – DSA step 10",
   description:
-    "DSA Foundations step 9: the nine common growth rates from O(1) to O(n!) with step counts, space complexity (extra memory) in C, and simple rules of thumb for Big-O.",
+    "DSA Foundations step 10: the nine common growth rates from O(1) to O(n!) with step counts, space complexity (extra memory) in C, and simple rules of thumb for Big-O.",
   alternates: { canonical: "/dsa/foundations/growth-rates" },
 };
 

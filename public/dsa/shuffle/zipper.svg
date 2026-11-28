@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="300" viewBox="0 0 560 300" role="img" aria-labelledby="t d">
+  <title id="t">Two halves zip into one line</title>
+  <desc id="d">The first half 2 5 1 and the second half 3 4 7 merge into one line, taking one from each half in turn: 2 3 5 4 1 7. Next to it a zipper does the same with its teeth: one from the left, one from the right, in turn.</desc>
+  <defs>
+    <marker id="ab" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2563EB"/></marker>
+    <marker id="ap" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#9333EA"/></marker>
+  </defs>
+  <rect width="560" height="300" fill="#F8FAFC"/>
+
+  <text x="24" y="28" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700" fill="#1D4ED8">First half (x)</text>
+  <rect x="24" y="40" width="40" height="40" rx="6" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/><text x="44" y="67" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="800" text-anchor="middle" fill="#1D4ED8">2</text>
+  <rect x="76" y="40" width="40" height="40" rx="6" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/><text x="96" y="67" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="800" text-anchor="middle" fill="#1D4ED8">5</text>
+  <rect x="128" y="40" width="40" height="40" rx="6" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/><text x="148" y="67" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="800" text-anchor="middle" fill="#1D4ED8">1</text>
+
+  <text x="200" y="28" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700" fill="#7E22CE">Second half (y)</text>
+  <rect x="200" y="40" width="40" height="40" rx="6" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/><text x="220" y="67" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="800" text-anchor="middle" fill="#7E22CE">3</text>
+  <rect x="252" y="40" width="40" height="40" rx="6" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/><text x="272" y="67" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="800" text-anchor="middle" fill="#7E22CE">4</text>
+  <rect x="304" y="40" width="40" height="40" rx="6" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/><text x="324" y="67" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="800" text-anchor="middle" fill="#7E22CE">7</text>
+
+  <path d="M44 84 C 44 130, 44 140, 44 186" stroke="#2563EB" stroke-width="2.5" fill="none" marker-end="url(#ab)"/>
+  <path d="M96 84 C 96 130, 148 140, 148 186" stroke="#2563EB" stroke-width="2.5" fill="none" marker-end="url(#ab)"/>
+  <path d="M148 84 C 148 130, 252 140, 252 186" stroke="#2563EB" stroke-width="2.5" fill="none" marker-end="url(#ab)"/>
+  <path d="M220 84 C 220 130, 96 140, 96 186" stroke="#9333EA" stroke-width="2.5" fill="none" marker-end="url(#ap)"/>
+  <path d="M272 84 C 272 130, 200 140, 200 186" stroke="#9333EA" stroke-width="2.5" fill="none" marker-end="url(#ap)"/>
+  <path d="M324 84 C 324 130, 304 140, 304 186" stroke="#9333EA" stroke-width="2.5" fill="none" marker-end="url(#ap)"/>
+
+  <rect x="24" y="192" width="40" height="40" rx="6" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/><text x="44" y="219" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="800" text-anchor="middle" fill="#1D4ED8">2</text>
+  <rect x="76" y="192" width="40" height="40" rx="6" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/><text x="96" y="219" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="800" text-anchor="middle" fill="#7E22CE">3</text>
+  <rect x="128" y="192" width="40" height="40" rx="6" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/><text x="148" y="219" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="800" text-anchor="middle" fill="#1D4ED8">5</text>
+  <rect x="180" y="192" width="40" height="40" rx="6" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/><text x="200" y="219" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="800" text-anchor="middle" fill="#7E22CE">4</text>
+  <rect x="232" y="192" width="40" height="40" rx="6" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/><text x="252" y="219" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="800" text-anchor="middle" fill="#1D4ED8">1</text>
+  <rect x="284" y="192" width="40" height="40" rx="6" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/><text x="304" y="219" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="800" text-anchor="middle" fill="#7E22CE">7</text>
+  <text x="24" y="262" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700" fill="#475569">Together: one from each half, in turn</text>
+  <text x="24" y="282" font-family="JetBrains Mono, Consolas, monospace" font-size="13" font-weight="600" fill="#64748B">x1 y1 x2 y2 x3 y3</text>
+
+  <rect x="418" y="44" width="22" height="176" rx="4" fill="#BFDBFE"/>
+  <rect x="496" y="44" width="22" height="176" rx="4" fill="#E9D5FF"/>
+  <rect x="440" y="50" width="32" height="12" rx="3" fill="#2563EB"/>
+  <rect x="464" y="72" width="32" height="12" rx="3" fill="#9333EA"/>
+  <rect x="440" y="94" width="32" height="12" rx="3" fill="#2563EB"/>
+  <rect x="464" y="116" width="32" height="12" rx="3" fill="#9333EA"/>
+  <rect x="440" y="138" width="32" height="12" rx="3" fill="#2563EB"/>
+  <rect x="464" y="160" width="32" height="12" rx="3" fill="#9333EA"/>
+  <rect x="440" y="182" width="32" height="12" rx="3" fill="#2563EB"/>
+  <rect x="464" y="204" width="32" height="12" rx="3" fill="#9333EA"/>
+  <rect x="436" y="24" width="64" height="22" rx="7" fill="#64748B"/>
+  <text x="400" y="250" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700" fill="#475569">A zipper does it too</text>
+  <text x="400" y="270" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#64748B">one tooth from the left,</text>
+  <text x="400" y="288" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#64748B">one from the right</text>
+</svg>

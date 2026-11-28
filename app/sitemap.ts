@@ -50,6 +50,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/dsa/foundations/tracing`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE_URL}/dsa/foundations/neighbours-and-swaps`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE_URL}/dsa/foundations/concatenation-of-array`, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${SITE_URL}/dsa/foundations/shuffle-the-array`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE_URL}/dsa/foundations/reading-loops`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE_URL}/dsa/foundations/techniques`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE_URL}/dsa/foundations/comparing-solutions`, changeFrequency: "monthly", priority: 0.7 },

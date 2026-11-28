@@ -9,9 +9,9 @@ import { Cards, DataTable, KeyIdea, P, PlainSteps, Tip } from "../../_components
 // (section 4 "Same Big-O, different code": board "NEW section 4 — Same Big-O, different code").
 
 export const metadata: Metadata = {
-  title: "Comparing two solutions: best case, worst case, O, Ω and Θ – DSA step 8",
+  title: "Comparing two solutions: best case, worst case, O, Ω and Θ – DSA step 9",
   description:
-    "DSA Foundations step 8: best and worst case, a step-by-step duplicate check, brute force O(n²) vs sort-then-scan O(n log n) in C, and Big-O's siblings Ω and Θ.",
+    "DSA Foundations step 9: best and worst case, a step-by-step duplicate check, brute force O(n²) vs sort-then-scan O(n log n) in C, and Big-O's siblings Ω and Θ.",
   alternates: { canonical: "/dsa/foundations/comparing-solutions" },
 };
 
@@ -157,7 +157,7 @@ export default function ComparingSolutionsLessonPage() {
           </div>
         </div>
         <Tip title="Coming up">
-          In step 11, Hashing: a hash set checks each number once, so this drops to O(n) on average. Note that <code className="font-mono">qsort</code> reorders the
+          In step 12, Hashing: a hash set checks each number once, so this drops to O(n) on average. Note that <code className="font-mono">qsort</code> reorders the
           caller&apos;s array.
         </Tip>
       </section>

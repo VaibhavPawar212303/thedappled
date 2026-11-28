@@ -260,7 +260,7 @@ export default function ConcatenationLessonPage() {
       <section>
         <SectionHead n={4} id="two-loops" title="Another way: two loops" />
         <P>
-          You can also copy nums once, then copy it again. Both are correct and give the same ans. In step 8, Comparing two solutions, you&apos;ll measure both and see
+          You can also copy nums once, then copy it again. Both are correct and give the same ans. In step 9, Comparing two solutions, you&apos;ll measure both and see
           why they are equally fast.
         </P>
         <div className="mt-6 grid gap-4 md:grid-cols-2">
@@ -309,7 +309,7 @@ export default function ConcatenationLessonPage() {
           cols={2}
         />
         <KeyIdea title="Why O(n) and not O(2n)?">
-          Big-O only asks: when the blocks double, what happens to the work? It doubles, so it is O(n), whether each block takes 2 moves or 5. In step 7 you&apos;ll read
+          Big-O only asks: when the blocks double, what happens to the work? It doubles, so it is O(n), whether each block takes 2 moves or 5. In step 8 you&apos;ll read
           this straight from the loop.
         </KeyIdea>
       </section>

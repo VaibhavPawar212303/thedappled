@@ -20,7 +20,7 @@ export const DSA_FOUNDATIONS = "dsa-foundations";
 // change, so saved progress is kept. Step 4 ("Tracing code") was then added after Coding basics and the
 // later steps moved down one again (Penpot page "Foundations 4 – Tracing code"). Step 5 ("Neighbours &
 // swaps") then took two problems out of Tracing code, and the later steps moved down one once more.
-// Step 6 ("Concatenation of Array") was added after it the same way.
+// Step 6 ("Concatenation of Array") was added after it the same way, then step 7 ("Shuffle the Array").
 export const FOUNDATIONS_STEPS: DsaStep[] = [
   { n: 0, id: "dsa-intro", title: "What is DSA?", blurb: "Data structures and algorithms in plain words, with everyday examples.", href: "/dsa/foundations/what-is-dsa", isNew: true },
   { n: 1, id: "dsa-algorithms", title: "What is an algorithm?", blurb: "Recipes, the phone-book search, and counting steps instead of seconds.", href: "/dsa/foundations/algorithms", isNew: true },
@@ -29,14 +29,15 @@ export const FOUNDATIONS_STEPS: DsaStep[] = [
   { n: 4, id: "dsa-tracing", title: "Tracing code", blurb: "Follow a loop line by line, solve three first problems, spot common bugs.", href: "/dsa/foundations/tracing", isNew: true },
   { n: 5, id: "dsa-neighbours-swaps", title: "Neighbours & swaps", blurb: "Compare each item with its neighbour, swap safely, reverse with two pointers.", href: "/dsa/foundations/neighbours-and-swaps", isNew: true },
   { n: 6, id: "dsa-concatenation", title: "Concatenation of Array", blurb: "Your first new array: copy nums twice into ans, writing at i and i + n.", href: "/dsa/foundations/concatenation-of-array", isNew: true },
-  { n: 7, id: "dsa-reading-loops", title: "Reading loops", blurb: "No loop O(1), one loop O(n), loop in a loop O(n²), halving O(log n).", href: "/dsa/foundations/reading-loops", isNew: true },
-  { n: 8, id: "dsa-comparing", title: "Comparing two solutions", blurb: "Best and worst case, brute force vs better, and O, Ω and Θ.", href: "/dsa/foundations/comparing-solutions", isNew: true },
-  { n: 9, id: "dsa-growth-memory", title: "Growth rates & memory", blurb: "Nine growth rates from O(1) to O(n!), and space complexity.", href: "/dsa/foundations/growth-rates", isNew: true },
-  { n: 10, id: "dsa-arrays", title: "Arrays & strings", blurb: "Indexing, in-place updates, prefix sums and string building." },
-  { n: 11, id: "dsa-hashing", title: "Hashing", blurb: "Hash maps and sets for counting, lookups and de-duplication." },
-  { n: 12, id: "dsa-linked-lists", title: "Linked lists", blurb: "Pointers, reversal, fast and slow runners, merging lists." },
-  { n: 13, id: "dsa-stacks-queues", title: "Stacks & queues", blurb: "LIFO and FIFO, balanced brackets, monotonic stacks." },
-  { n: 14, id: "dsa-recursion", title: "Recursion", blurb: "Base cases, the call stack, and thinking in smaller problems." },
+  { n: 7, id: "dsa-shuffle", title: "Shuffle the Array", blurb: "Weave two halves into one, like a zipper: write at 2i and 2i + 1.", href: "/dsa/foundations/shuffle-the-array", isNew: true },
+  { n: 8, id: "dsa-reading-loops", title: "Reading loops", blurb: "No loop O(1), one loop O(n), loop in a loop O(n²), halving O(log n).", href: "/dsa/foundations/reading-loops", isNew: true },
+  { n: 9, id: "dsa-comparing", title: "Comparing two solutions", blurb: "Best and worst case, brute force vs better, and O, Ω and Θ.", href: "/dsa/foundations/comparing-solutions", isNew: true },
+  { n: 10, id: "dsa-growth-memory", title: "Growth rates & memory", blurb: "Nine growth rates from O(1) to O(n!), and space complexity.", href: "/dsa/foundations/growth-rates", isNew: true },
+  { n: 11, id: "dsa-arrays", title: "Arrays & strings", blurb: "Indexing, in-place updates, prefix sums and string building." },
+  { n: 12, id: "dsa-hashing", title: "Hashing", blurb: "Hash maps and sets for counting, lookups and de-duplication." },
+  { n: 13, id: "dsa-linked-lists", title: "Linked lists", blurb: "Pointers, reversal, fast and slow runners, merging lists." },
+  { n: 14, id: "dsa-stacks-queues", title: "Stacks & queues", blurb: "LIFO and FIFO, balanced brackets, monotonic stacks." },
+  { n: 15, id: "dsa-recursion", title: "Recursion", blurb: "Base cases, the call stack, and thinking in smaller problems." },
 ];
 
 // The "chapter bridge" at the top of each lesson: what the last chapter covered, and what this one adds.
@@ -50,7 +51,8 @@ export const DSA_BRIDGES: Record<string, DsaBridge> = {
   "dsa-tracing": { recap: "Variables, if / else, loops, arrays and functions in C.", now: ["Trace a loop by hand", "Solve 3 first problems", "Spot 3 common bugs"] },
   "dsa-neighbours-swaps": { recap: "Trace a loop by hand, row by row, and three first problems in C.", now: ["Compare each item with its neighbour", "Swap two boxes safely with tmp", "Two pointers: reverse in place"] },
   "dsa-concatenation": { recap: "Compare neighbours, swap with tmp, reverse in place with two pointers.", now: ["Read a problem: input, output, example", "Build a new array of size 2n", "Write at a shifted index: i + n"] },
-  "dsa-reading-loops": { recap: "Loops you can trace row by row; each run of a loop body is one step. Concatenation ran its loop n times.", now: ["Count those steps to get Big-O", "O(1), O(n), O(n²), O(log n)", "Simplify 3n² + 5n + 2"] },
+  "dsa-shuffle": { recap: "Built a new array of 2n and wrote each item at i and at the shifted index i + n.", now: ["Spot the x1, y1, x2, y2 pattern", "Write at 2i and 2i + 1", "Fix the \"sits on the last one\" bug"] },
+  "dsa-reading-loops": { recap: "Loops you can trace row by row; each run of a loop body is one step. Concatenation and Shuffle each ran their loop n times.", now: ["Count those steps to get Big-O", "O(1), O(n), O(n²), O(log n)", "Simplify 3n² + 5n + 2"] },
   "dsa-comparing": { recap: "Read Big-O straight from the loops: one loop O(n), nested O(n²).", now: ["Best case and worst case", "Brute force → better", "Same Big-O, different code; O, Ω, Θ"] },
   "dsa-growth-memory": { recap: "Compare two correct solutions with best / worst case and O, Ω, Θ.", now: ["Nine growth rates, O(1) to O(n!)", "Space complexity: extra memory", "Rules of thumb for Big-O"] },
 };
@@ -183,7 +185,40 @@ const CONCATENATION: DsaQuestion[] = [
     q: "One loop writing both copies vs. two loops, one copy each. Which is correct?",
     options: ["Only one loop", "Only two loops", "Both give the same ans", "Neither"],
     answer: 2,
-    why: "Both write every box of ans exactly once. Step 8 shows they are equally fast too: O(n).",
+    why: "Both write every box of ans exactly once. Step 9 shows they are equally fast too: O(n).",
+  },
+];
+
+const SHUFFLE: DsaQuestion[] = [
+  {
+    q: "nums = {2, 5, 1, 3, 4, 7} and n = 3. What is the answer?",
+    options: ["{2, 3, 5, 4, 1, 7}", "{2, 5, 1, 3, 4, 7}", "{3, 2, 4, 5, 7, 1}", "{2, 5, 3, 4, 1, 7}"],
+    answer: 0,
+    why: "The x's are 2 5 1 and the y's are 3 4 7. Take one from each in turn: 2 3, 5 4, 1 7.",
+  },
+  {
+    q: "In round i = 2, which seat of ans does y go to?",
+    options: ["ans[3]", "ans[5]", "ans[6]", "ans[4]"],
+    answer: 1,
+    why: "x goes to 2i = 4 and y sits right next to it at 2i + 1 = 5.",
+  },
+  {
+    q: "Why does the seat number use 2 * i and not just i?",
+    options: ["Each round fills two seats", "To make the loop faster", "ans is twice as wide", "C counts from 2"],
+    answer: 0,
+    why: "Every round writes an x and a y, so the next round has to start two seats further on.",
+  },
+  {
+    q: "What prints if you write ans[i] and ans[i + 1] instead of ans[2 * i] and ans[2 * i + 1]?",
+    options: ["2 3 5 4 1 7", "2 5 1 7 0 0", "2 5 1 3 4 7", "0 0 0 0 0 0"],
+    answer: 1,
+    why: "The seats overlap: each new x lands on the last y, and the last two seats are never written.",
+  },
+  {
+    q: "How much work does Shuffle the Array do?",
+    options: ["O(1)", "O(n)", "O(n²)", "O(log n)"],
+    answer: 1,
+    why: "One loop runs n times and does 2 writes each time. Double n and the work doubles: O(n).",
   },
 ];
 
@@ -392,6 +427,7 @@ export const DSA_QUIZZES: Record<string, DsaQuestion[]> = {
   "dsa-tracing": TRACING,
   "dsa-neighbours-swaps": NEIGHBOURS_SWAPS,
   "dsa-concatenation": CONCATENATION,
+  "dsa-shuffle": SHUFFLE,
   "dsa-reading-loops": READING_LOOPS,
   "dsa-techniques": TECHNIQUES,
   "dsa-comparing": COMPARING,
