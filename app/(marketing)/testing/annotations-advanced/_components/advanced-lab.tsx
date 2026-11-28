@@ -4,7 +4,7 @@ import * as React from "react";
 import { useAssignmentReporter } from "../../ui-automation/_components/assignment-reporter";
 import { detectEngine } from "../../page-objects/_components/demo-shop";
 
-// Design: Penpot "26 - Testing Learning Path", page "Stage 6 – Advanced annotations", board D.
+// Design: Penpot "26 - Testing Learning Path", page "Stage 7 – Advanced annotations", board D.
 // Each area needs a group-level annotation in the learner's tests:
 //   Charts   → test.skip(({ browserName }) => browserName !== 'chromium', …) inside the describe block
 //   Settings → test.fixme(isMobile, …) in the group's beforeEach hook

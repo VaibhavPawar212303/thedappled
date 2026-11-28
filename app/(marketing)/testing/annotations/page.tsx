@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-// Design: Penpot "26 - Testing Learning Path", page "Stage 5 – Annotations", board B.
+// Design: Penpot "26 - Testing Learning Path", page "Stage 4 – Annotations", board B.
 
 
 type Kind = { t: string; tone: string; when: string; code: Piece[][] };

@@ -7,7 +7,7 @@ import { useAssignmentReporter } from "../../ui-automation/_components/assignmen
 import { AssignmentNote } from "../../ui-automation/_components/assignment-banner";
 import { detectEngine } from "../../page-objects/_components/demo-shop";
 
-// Design: Penpot "26 - Testing Learning Path", page "Stage 5 – Annotations", board D.
+// Design: Penpot "26 - Testing Learning Path", page "Stage 4 – Annotations", board D.
 // Each panel needs a different annotation in the learner's tests:
 //   Coupon      → test.fail   (known bug: SAVE10 takes 20% off instead of 10%)
 //   Export      → test.slow   (the file is ready after 40 s, longer than the default 30 s timeout)

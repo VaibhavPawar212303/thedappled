@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-// Design: Penpot "26 - Testing Learning Path", page "Stage 6 – Advanced annotations", board D.
+// Design: Penpot "26 - Testing Learning Path", page "Stage 7 – Advanced annotations", board D.
 export default function AdvancedLabPage() {
   return (
     <div className="min-h-[70vh] bg-slate-50 dark:bg-slate-900/40">

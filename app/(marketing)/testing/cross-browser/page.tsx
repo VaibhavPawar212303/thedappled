@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-// Design: Penpot "26 - Testing Learning Path", page "Stage 4 – Cross-browser", board B.
+// Design: Penpot "26 - Testing Learning Path", page "Stage 5 – Cross-browser (Cypress: stage 4)", board B.
 
 // Step 1 depends on the chosen tool (board D on the "Tools – Playwright & Cypress" page).
 const ADD_BROWSERS: Record<Tool, string> = {

@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useAssignmentReporter } from "../../ui-automation/_components/assignment-reporter";
 
-// Design: Penpot "26 - Testing Learning Path", page "Stage 7 – Advanced fixtures", board D.
+// Design: Penpot "26 - Testing Learning Path", page "Stage 6 – Advanced fixtures", board D.
 // Each panel needs a kind of fixture in the learner's tests:
 //   Account → a worker-scoped fixture: one account per worker (sign-ups live in this browser session)
 //   Store   → an option fixture: ?currency=USD|EUR|GBP|INR changes every price

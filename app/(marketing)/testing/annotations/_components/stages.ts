@@ -1,5 +1,5 @@
 // Copy for the Playwright-only stages 5-8 (annotations, fixtures, parallel runs), shared by their card and assignment view.
-// Design: Penpot "26 - Testing Learning Path", pages "Stage 5 – Annotations", "Stage 6 – Advanced annotations", "Stage 7 – Advanced fixtures", "Stage 8 – Parallel runs & workers".
+// Design: Penpot "26 - Testing Learning Path", pages "Stage 4 – Annotations", "Stage 7 – Advanced annotations", "Stage 6 – Advanced fixtures", "Stage 8 – Parallel runs & workers".
 import { ADVANCED_STEPS, ANNOTATION_STEPS, FIXTURE_STEPS, PARALLEL_STEPS, type StepId } from "@/lib/assignments";
 
 export const ANN_EXAMPLE = `// tests/lab.spec.ts

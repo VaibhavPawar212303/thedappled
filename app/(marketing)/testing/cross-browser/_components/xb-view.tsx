@@ -10,7 +10,7 @@ import { REASON_TEXT } from "@/lib/verification";
 import { TOOL_LABEL, withTool, type Tool } from "@/lib/tools";
 import { TrackLine } from "../../_components/card-tool";
 
-// Design: Penpot "26 - Testing Learning Path", page "Stage 4 – Cross-browser", board C.
+// Design: Penpot "26 - Testing Learning Path", page "Stage 5 – Cross-browser (Cypress: stage 4)", board C.
 
 type Env = { BASE_URL: string; ASSIGNMENT_TOKEN: string; SHOP_EMAIL: string; SHOP_PASSWORD: string };
 type RepoCheck = { ok: boolean; message: string };

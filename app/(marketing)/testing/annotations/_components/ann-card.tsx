@@ -7,7 +7,7 @@ import { ToolBadge } from "../../_components/card-tool";
 import { StartAssignmentButton } from "../../ui-automation/_components/start-assignment-button";
 import { ANN_STAGES, type AnnSlug } from "./stages";
 
-// Design: Penpot "26 - Testing Learning Path", pages "Stage 5 – Annotations" to "Stage 8 – Parallel runs & workers", board B (assignment card).
+// Design: Penpot "26 - Testing Learning Path", pages "Stage 4 – Annotations" to "Stage 8 – Parallel runs & workers", board B (assignment card).
 export function AnnCard({ slug, signedIn, assignment }: { slug: AnnSlug; signedIn: boolean; assignment: AssignmentStatus | null }) {
   const card = ANN_STAGES[slug].card;
   const done = assignment?.done ?? 0;

@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-// Design: Penpot "26 - Testing Learning Path", page "Stage 7 – Advanced fixtures", board C.
+// Design: Penpot "26 - Testing Learning Path", page "Stage 6 – Advanced fixtures", board C.
 export default async function AdvancedFixturesAssignmentPage() {
   const { userId } = await auth();
   if (!userId) redirect(`/sign-in?redirect_url=${encodeURIComponent("/testing/fixtures-advanced/assignment")}`);
