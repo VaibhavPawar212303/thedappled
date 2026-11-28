@@ -431,9 +431,9 @@ export default function LandingContent({ stats, paths }: LandingContentProps) {
       {/* 2. STATS */}
       {statItems.length > 0 && (
         <section className="bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800">
-          <div className="max-w-5xl mx-auto px-4 py-10 flex flex-wrap justify-center gap-8 text-center">
+          <div className="max-w-6xl mx-auto px-4 py-10 flex flex-wrap justify-center gap-x-6 gap-y-8 text-center md:flex-nowrap">
             {statItems.map((item) => (
-              <div key={item.label} className="flex w-[calc(50%-1rem)] flex-col items-center md:w-auto md:min-w-[180px] md:flex-1">
+              <div key={item.label} className="flex w-[calc(50%-0.75rem)] flex-col items-center md:w-auto md:min-w-0 md:flex-1">
                 <span className={`text-3xl md:text-4xl font-extrabold ${item.accent || "text-slate-900 dark:text-slate-50"}`}>
                   {item.value}
                   {item.suffix}
