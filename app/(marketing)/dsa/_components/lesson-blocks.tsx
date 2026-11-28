@@ -29,9 +29,10 @@ export function Tip({ title = "Remember", children }: { title?: string; children
 // optional illustration shown on top of the card (an SVG in /public, 360 × 220).
 type CardItem = { t: string; d: React.ReactNode; big?: React.ReactNode; img?: { src: string; alt: string } };
 
-export function Cards({ items }: { items: CardItem[] }) {
+export function Cards({ items, cols }: { items: CardItem[]; cols?: 2 | 3 }) {
+  const two = cols ? cols === 2 : items.some((c) => c.img);
   return (
-    <div className={`mt-6 grid gap-4 ${items.some((c) => c.img) ? "sm:grid-cols-2" : "sm:grid-cols-3"}`}>
+    <div className={`mt-6 grid gap-4 ${two ? "sm:grid-cols-2" : "sm:grid-cols-3"}`}>
       {items.map((c) => (
         <div key={c.t} className="overflow-hidden rounded-2xl border bg-slate-50 dark:bg-slate-900/40">
           {c.img && <Illustration src={c.img.src} alt={c.img.alt} className="border-b" />}
@@ -95,11 +96,11 @@ export function DataTable({ caption, head, rows, hot, plain = false }: { caption
   );
 }
 
-// A wide illustration for a section (e.g. above the plain-English steps).
-export function Figure({ src, alt, caption }: { src: string; alt: string; caption?: string }) {
+// A wide illustration for a section (e.g. above the plain-English steps). `wide` allows up to 560px.
+export function Figure({ src, alt, caption, wide = false }: { src: string; alt: string; caption?: string; wide?: boolean }) {
   return (
     <figure className="mt-6 overflow-hidden rounded-2xl border">
-      <Illustration src={src} alt={alt} className="py-2" maxW="max-w-[480px]" />
+      <Illustration src={src} alt={alt} className="py-2" maxW={wide ? "max-w-[560px]" : "max-w-[480px]"} />
       {caption && <figcaption className="border-t px-5 py-3 text-sm text-muted-foreground">{caption}</figcaption>}
     </figure>
   );

@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { DsaLessonLayout, SectionHead } from "../../_components/dsa-lesson-layout";
 import { CodeBlock } from "../../_components/code-block";
-import { DataTable, KeyIdea, P, PlainSteps, Tip } from "../../_components/lesson-blocks";
+import { Cards, DataTable, Figure, KeyIdea, P, PlainSteps, Tip } from "../../_components/lesson-blocks";
 import { TraceStepThrough } from "../../_components/trace-step-through";
 
-// Design: Penpot "27 - DSA Learning Path", page "Foundations 6 – Concatenation of Array".
+// Design: Penpot "27 - DSA Learning Path", page "Foundations 6 – Concatenation of Array"
+// (boards "Section 1 addition — Technique used" and "NEW section 5 — How much work is it? (toy blocks)").
 
 export const metadata: Metadata = {
   title: "Concatenation of Array: build a new array in C – DSA step 6",
@@ -18,8 +20,12 @@ const TOC = [
   { id: "picture", label: "Picture it" },
   { id: "code", label: "Code it" },
   { id: "two-loops", label: "Another way: two loops" },
+  { id: "how-much-work", label: "How much work is it?" },
   { id: "bugs", label: "Bugs and a challenge" },
 ];
+
+const CLUES = ["every item of nums", "build a new array", "same small job for each item"];
+const NOT_NEEDED = ["sorting", "a hash map", "a loop inside a loop"];
 
 // Every program below was run step by step in the Compiler and prints what the lesson says.
 // They stay in main: the Compiler can't size an array from a variable (int ans[2 * n]) or fill one
@@ -158,6 +164,39 @@ export default function ConcatenationLessonPage() {
           ]}
           hot={2}
         />
+        <div data-testid="technique" className="mt-6 rounded-2xl border bg-card p-5 sm:p-6">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Technique</p>
+            <Link href="/dsa/foundations/techniques" className="text-sm font-bold text-blue-600 hover:underline dark:text-blue-400">
+              All 20 techniques: step 2 →
+            </Link>
+          </div>
+          <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
+            <span className="inline-flex items-center gap-2 rounded-full bg-blue-100 px-4 py-1.5 text-base font-extrabold text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+              <span aria-hidden="true">→</span> Traversal
+            </span>
+            <span className="text-base font-bold">Visit every item once, in order.</span>
+          </div>
+          <p className="mt-3 text-[15px] leading-relaxed text-slate-700 dark:text-slate-300">
+            Like reading a class register from top to bottom. Here the job for each item is the same: write it into ans twice.
+          </p>
+          <p className="mt-5 text-[11px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">Clues in this question</p>
+          <ul className="m-0 mt-2 flex list-none flex-wrap gap-2 p-0">
+            {CLUES.map((c) => (
+              <li key={c} className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[13px] font-semibold text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-300">
+                {c}
+              </li>
+            ))}
+          </ul>
+          <p className="mt-4 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Not needed here</p>
+          <ul className="m-0 mt-2 flex list-none flex-wrap gap-2 p-0">
+            {NOT_NEEDED.map((c) => (
+              <li key={c} className="rounded-full border bg-slate-100 px-3 py-1 text-[13px] font-semibold text-slate-500 dark:bg-slate-800 dark:text-slate-400">
+                {c}
+              </li>
+            ))}
+          </ul>
+        </div>
         <Tip>Before you code, write down the input, the output and one small example. Most mistakes come from skipping this.</Tip>
       </section>
 
@@ -237,7 +276,46 @@ export default function ConcatenationLessonPage() {
       </section>
 
       <section>
-        <SectionHead n={5} id="bugs" title="Bugs and a challenge" />
+        <SectionHead n={5} id="how-much-work" title="How much work is it?" />
+        <P>Imagine a row of toy blocks. Your job: build the same row twice. That is exactly what the loop does with nums and ans.</P>
+        <Figure
+          src="/dsa/concatenation/toy-blocks.svg"
+          alt="Three toy blocks, 1, 2 and 1, each copied twice onto a new shelf twice as long: 1 2 1 1 2 1. A small graph shows the moves growing in a straight line with the number of blocks."
+          caption="Each block is copied twice onto a shelf that is twice as long."
+          wide
+        />
+        <DataTable
+          head={["Blocks (n)", "Moves (time)", "Shelf spots (space)"]}
+          rows={[
+            ["3", "6", "6"],
+            ["10", "20", "20"],
+            ["100", "200", "200"],
+          ]}
+          hot={1}
+        />
+        <Cards
+          items={[
+            {
+              big: "O(n)",
+              t: "Time: how many moves",
+              d: "Every block is copied twice. Double the blocks, double the moves — like handing out invitations: 10 friends, 10 trips.",
+            },
+            {
+              big: "O(n)",
+              t: "Space: how much room",
+              d: "The new shelf grows with the blocks. Your hands hold one block at a time, so the extra room is only O(1).",
+            },
+          ]}
+          cols={2}
+        />
+        <KeyIdea title="Why O(n) and not O(2n)?">
+          Big-O only asks: when the blocks double, what happens to the work? It doubles, so it is O(n), whether each block takes 2 moves or 5. In step 7 you&apos;ll read
+          this straight from the loop.
+        </KeyIdea>
+      </section>
+
+      <section>
+        <SectionHead n={6} id="bugs" title="Bugs and a challenge" />
         <div className="mt-6 grid gap-4 sm:grid-cols-3">
           {BUGS.map((b) => (
             <div key={b.title} className="flex min-w-0 flex-col rounded-2xl border bg-card p-5">
