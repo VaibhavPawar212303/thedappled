@@ -6,22 +6,27 @@ import {
   ArrowRight,
   BookOpen,
   Bookmark,
+  Braces,
   Check,
   CheckCircle,
+  ClipboardCheck,
   Code,
   FlaskConical,
   Globe,
   MonitorPlay,
   Newspaper,
   Play,
+  Smartphone,
   Sparkles,
+  Terminal,
 } from "lucide-react";
 import { SignedIn, SignedOut, SignUpButton } from "@clerk/nextjs";
 import { AppLogoLink } from "@/app/_components/app-logo-link";
 import { motion } from "framer-motion";
 import type { LandingStats } from "@/actions/get-landing-stats";
+import { COMPILER_URL } from "../dsa/_components/dsa-footer";
 
-// Design: Penpot "01 - Landing", board "Landing - v3 (testing path + setup)".
+// Design: Penpot "01 - Landing", board "Landing - v4 (DSA + Compiler, 3 testing tracks)".
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
@@ -33,17 +38,23 @@ const staggerContainer = {
   visible: { opacity: 1, transition: { staggerChildren: 0.2 } },
 };
 
+// Path sizes come from the server page (lib/assignments, the manual steps and lib/dsa-lessons), so
+// they always match the roadmaps.
+export type LandingPaths = {
+  manualSteps: number;
+  playwrightStages: number;
+  cypressStages: number;
+  dsaLessons: number;
+  dsaSteps: { n: number; title: string; href: string; isNew: boolean }[];
+};
+
 interface LandingContentProps {
   stats: LandingStats;
+  paths: LandingPaths;
 }
 
-// The Testing path stages. Check counts mirror lib/assignments.ts (not imported: it pulls in the
-// database client, and this is a client component).
-const TESTING_STAGES = [
-  { n: 1, title: "UI automation", text: "Locators, waits and assertions on real sign-in and sign-up pages.", checks: 6, tag: "Playwright · Cypress", href: "/testing/ui-automation", isNew: false },
-  { n: 2, title: "Framework setup", text: "Config in .env, tests that read it, and CI with GitHub secrets.", checks: 5, tag: ".env · GitHub Actions", href: "/testing/framework-setup", isNew: false },
-  { n: 3, title: "Page objects & fixtures", text: "One class per page, fixtures for setup, specs that read like steps.", checks: 6, tag: "Demo shop", href: "/testing/page-objects", isNew: true },
-];
+const DSA_SNIPPET = `int total = sum(a, 4);
+printf("%d\\n", total);   // 17`;
 
 const SETUP_CARDS = [
   {
@@ -85,7 +96,9 @@ const OFFERINGS = [
   { title: "Video Courses", text: "Project-based tutorials covering full-stack development.", href: "/search", cta: "Browse courses", Icon: MonitorPlay, tone: "blue" },
   { title: "Interactive Books", text: "Deep-dive reading with bookmarks and progress tracking.", href: "/books", cta: "Explore books", Icon: BookOpen, tone: "purple" },
   { title: "Tech Insights", text: "AI-researched articles on the latest market trends.", href: "/blogs", cta: "Read articles", Icon: Newspaper, tone: "emerald" },
-  { title: "Testing Path", text: "Playwright & Cypress, verified assignments and a leaderboard.", href: "/testing", cta: "Start the path", Icon: FlaskConical, tone: "amber", isNew: true },
+  { title: "Testing Path", text: "Manual, Playwright and Cypress tracks with verified assignments.", href: "/testing", cta: "Start the path", Icon: FlaskConical, tone: "amber" },
+  { title: "DSA Path", text: "Step-by-step lessons, plain English first, then C you can run.", href: "/dsa", cta: "Start with step 0", Icon: Braces, tone: "blue", isNew: true },
+  { title: "C Compiler", text: "Step through C line by line and watch the stack and heap.", href: COMPILER_URL, cta: "Open the Compiler", Icon: Terminal, tone: "purple", external: true },
 ] as const;
 
 const TONE = {
@@ -251,13 +264,41 @@ function ArticlesMock() {
   );
 }
 
-export default function LandingContent({ stats }: LandingContentProps) {
+export default function LandingContent({ stats, paths }: LandingContentProps) {
   const statItems = [
-    { label: "Video Courses", value: stats.courses, suffix: "+", accent: false },
-    { label: "Interactive Books", value: stats.books, suffix: "+", accent: false },
-    { label: "Tech Articles", value: stats.articles, suffix: "+", accent: false },
-    { label: "Testing Stages", value: TESTING_STAGES.length, suffix: "", accent: true },
+    { label: "Video Courses", value: stats.courses, suffix: "+", accent: "" },
+    { label: "Interactive Books", value: stats.books, suffix: "+", accent: "" },
+    { label: "Tech Articles", value: stats.articles, suffix: "+", accent: "" },
+    { label: "Playwright stages", value: paths.playwrightStages, suffix: "", accent: "text-amber-700 dark:text-amber-400" },
+    { label: "DSA lessons", value: paths.dsaLessons, suffix: "", accent: "text-blue-600 dark:text-blue-400" },
   ].filter((item) => item.value > 0); // "0+" looks broken — only show counts with real content behind them
+
+  const testingTracks = [
+    {
+      title: "Manual testing",
+      meta: `${paths.manualSteps} steps · beginner`,
+      text: "Fundamentals, test design, bug reports and exploratory testing. Each step ends with a quiz.",
+      href: "/testing/manual",
+      Icon: ClipboardCheck,
+      tone: "blue" as const,
+    },
+    {
+      title: "Automation",
+      meta: `Playwright ${paths.playwrightStages} stages · Cypress ${paths.cypressStages}`,
+      text: "Framework setup, UI automation, page objects, annotations, cross-browser, fixtures and parallel runs.",
+      href: "/testing/automation",
+      Icon: Play,
+      tone: "purple" as const,
+    },
+    {
+      title: "Mobile testing",
+      meta: "Appium · coming soon",
+      text: "Emulators, locators, gestures, waits and CI for Android and iOS.",
+      href: "/testing/mobile",
+      Icon: Smartphone,
+      tone: "emerald" as const,
+    },
+  ];
 
   return (
     <div className="flex flex-col min-h-screen font-sans text-slate-900 dark:text-slate-50 overflow-x-hidden">
@@ -275,9 +316,9 @@ export default function LandingContent({ stats }: LandingContentProps) {
         >
           <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
             <motion.div variants={fadeIn}>
-              <Link href="/testing/page-objects" className="mb-6 inline-flex items-center rounded-full border border-emerald-200 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950 px-4 py-1.5 text-sm font-semibold text-emerald-700 dark:text-emerald-300 shadow-sm hover:bg-emerald-100 dark:hover:bg-emerald-900 transition">
+              <Link href="/dsa/foundations/coding-basics" className="mb-6 inline-flex items-center rounded-full border border-emerald-200 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950 px-4 py-1.5 text-sm font-semibold text-emerald-700 dark:text-emerald-300 shadow-sm hover:bg-emerald-100 dark:hover:bg-emerald-900 transition">
                 <span className="flex h-2 w-2 rounded-full bg-emerald-600 mr-2 animate-pulse"></span>
-                New: Testing path — Stage 3 · Page objects
+                New: DSA path · run every program in the Compiler
               </Link>
             </motion.div>
 
@@ -290,7 +331,8 @@ export default function LandingContent({ stats }: LandingContentProps) {
             </motion.h1>
 
             <motion.p variants={fadeIn} className="text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-xl mb-8 leading-relaxed">
-              Video courses, interactive books, AI-researched articles and a hands-on testing path &mdash; one platform built for developers.
+              Video courses, interactive books, AI-researched articles, a hands-on testing path and a step-by-step DSA path with a built-in C
+              Compiler &mdash; one platform built for developers.
             </motion.p>
 
             <motion.div variants={fadeIn} className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
@@ -310,15 +352,15 @@ export default function LandingContent({ stats }: LandingContentProps) {
                   </Button>
                 </Link>
               </SignedIn>
-              <Link href="/testing" className="w-full sm:w-auto">
+              <Link href="#paths" className="w-full sm:w-auto">
                 <Button size="lg" variant="outline" className="w-full sm:w-auto text-md px-8 py-6 rounded-xl border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">
-                  Explore the testing path
+                  Explore the paths
                 </Button>
               </Link>
             </motion.div>
 
             <motion.p variants={fadeIn} className="mt-6 text-sm text-slate-500 dark:text-slate-400">
-              Free to start · {TESTING_STAGES.length} testing stages with verified assignments · live leaderboard
+              Free to start · Playwright, Cypress and manual testing · DSA lessons you can run
             </motion.p>
           </div>
 
@@ -350,7 +392,7 @@ export default function LandingContent({ stats }: LandingContentProps) {
                 <div className="h-2 rounded-full bg-slate-100 dark:bg-slate-800">
                   <div className="h-full w-2/3 rounded-full bg-blue-600" />
                 </div>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                   <div className="rounded-xl bg-purple-50 dark:bg-purple-950/40 p-3">
                     <div className="flex items-center gap-1.5 text-sm font-semibold text-purple-700 dark:text-purple-300">
                       <BookOpen className="h-4 w-4 shrink-0" /> Books
@@ -370,6 +412,15 @@ export default function LandingContent({ stats }: LandingContentProps) {
                     <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">6 of 6 verified</p>
                     <div className="mt-2 h-1.5 rounded-full bg-amber-500" />
                   </div>
+                  <div className="rounded-xl bg-blue-50 dark:bg-blue-950/40 p-3">
+                    <div className="flex items-center gap-1.5 text-sm font-semibold text-blue-700 dark:text-blue-300">
+                      <Braces className="h-4 w-4 shrink-0" /> DSA
+                    </div>
+                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Run in Compiler</p>
+                    <span className="mt-2 inline-flex items-center gap-1 rounded-md bg-blue-600 px-2 py-0.5 text-[11px] font-bold text-white">
+                      <Play className="h-2.5 w-2.5" /> Run
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -383,7 +434,7 @@ export default function LandingContent({ stats }: LandingContentProps) {
           <div className="max-w-5xl mx-auto px-4 py-10 flex flex-wrap justify-center gap-8 text-center">
             {statItems.map((item) => (
               <div key={item.label} className="flex w-[calc(50%-1rem)] flex-col items-center md:w-auto md:min-w-[180px] md:flex-1">
-                <span className={`text-3xl md:text-4xl font-extrabold ${item.accent ? "text-amber-700 dark:text-amber-400" : "text-slate-900 dark:text-slate-50"}`}>
+                <span className={`text-3xl md:text-4xl font-extrabold ${item.accent || "text-slate-900 dark:text-slate-50"}`}>
                   {item.value}
                   {item.suffix}
                 </span>
@@ -395,22 +446,23 @@ export default function LandingContent({ stats }: LandingContentProps) {
       )}
 
       {/* 3. ECOSYSTEM */}
-      <section className="py-24 px-4 bg-white dark:bg-slate-950">
+      <section id="paths" className="scroll-mt-20 py-24 px-4 bg-white dark:bg-slate-950">
         <div className="max-w-6xl mx-auto">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeIn} className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-slate-50 mb-4">Your complete learning ecosystem</h2>
             <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">Every developer learns differently — pick the format that fits you.</p>
           </motion.div>
 
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={staggerContainer} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={staggerContainer} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {OFFERINGS.map(({ title, text, href, cta, Icon, tone, ...rest }) => {
               const isNew = "isNew" in rest && rest.isNew;
+              const external = "external" in rest && rest.external;
               return (
                 <motion.div
                   key={title}
                   variants={fadeIn}
                   className={`relative flex flex-col p-7 rounded-2xl border shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ${
-                    isNew ? "border-amber-400 bg-amber-50/60 dark:border-amber-700 dark:bg-amber-950/20" : "border-slate-100 bg-white dark:border-slate-800 dark:bg-slate-900"
+                    isNew ? "border-blue-300 bg-blue-50/60 dark:border-blue-800 dark:bg-blue-950/20" : "border-slate-100 bg-white dark:border-slate-800 dark:bg-slate-900"
                   }`}
                 >
                   {isNew && <span className="absolute right-5 top-5 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-bold text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">New</span>}
@@ -419,9 +471,15 @@ export default function LandingContent({ stats }: LandingContentProps) {
                   </div>
                   <h3 className="text-xl font-bold mb-2 text-slate-900 dark:text-slate-50">{title}</h3>
                   <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-6">{text}</p>
-                  <Link href={href} className={`mt-auto text-sm font-semibold hover:underline ${TONE[tone].link}`}>
-                    {cta} &rarr;
-                  </Link>
+                  {external ? (
+                    <a href={href} target="_blank" rel="noopener noreferrer" className={`mt-auto text-sm font-semibold hover:underline ${TONE[tone].link}`}>
+                      {cta} &rarr;
+                    </a>
+                  ) : (
+                    <Link href={href} className={`mt-auto text-sm font-semibold hover:underline ${TONE[tone].link}`}>
+                      {cta} &rarr;
+                    </Link>
+                  )}
                 </motion.div>
               );
             })}
@@ -488,15 +546,15 @@ export default function LandingContent({ stats }: LandingContentProps) {
         <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeIn} className="space-y-6">
             <span className="inline-flex items-center gap-1.5 rounded-md bg-emerald-100 px-3 py-1 text-sm font-semibold text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
-              <Check className="h-4 w-4" /> Testing path · {TESTING_STAGES.length} stages
+              <Check className="h-4 w-4" /> Testing path · {testingTracks.length} tracks
             </span>
             <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50">Learn test automation by doing it for real</h2>
             <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-400">
-              Write Playwright or Cypress scripts against real demo pages. Every step is verified as automated, your repo is checked on
-              GitHub, and you climb a live leaderboard.
+              Start with manual testing, then automate with Playwright or Cypress. Every check is verified from real runs, your repo is
+              checked on GitHub, and you climb a live leaderboard.
             </p>
             <ul className="space-y-3">
-              {["Verified automation — hand-driven runs don't count", "GitHub checks for .env, CI secrets and page objects", "A live leaderboard for every stage"].map((t) => (
+              {["Verified automation — hand-driven runs don't count", "Framework first, then each stage improves on the last", "A live leaderboard for every stage and tool"].map((t) => (
                 <li key={t} className="flex items-center gap-3 text-slate-700 dark:text-slate-300">
                   <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
                     <Check className="h-3 w-3" />
@@ -517,32 +575,100 @@ export default function LandingContent({ stats }: LandingContentProps) {
             </div>
           </motion.div>
 
-          <motion.ol initial="hidden" whileInView="visible" viewport={{ once: true }} variants={staggerContainer} className="m-0 list-none space-y-4 p-0">
-            {TESTING_STAGES.map((s) => (
-              <motion.li key={s.n} variants={fadeIn}>
+          <motion.ul initial="hidden" whileInView="visible" viewport={{ once: true }} variants={staggerContainer} className="m-0 list-none space-y-4 p-0">
+            {testingTracks.map((tr) => (
+              <motion.li key={tr.title} variants={fadeIn}>
                 <Link
-                  href={s.href}
-                  className={`flex items-start gap-4 rounded-2xl border bg-white p-5 transition hover:shadow-md dark:bg-slate-900 ${s.isNew ? "border-emerald-500" : "border-slate-200 dark:border-slate-800"}`}
+                  href={tr.href}
+                  data-testid={`landing-track-${tr.href.split("/").pop()}`}
+                  className="group flex items-start gap-4 rounded-2xl border border-slate-200 bg-white p-5 transition hover:shadow-md dark:border-slate-800 dark:bg-slate-900"
                 >
-                  <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-lg font-extrabold ${s.isNew ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300" : "bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300"}`}>
-                    {s.n}
+                  <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${TONE[tr.tone].icon}`}>
+                    <tr.Icon className="h-5 w-5" />
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-slate-500">
-                      Stage {s.n}
-                      {s.isNew && <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] normal-case tracking-normal text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">New</span>}
-                    </span>
-                    <span className="mt-0.5 block text-lg font-bold text-slate-900 dark:text-slate-50">{s.title}</span>
-                    <span className="mt-1 block text-sm text-slate-600 dark:text-slate-400">{s.text}</span>
-                    <span className="mt-3 flex flex-wrap gap-2">
-                      <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600 dark:bg-slate-800 dark:text-slate-300">{s.checks} checks</span>
-                      <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600 dark:bg-slate-800 dark:text-slate-300">{s.tag}</span>
-                    </span>
+                    <span className="block text-lg font-bold text-slate-900 dark:text-slate-50">{tr.title}</span>
+                    <span className={`mt-0.5 block text-sm font-semibold ${TONE[tr.tone].link}`}>{tr.meta}</span>
+                    <span className="mt-1 block text-sm text-slate-600 dark:text-slate-400">{tr.text}</span>
                   </span>
+                  <ArrowRight className={`mt-1 h-5 w-5 shrink-0 transition group-hover:translate-x-0.5 ${TONE[tr.tone].link}`} />
                 </Link>
               </motion.li>
             ))}
-          </motion.ol>
+          </motion.ul>
+        </div>
+      </section>
+
+      {/* 5b. DSA PATH */}
+      <section className="py-24 px-4 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-800">
+        <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeIn} className="space-y-6">
+            <span className="inline-flex items-center gap-1.5 rounded-md bg-blue-100 px-3 py-1 text-sm font-semibold text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+              <Braces className="h-4 w-4" /> DSA path · New
+            </span>
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50">Learn DSA step by step, then run it yourself</h2>
+            <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-400">
+              Short lessons in plain English first, then C. Every chapter starts with what the last one taught, and every program opens in
+              the Thedappled Compiler so you can step through it line by line.
+            </p>
+            <ul className="space-y-3">
+              {["Plain English first, then C", "Run in Compiler on every program", "A 5-question check at the end of each step"].map((t) => (
+                <li key={t} className="flex items-center gap-3 text-slate-700 dark:text-slate-300">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+                    <Check className="h-3 w-3" />
+                  </span>
+                  {t}
+                </li>
+              ))}
+            </ul>
+            <div className="flex flex-col sm:flex-row gap-3 pt-2">
+              <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl px-6">
+                <Link href={paths.dsaSteps[0]?.href ?? "/dsa"}>
+                  Start with {paths.dsaSteps[0]?.title ?? "the DSA path"} <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+              <Button asChild size="lg" variant="outline" className="rounded-xl px-6 border-slate-300 dark:border-slate-700">
+                <a href={COMPILER_URL} target="_blank" rel="noopener noreferrer">Open the Compiler</a>
+              </Button>
+            </div>
+          </motion.div>
+
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeIn} className="space-y-4">
+            <div className="rounded-2xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
+              <p className="flex items-center justify-between text-xs font-bold uppercase tracking-wide text-slate-500">
+                Foundations
+                <span className="normal-case tracking-normal text-blue-600 dark:text-blue-400">{paths.dsaLessons} lessons live</span>
+              </p>
+              <ol className="m-0 mt-4 list-none space-y-2.5 p-0">
+                {paths.dsaSteps.map((s) => (
+                  <li key={s.href}>
+                    <Link href={s.href} className="group flex items-center gap-3 text-[15px]">
+                      <span
+                        className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${s.isNew ? "bg-blue-600 text-white" : "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300"}`}
+                      >
+                        {s.n}
+                      </span>
+                      <span className={`group-hover:underline ${s.isNew ? "font-bold text-blue-700 dark:text-blue-300" : "text-slate-700 dark:text-slate-300"}`}>{s.title}</span>
+                      {s.isNew && (
+                        <span className="ml-auto rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-bold text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
+                          New · step {s.n}
+                        </span>
+                      )}
+                    </Link>
+                  </li>
+                ))}
+              </ol>
+            </div>
+            <div className="overflow-hidden rounded-2xl bg-slate-900" aria-hidden="true">
+              <div className="flex items-center justify-between bg-slate-800 px-4 py-2">
+                <span className="font-mono text-xs font-semibold text-slate-400">sum.c · C</span>
+                <span className="inline-flex h-6 items-center gap-1 rounded-md bg-blue-600 px-2.5 text-[11px] font-semibold text-white">
+                  <Play className="h-3 w-3" /> Run in Compiler
+                </span>
+              </div>
+              <pre className="m-0 overflow-x-auto p-4 font-mono text-[13px] leading-[1.7] text-slate-200">{DSA_SNIPPET}</pre>
+            </div>
+          </motion.div>
         </div>
       </section>
 
@@ -576,7 +702,7 @@ export default function LandingContent({ stats }: LandingContentProps) {
           <h2 className="text-3xl font-bold text-center mb-14 text-slate-900 dark:text-slate-50">How it works</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             {[
-              { n: 1, title: "Pick a path", text: "Courses, books, articles or the testing path." },
+              { n: 1, title: "Pick a path", text: "Courses, books, articles, the testing path or DSA." },
               { n: 2, title: "Learn by building", text: "Ship projects and pass verified assignments." },
               { n: 3, title: "Track progress", text: "Resume anywhere, see verified checks and your rank." },
             ].map((step) => (
@@ -656,7 +782,7 @@ export default function LandingContent({ stats }: LandingContentProps) {
       <section className="px-4 py-20 bg-white dark:bg-slate-950">
         <div className="max-w-5xl mx-auto rounded-3xl bg-blue-600 px-6 py-14 text-center text-white shadow-xl">
           <h2 className="text-3xl md:text-4xl font-extrabold mb-3">Start learning today &mdash; it&apos;s free</h2>
-          <p className="text-blue-100 mb-8">Pick a path — courses, books, articles or testing — and build something real.</p>
+          <p className="text-blue-100 mb-8">Pick a path — courses, books, articles, testing or DSA — and build something real.</p>
           <SignedOut>
             <SignUpButton mode="modal">
               <Button size="lg" className="bg-white text-blue-700 hover:bg-blue-50 px-8 py-6 rounded-xl font-semibold">Create free account</Button>
